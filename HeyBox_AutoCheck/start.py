@@ -7,7 +7,7 @@ if __name__ =='__main__':
 
     pkey=dict['pkey']
     imei=dict['imei']
-    heybox_id=dict['heyboxid']
+    heybox_id=dict['heybox_id']
 
     
     heybox1=Heybox(heybox_id,imei,pkey,1)
