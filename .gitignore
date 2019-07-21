@@ -7,7 +7,6 @@
 *.userosscache
 *.sln.docstates
 config.json
-test.py
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
