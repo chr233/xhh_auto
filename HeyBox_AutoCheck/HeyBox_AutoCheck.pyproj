@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.json" />
+    <Content Include="config_sample.json" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
