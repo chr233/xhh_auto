@@ -35,13 +35,14 @@ _AWARD_LINK_ = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点�
 _COMMENT_UP_ = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
 _TASK_SIGN_ = 'https://api.xiaoheihe.cn/task/sign/'#签到
 _SHARE_CLICK_ = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
-_SHARE_QQ_='https://api.xiaoheihe.cn/task/shared/'#QQ分享
+_SHARE_QQ_ = 'https://api.xiaoheihe.cn/task/shared/'#QQ分享
 _VERSION_CHECK_ = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'#检查更新
 _USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'
 
 #LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
-#logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
+#logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d
+#%H:%M:%S')
 logging.basicConfig(level=logging.INFO,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 class Heybox():
@@ -423,7 +424,7 @@ class Heybox():
 
     #模拟点击分享按钮
     def simu_share(self,newsid,index=1):
-        url=_SHARE_CLICK_
+        url = _SHARE_CLICK_
         self.__flush_params()
         referer = {
             'from_tag':-1,
@@ -448,7 +449,7 @@ class Heybox():
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
             'X-Requested-With': 'com.max.xiaoheihe',   
-            'Referer':_NEWS_DETAIL_+str(newsid)+'?'+urllib.parse.urlencode(query=referer)
+            'Referer':_NEWS_DETAIL_ + str(newsid) + '?' + urllib.parse.urlencode(query=referer)
         }
 
         cookies = { 
@@ -456,7 +457,7 @@ class Heybox():
             'user_heybox_id' : self._params['heybox_id']
         }
 
-        resp=self.Session2.get(url=url,headers=headers,cookies=cookies)
+        resp = self.Session2.get(url=url,headers=headers,cookies=cookies)
         try:
             dict = resp.json()
             self.__check_status(dict)
@@ -474,17 +475,17 @@ class Heybox():
 
     #检查分享结果
     def check_share_task(self):
-        url=_SHARE_QQ_
+        url = _SHARE_QQ_
         self.__flush_params()
-        params={
+        params = {
             'shared_type':'normal',
             'share_plat':'shareQQFriend',
             **self._params
         }
 
-        resp=self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
+        resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
         try:
-            dict=resp.json()
+            dict = resp.json()
             print(dict)
             self.__check_status(dict)
             self.logger.info('检查签到结果')
@@ -829,7 +830,7 @@ class Heybox():
             return(hkey)
         asctime = self.__get_currenttime()
         self._params['hkey'] = gen_hkey(asctime)    
-        self._params['_time']=asctime   
+        self._params['_time'] = asctime   
 
     #取时间戳
     def __get_currenttime(self):

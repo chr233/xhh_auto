@@ -2,16 +2,16 @@
 import HeyBoxClient
 import json
 
-if __name__ =='__main__':
+if __name__ == '__main__':
     try:
         with open('config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
         for item in dict:
-            pkey=item['pkey']
-            imei=item['imei']
-            heybox_id=item['heybox_id']
+            pkey = item['pkey']
+            imei = item['imei']
+            heybox_id = item['heybox_id']
     
-            heybox1=HeyBoxClient.Heybox(heybox_id,imei,pkey,1)
+            heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,1)
 
             heybox1.auto()#自动完成每日任务，自动动态点赞
             heybox1.get_task_stats()#获取任务完成度
@@ -23,3 +23,7 @@ if __name__ =='__main__':
         print('出错了',e)
     except KeyError as e:
         print('出错了',e)
+    except FileNotFoundError as e:
+        print('未找到配置文件，请将config_sample.json重命名为config.json并填入账号凭据',e)
+    except json.JSONDecodeError as e:
+        print('config.json格式有误', e)
