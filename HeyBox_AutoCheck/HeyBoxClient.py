@@ -759,7 +759,7 @@ class Heybox():
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
             return(False)
-        #except ClientException as e:
+        except ClientException as e:
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
         pass
