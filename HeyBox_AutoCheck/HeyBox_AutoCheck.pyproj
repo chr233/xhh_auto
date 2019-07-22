@@ -29,6 +29,9 @@
     <Compile Include="start.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="changelog.md">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="config_sample.json" />
     <Content Include="requirements.txt" />
   </ItemGroup>

@@ -132,12 +132,18 @@ class Heybox():
         else:
             self.logger.info('批量模式开启，目标为[%d]条动态' % len(likelist))
         i = 1
+        likedcount=0
         for item in likelist:
             self.logger.info('第[%d]条动态' % i)
             if not item[2]:
                 self.like_follow(item[0],item[1])
+                likedcount=0
             else:
                 self.logger.info('已点赞，跳过')
+                likedcount+=1
+                if(likedcount==5):
+                    self.logger.info('连续5条动态已点赞，终止任务')
+                    break
             i+=1
             limit-=1
             if limit == 0:
@@ -461,7 +467,6 @@ class Heybox():
         try:
             dict = resp.json()
             self.__check_status(dict)
-            print(dict)
             self.logger.info('模拟点击分享按钮')
         except ValueError as e:
             self.logger.error('分享出错')
@@ -486,7 +491,6 @@ class Heybox():
         resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
         try:
             dict = resp.json()
-            print(dict)
             self.__check_status(dict)
             self.logger.info('检查签到结果')
         except ValueError as e:
@@ -722,7 +726,6 @@ class Heybox():
     def get_my_profile(self):
         url = _USER_PROFILE_
         userid = self._params['heybox_id']
-        print(userid)
 
         info = self.get_user_profile(userid)
         return(info)
@@ -793,6 +796,7 @@ class Heybox():
             if dict['status'] == 'ignore':
                 raise AlreadyDone
             if dict['status'] == 'failed':
+                print(dict)
                 if dict['msg'] == '操作已经完成':
                     raise AlreadyDone
                 elif dict['msg'] == '不能进行重复的操作哦':

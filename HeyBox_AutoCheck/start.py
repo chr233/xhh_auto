@@ -6,13 +6,16 @@ if __name__ == '__main__':
     try:
         with open('config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
+
+        i=0
         for item in dict:
+            i+=1
             pkey = item['pkey']
             imei = item['imei']
             heybox_id = item['heybox_id']
     
-            heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,1)
-
+            heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
+            
             heybox1.auto()#自动完成每日任务，自动动态点赞
             heybox1.get_task_stats()#获取任务完成度
             heybox1.get_task_detail()#获取任务详情
