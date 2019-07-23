@@ -37,23 +37,28 @@ _TASK_SIGN_ = 'https://api.xiaoheihe.cn/task/sign/'#签到
 _SHARE_CLICK_ = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
 _SHARE_QQ_ = 'https://api.xiaoheihe.cn/task/shared/'#QQ分享
 _VERSION_CHECK_ = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'#检查更新
-_USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'
+_USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人资料
+_FOLLOWER_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#好友列表
+_FOLLOW_USER_ = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
+_FOLLOW_USER_CANCEL_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
 
 #LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
 #logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d
 #%H:%M:%S')
-logging.basicConfig(level=logging.INFO,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 class Heybox():
     Session = requests.session()
     Session2 = requests.session()#独立会话，只用于拉取文章页
+    Session.headers={}
+    Session2.headers={}
     _headers = {}
     _cookies = {}
     _params = {}
     
     #3个参数抓包可以拿到,最后一个是标签
-    def __init__(self, heybox_id,imei,pkey,tag='未定义'):
+    def __init__(self, heybox_id,imei,pkey,tag='null'):
         self._headers = {
             'Referer': 'http://api.maxjia.com/',
             'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
@@ -68,7 +73,7 @@ class Heybox():
             'heybox_id': heybox_id,
             'imei': imei,
             'os_type': 'Android',
-            'os_version': '10',
+            'os_version': '8.1.0',
             'version': _VERSION,
             '_time': '',
             'hkey': ''
@@ -132,16 +137,16 @@ class Heybox():
         else:
             self.logger.info('批量模式开启，目标为[%d]条动态' % len(likelist))
         i = 1
-        likedcount=0
+        likedcount = 0
         for item in likelist:
             self.logger.info('第[%d]条动态' % i)
             if not item[2]:
                 self.like_follow(item[0],item[1])
-                likedcount=0
+                likedcount = 0
             else:
                 self.logger.info('已点赞，跳过')
                 likedcount+=1
-                if(likedcount==5):
+                if(likedcount == 5):
                     self.logger.info('连续5条动态已点赞，终止任务')
                     break
             i+=1
@@ -150,6 +155,20 @@ class Heybox():
                 break
             time.sleep(1)
         self.logger.info('执行完毕')
+
+    #批量关注粉丝[(userid,关系),……]
+    def simu_like_follows(self,followerlist,limit=-1):
+        self.logger.info('批量关注粉丝')
+        for item in followerlist:
+            if (item[1] == 2):
+                self.logger.info('尝试关注新粉丝@[%s]' % item[0])
+                self.follow_user(item[0])
+                time.sleep(1)
+            limit-=1
+            if limit == 0:
+                break
+        self.logger.info('执行完毕')
+
 
     #[自动]
     def auto(self):#,viewcount,likecount,sharecount,followcount):
@@ -176,7 +195,11 @@ class Heybox():
         likelist = self.get_follow_post()
         self.simu_like_follows(likelist,limit)
         return(True)
+    #自动关注粉丝
+    def auto_follow_followers(self,limit=30):
+        followerlist = self.get_follower_list()
 
+        self.simu_like_follows(followerlist)
 
 
     #拉取首页文章列表(offset为偏移，30一个单位)，返回[(linkid,newsid),……]
@@ -336,6 +359,51 @@ class Heybox():
             return(False)    
         pass
     
+    #拉取粉丝列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
+    def get_follower_list(self,offset=0):
+        url = _FOLLOWER_LIST_
+        self.__flush_params()
+        params = {
+            'userid':self._params['heybox_id'],
+            'offset':offset,
+            'limit':30,
+            **self._params
+        }
+
+        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            try:
+                self.__check_status(dict)
+            except ClientException as e:
+                self.logger.error('拉取粉丝列表出错')
+                self.logger.error(e)
+                return(False)
+
+            try:
+                fan_num = dict['follow_cnt']['fan_num']
+                follow_num = dict['follow_cnt']['follow_num']
+                follow_list = dict['follow_list']
+
+                result = []
+                for item in follow_list:
+                    result.append((item['userid'],item['is_follow']))
+
+                self.logger.info('关注[%s] 粉丝[%s]' % (follow_num,fan_num))
+                return(result)
+            
+            except KeyError as e:
+                self.logger.error('拉取粉丝列表出错')
+                self.logger.error(e)
+                return(False)
+        except ValueError as e:
+            self.logger.error('拉取粉丝列表出错')
+            self.logger.error(e)
+            return(False)    
+        pass
+
+
+
     #给新闻点赞(linkid,newsid,[index])
     def like_news(self,linkid,newsid,index=1):
         url = _AWARD_LINK_
@@ -422,8 +490,64 @@ class Heybox():
         self.logger.info('动态点赞成功')
         return(True)
 
-    #分享
+    #关注用户(userid)
+    def follow_user(self,userid):
+        #url ="https://httpbin.org/post"
+        url = _FOLLOW_USER_
 
+        
+        '''headers = {
+            **self._headers,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }'''
+        
+        headers = {
+
+            'Referer': 'http://api.maxjia.com/',
+            'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
+            'Cookie':'pkey='+self._cookies['pkey'],
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Host': 'api.xiaoheihe.cn',
+            'Connection': 'Keep-Alive',
+            'Accept-Encoding': 'gzip'
+        }
+
+
+        data = {
+            'following_id': userid,
+        }
+
+
+        proxies = {
+            "http": "http://127.0.0.1:8888",
+            "https": "https://127.0.0.1:8888"
+           
+        }
+
+        print(headers)
+        print(data)
+
+
+        self.__flush_params()
+        resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies,proxies=proxies, verify=False)
+
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+        except ValueError as e:
+            self.logger.error('关注用户出错')
+            self.logger.error(e)
+            return(False)
+        try:
+            self.__check_status(dict)
+        except ClientException as e:
+            self.logger.error('关注用户出错')
+            self.logger.error(e)
+            return(False)
+        self.logger.info('关注用户[%s]成功' % userid)
+        return(True)
+
+    #分享
     def share(self,newsid,index=1):
         self.simu_share(newsid,index)
         self.check_share_task()
@@ -492,16 +616,13 @@ class Heybox():
         try:
             dict = resp.json()
             self.__check_status(dict)
-            self.logger.info('检查签到结果')
+            self.logger.info('检查分享结果')
         except ValueError as e:
-            self.logger.error('签到出错')
+            self.logger.error('分享出错')
             self.logger.error(e)
             return(False)
-        except AlreadyDone:
-            self.logger.info('已经签过到了')
-            return(True)
         except ClientException as e:
-            self.logger.error('签到出错')
+            self.logger.error('分享出错(貌似还是可以完成任务)')
             self.logger.error(e)
             return(False)
         pass
@@ -689,9 +810,10 @@ class Heybox():
         except ClientException as e:
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
+            return(False)
         pass
 
-    #获取个人数据，返回(H币,等级,经验/下级经验,连续签到天数)
+    #获取个人数据，返回(昵称,H币,等级,经验/下级经验,连续签到天数)
     def get_my_data(self):
         url = _TASK_LIST_
         self.__flush_params()
@@ -720,6 +842,7 @@ class Heybox():
         except ClientException as e:
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
+            return(False)
         pass
 
     #获取自己的个人资料([userid]不填返回自己的信息)，返回(关注,粉丝,获赞)
@@ -757,7 +880,7 @@ class Heybox():
 
             self.logger.info('昵称:%s @%s [%s级]' % (username,userid,level))
             self.logger.info('关注[%s],粉丝[%d],获赞[%s]' % (follow_num,fan_num,awd_num))
-            return((username,userid,level))
+            return((follow_num,fan_num,awd_num))
         
         except ValueError as e:
             self.logger.error('获取任务详情出错')
@@ -766,6 +889,7 @@ class Heybox():
         except ClientException as e:
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
+            return(False)
         pass
 
 
@@ -796,7 +920,7 @@ class Heybox():
             if dict['status'] == 'ignore':
                 raise AlreadyDone
             if dict['status'] == 'failed':
-                print(dict)
+                self.logger.info(dict)
                 if dict['msg'] == '操作已经完成':
                     raise AlreadyDone
                 elif dict['msg'] == '不能进行重复的操作哦':
@@ -805,9 +929,14 @@ class Heybox():
                     raise OBJnotExist
                 elif dict['msg'] == '不能给自己的评价点赞哟':
                     raise CantDoERROR
+                elif dict['msg'] == '系统时间不正确':
+                    raise UnknownERROR
                 elif dict['msg'] == 'invalid userid':
                     raise UserIDERROR
-                print(dict)
+                elif dict['msg'] == '参数错误':
+                    raise ParamsERROR
+                self.logger.error('未知返回值')
+                self.logger.error(dict)
                 raise UnknownERROR
             if dict['status'] == 'relogin':
                 raise TokenERROR
@@ -889,6 +1018,13 @@ class CantDoERROR(ClientException):
 #未知错误
 class UnknownERROR(ClientException):
     def __init__(self,ErrorInfo='未知错误'):
+        super().__init__(self)
+        self.errorinfo = ErrorInfo
+    def __str__(self):
+        return self.errorinfo
+#参数错误
+class ParamsERROR(ClientException):
+    def __init__(self,ErrorInfo='参数错误'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
     def __str__(self):
