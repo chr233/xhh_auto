@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="30.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_secondary_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/ranking" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_secondary_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="80.0dip" android:text="@string/player" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_secondary_color" android:gravity="center" android:layout_width="44.0dip" android:layout_height="wrap_content" android:layout_marginRight="109.0dip" android:text="@string/game_time" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_secondary_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="16.0dip" android:text="@string/invite_to_heybox" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+    <View android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_alignParentBottom="true" />
+    <View android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_alignParentTop="true" />
+</RelativeLayout>

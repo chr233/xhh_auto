@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@drawable/list_item_bg" android:clickable="true" android:layout_width="fill_parent" android:layout_height="46.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/iv_item_friend_ranking_avatar" android:layout_width="30.0dip" android:layout_height="30.0dip" android:layout_marginLeft="10.0dip" android:scaleType="centerCrop" android:layout_centerVertical="true" />
+    <LinearLayout android:gravity="center_vertical" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="24.0dip" android:layout_toLeftOf="@id/vg_item_friend_ranking_x_heybox_info" android:layout_toRightOf="@id/iv_item_friend_ranking_avatar" android:layout_centerVertical="true">
+        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_primary_color" android:ellipsize="end" android:id="@id/tv_item_friend_ranking_nickname" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxWidth="130.0dip" android:text="dasd" android:singleLine="true" android:layout_centerVertical="true" />
+        <TextView android:textSize="@dimen/text_size_9" android:textColor="@color/text_primary_color" android:id="@id/tv_item_friend_online_status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2.0dip" android:text="dasd" />
+    </LinearLayout>
+    <RelativeLayout android:id="@id/vg_item_friend_ranking_x_heybox_info" android:layout_width="75.0dip" android:layout_height="fill_parent" android:layout_marginRight="10.0dip" android:layout_alignParentRight="true">
+        <RelativeLayout android:id="@id/vg_item_friend_invite" android:background="@drawable/blue_stroke_2dp" android:visibility="gone" android:clickable="true" android:layout_width="64.0dip" android:layout_height="24.0dip" android:layout_marginTop="23.0dip" android:layout_centerHorizontal="true" android:layout_centerVertical="true">
+            <TextView android:textColor="@color/interactive_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/invite_he" android:layout_centerInParent="true" />
+        </RelativeLayout>
+        <ImageView android:id="@id/iv_item_friend_ranking_x_heybox_avatar" android:layout_width="16.0dip" android:layout_height="16.0dip" android:layout_centerVertical="true" />
+        <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_primary_color" android:ellipsize="end" android:id="@id/tv_item_friend_ranking_x_heybox_username" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:singleLine="true" android:layout_toRightOf="@id/iv_item_friend_ranking_x_heybox_avatar" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <View android:id="@id/v_item_friend_ranking_divider" android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:layout_alignParentBottom="true" />
+</RelativeLayout>

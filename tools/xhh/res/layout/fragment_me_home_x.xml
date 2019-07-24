@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.scwang.smartrefresh.layout.SmartRefreshLayout android:id="@id/srl_me_home" android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior" app:srlEnableLoadmore="false" style="@style/smartRefreshStyle"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.v4.widget.NestedScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/tile_bg_color" android:gravity="center" android:id="@id/tv_forbid_info" android:background="@color/text_hint_color" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="34.0dip" android:layout_marginTop="4.0dip" android:alpha="0.5" />
+            <android.support.v7.widget.CardView android:id="@id/vg_me_home_fragment_enters" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:layout_marginTop="4.0dip" android:layout_marginRight="4.0dip" app:cardCornerRadius="2.0dip" app:cardElevation="0.0dip" app:cardPreventCornerOverlap="false">
+                <LinearLayout android:orientation="horizontal" android:background="@android:color/white" android:layout_width="fill_parent" android:layout_height="64.0dip" android:baselineAligned="false">
+                    <RelativeLayout android:id="@id/rl_me_home_task" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+                        <ImageView android:id="@id/iv_me_home_task" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_marginTop="9.0dip" android:src="@drawable/ic_task" android:layout_centerHorizontal="true" />
+                        <ImageView android:id="@id/iv_task_button_time" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="-5.0dip" android:layout_marginRight="-5.0dip" android:src="@drawable/ic_msg_red_point" android:layout_alignTop="@id/iv_me_home_task" android:layout_alignRight="@id/iv_me_home_task" />
+                        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/appbar_text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="43.0dip" android:text="@string/task" android:layout_centerHorizontal="true" />
+                        <View android:background="@color/divider_color" android:layout_width="0.5dip" android:layout_height="20.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+                    </RelativeLayout>
+                    <RelativeLayout android:id="@id/rl_me_home_favour" android:background="?selectableItemBackground" android:clickable="true" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+                        <ImageView android:id="@id/iv_me_home_favour" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_marginTop="9.0dip" android:src="@drawable/ic_favour" android:layout_centerHorizontal="true" />
+                        <ImageView android:id="@id/iv_favour_button_time" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="-5.0dip" android:layout_marginRight="-5.0dip" android:src="@drawable/ic_msg_red_point" android:layout_alignTop="@id/iv_me_home_favour" android:layout_alignRight="@id/iv_me_home_favour" />
+                        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/appbar_text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="43.0dip" android:text="@string/favour" android:layout_centerHorizontal="true" />
+                        <View android:background="@color/divider_color" android:layout_width="0.5dip" android:layout_height="20.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+                    </RelativeLayout>
+                    <RelativeLayout android:id="@id/rl_me_home_thematic" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+                        <ImageView android:id="@id/iv_me_home_thematic" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_marginTop="9.0dip" android:src="@drawable/ic_activity" android:layout_centerHorizontal="true" />
+                        <ImageView android:id="@id/iv_activity_button_time" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="-5.0dip" android:layout_marginRight="-5.0dip" android:src="@drawable/ic_msg_red_point" android:layout_alignTop="@id/iv_me_home_thematic" android:layout_alignRight="@id/iv_me_home_thematic" />
+                        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/appbar_text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="43.0dip" android:text="@string/thematic" android:layout_centerHorizontal="true" />
+                        <View android:background="@color/divider_color" android:layout_width="0.5dip" android:layout_height="20.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+                    </RelativeLayout>
+                    <RelativeLayout android:id="@id/rl_me_home_hshop" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+                        <ImageView android:id="@id/iv_me_home_hshop" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_marginTop="9.0dip" android:src="@drawable/ic_shop" android:layout_centerHorizontal="true" />
+                        <ImageView android:id="@id/iv_store_button_time" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="-5.0dip" android:layout_marginRight="-5.0dip" android:src="@drawable/ic_msg_red_point" android:layout_alignTop="@id/iv_me_home_hshop" android:layout_alignRight="@id/iv_me_home_hshop" />
+                        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/appbar_text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="43.0dip" android:text="@string/h_coin_shop" android:layout_centerHorizontal="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <include android:id="@id/vg_pubg_unbind_card" android:visibility="gone" layout="@layout/view_pubg_bind_card" />
+            <include android:id="@id/vg_steam_info_card" android:visibility="gone" layout="@layout/view_steam_info_card" />
+            <include android:id="@id/vg_pio_card" android:visibility="gone" layout="@layout/view_personal_information_open_card" />
+            <include android:id="@id/vg_pubg_info_card" android:visibility="gone" layout="@layout/view_pubg_info_card" />
+            <include android:id="@id/vg_steam_info_unbind" android:visibility="gone" layout="@layout/view_steam_unbind_card" />
+            <include android:id="@id/vg_my_game_card" android:visibility="gone" layout="@layout/view_my_game_card" />
+            <include android:id="@id/vg_following_card" android:visibility="gone" layout="@layout/view_following_card" />
+            <include android:id="@id/vg_my_friend_card" android:visibility="gone" layout="@layout/layout_friend_card" />
+            <Space android:layout_width="fill_parent" android:layout_height="4.0dip" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

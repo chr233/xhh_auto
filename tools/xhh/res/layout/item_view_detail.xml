@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:id="@id/vg_view_detail" android:background="@color/tablayout_bg" android:layout_width="fill_parent" android:layout_height="34.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <include android:id="@id/view_detail_divider" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_marginLeft="12.0dip" android:layout_marginRight="8.0dip" layout="@layout/divider" />
+    <TextView android:textSize="@dimen/text_size_13" android:textColor="@color/text_secondary_color" android:id="@id/tv_view_detail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/click_to_view" android:layout_centerVertical="true" />
+    <ImageView android:id="@id/iv_view_detail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:src="@drawable/right_arrow" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+</RelativeLayout>

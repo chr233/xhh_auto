@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.v7.widget.CardView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="60.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="60.0dip" android:layout_centerInParent="true" app:cardCornerRadius="4.0dip" app:cardElevation="0.0dip" app:cardPreventCornerOverlap="false">
+        <LinearLayout android:orientation="vertical" android:id="@id/vg_content" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <TextView android:textSize="@dimen/text_size_14" android:textStyle="normal" android:textColor="@color/text_primary_color" android:layout_gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16.0dip" android:text="@string/global_prices" />
+            <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="24.0dip">
+                <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="54.0dip" android:text="@string/country" android:layout_weight="1.0" />
+                <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/current_price" android:layout_weight="1.0" />
+                <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/original_price_and_discount" android:layout_weight="1.0" />
+            </LinearLayout>
+            <include android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_marginLeft="10.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="10.0dip" layout="@layout/divider" />
+            <ProgressBar android:id="@id/progress" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="10.0dip" />
+            <android.support.v7.widget.RecyclerView android:id="@id/rv_game_global_prices" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <ImageView android:id="@id/iv_window_close" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="10.0dip" android:src="@drawable/ic_window_close" android:layout_alignParentBottom="true" android:layout_centerHorizontal="true" />
+</RelativeLayout>

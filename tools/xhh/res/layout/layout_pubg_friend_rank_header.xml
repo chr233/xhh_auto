@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center" android:orientation="horizontal" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="32.0dip" android:layout_marginTop="4.0dip">
+        <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/ll_mode" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0">
+            <TextView android:gravity="center" android:id="@id/tv_mode" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/TextStyle_Normal_11" />
+            <ImageView android:id="@id/iv_mode_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:src="@drawable/list_expand" />
+        </LinearLayout>
+        <View android:background="@color/tab_layout_divider_color" android:layout_width="@dimen/divider_width" android:layout_height="16.0dip" />
+        <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/ll_season" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0">
+            <TextView android:gravity="center" android:id="@id/tv_season" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/TextStyle_Normal_11" />
+            <ImageView android:id="@id/iv_season_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:src="@drawable/list_expand" />
+        </LinearLayout>
+        <View android:background="@color/tab_layout_divider_color" android:layout_width="@dimen/divider_width" android:layout_height="16.0dip" />
+        <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/ll_region" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0">
+            <TextView android:gravity="center" android:id="@id/tv_region" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" style="@style/TextStyle_Normal_11" />
+            <ImageView android:id="@id/iv_region_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:src="@drawable/list_expand" />
+        </LinearLayout>
+    </LinearLayout>
+    <include layout="@layout/item_friend_ranking_title" />
+    <include layout="@layout/divider" />
+</LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:id="@id/activePart" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true">
+        <TextView android:textSize="@dimen/text_size_14" android:typeface="sans" android:textColor="@color/tile_bg_color" android:layout_gravity="center|right" android:id="@id/pass_login" android:padding="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/skip_login" />
+        <LinearLayout android:orientation="vertical" android:id="@id/ll_number" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/LoginWhiteStyle">
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="48.0dip">
+                <EditText android:textSize="@dimen/text_size_12" android:typeface="sans" android:textColor="#ff333333" android:textColorHint="#ff999999" android:gravity="center_vertical" android:id="@id/et_number" android:background="@null" android:paddingLeft="@dimen/login_et_padding" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginLeft="@dimen/login_et_margin" android:hint="@string/input_phonenumber" android:singleLine="true" android:inputType="number" />
+            </RelativeLayout>
+            <include layout="@layout/divider" />
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="48.0dip">
+                <EditText android:textSize="@dimen/text_size_12" android:typeface="sans" android:textColor="#ff333333" android:textColorHint="#ff999999" android:gravity="center_vertical" android:id="@id/et_pwd" android:background="@null" android:paddingLeft="@dimen/login_et_padding" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginLeft="@dimen/login_et_margin" android:hint="@string/input_pwd" android:singleLine="true" android:digits="@string/digits" android:inputType="textPassword" />
+                <TextView android:textSize="@dimen/text_size_12" android:typeface="sans" android:textColor="@color/buttonColor_blue" android:id="@id/tv_find_pwd" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:text="@string/forget_pwd" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+            </RelativeLayout>
+        </LinearLayout>
+        <Button android:textSize="@dimen/text_size_14" android:typeface="sans" android:textColor="@color/white" android:id="@id/bt_click_login" android:background="@drawable/btn_tran_white" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/login" />
+    </LinearLayout>
+</RelativeLayout>

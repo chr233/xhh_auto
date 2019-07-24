@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="bar_list_personal">
+        <item>评分</item>
+        <item>胜率</item>
+    </string-array>
+    <string-array name="compare_list">
+        <item>英雄伤害</item>
+        <item>每分钟经验</item>
+        <item>每分钟金钱</item>
+        <item>建筑伤害</item>
+    </string-array>
+    <string-array name="daily_data_list">
+        <item>场次</item>
+        <item>胜率</item>
+        <item>单人击杀</item>
+        <item>攻防击杀</item>
+        <item>最后一击</item>
+        <item>伤害量</item>
+        <item>击杀数</item>
+        <item>环境击杀数</item>
+    </string-array>
+    <string-array name="daily_data_list1">
+        <item>场次</item>
+        <item>KDA</item>
+        <item>表现评分</item>
+        <item>获得积分</item>
+    </string-array>
+    <string-array name="daily_data_list2">
+        <item>场均KDA</item>
+        <item>场均参与击杀</item>
+        <item>场均最后一击数</item>
+        <item>场均死亡</item>
+        <item>场均伤害</item>
+        <item>场均治疗</item>
+        <item>场均攻防时间</item>
+        <item>场均单人击杀</item>
+    </string-array>
+    <string-array name="dota2_personal_trend_list">
+        <item>胜率</item>
+        <item>MMR</item>
+    </string-array>
+    <string-array name="dota2_single_hero_trend_list">
+        <item>胜率</item>
+        <item>使用率</item>
+    </string-array>
+    <string-array name="league_detail_tab">
+        <item>联赛详情</item>
+        <item>对阵信息</item>
+        <item>比赛赛程</item>
+    </string-array>
+    <string-array name="league_game_type">
+        <item>守望先锋</item>
+        <item>dota2</item>
+    </string-array>
+    <string-array name="league_home_detail_tab">
+        <item>赛程</item>
+        <item>我的联赛</item>
+        <item>队伍信息</item>
+        <item>个人信息</item>
+    </string-array>
+    <string-array name="league_main_tab">
+        <item>赛事中心</item>
+        <item>比赛/队伍</item>
+    </string-array>
+    <string-array name="league_out_type">
+        <item>单败淘汰赛</item>
+        <item>双败淘汰赛</item>
+    </string-array>
+    <string-array name="league_time_bar">
+        <item>比赛创建</item>
+        <item>报名截止</item>
+        <item>开始比赛</item>
+    </string-array>
+    <string-array name="match_detail_tab">
+        <item>比赛状态</item>
+        <item>队伍信息</item>
+    </string-array>
+    <string-array name="mmr_help_window">
+        <item>天梯分帮助</item>
+        <item>1.未公开天梯数据: 请到游戏内设置公开数据</item>
+        <item>2.天梯分未更新: 我们将每天更新一次天梯分, 请够耐心等待</item>
+        <item>确定</item>
+    </string-array>
+    <string-array name="ow_hero_trend_list">
+        <item>命中率</item>
+        <item>场均伤害&amp;治疗</item>
+        <item>MMR</item>
+    </string-array>
+    <string-array name="ow_personal_trend_list">
+        <item>胜率</item>
+        <item>KDA</item>
+    </string-array>
+    <string-array name="pro_team_detail_tab">
+        <item>战绩</item>
+        <item>成员</item>
+    </string-array>
+    <string-array name="rec_data">
+        <item>比赛场次</item>
+        <item>KDA</item>
+        <item>金钱/分钟</item>
+        <item>正补/10分钟</item>
+        <item>伤害/分钟</item>
+        <item>经验/分钟</item>
+    </string-array>
+    <string-array name="start_league_elements">
+        <item>关于比赛</item>
+        <item>关于我们</item>
+        <item>游戏规则</item>
+        <item>比赛logo</item>
+        <item>最多参赛选手</item>
+        <item>联赛名称</item>
+    </string-array>
+    <string-array name="start_league_tab">
+        <item>赛事信息</item>
+        <item>赛程</item>
+    </string-array>
+</resources>

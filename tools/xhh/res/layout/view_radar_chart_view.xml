@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:background="@color/dark_blue" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.max.xiaoheihe.view.chart.HeyBoxRadarChart android:id="@id/hbrc_view_radar_chart_view" android:layout_width="260.0dip" android:layout_height="230.0dip" android:layout_marginLeft="4.0dip" />
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="230.0dip">
+        <RelativeLayout android:id="@id/vg_view_radar_chart_view_score" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="23.0dip" android:layout_marginRight="12.0dip" android:layout_alignParentRight="true">
+            <include layout="@layout/view_circle_process" />
+        </RelativeLayout>
+        <RelativeLayout android:id="@id/vg_view_radar_chart_view_rank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="136.0dip" android:layout_marginRight="12.0dip" android:layout_alignParentRight="true">
+            <include layout="@layout/view_circle_process" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

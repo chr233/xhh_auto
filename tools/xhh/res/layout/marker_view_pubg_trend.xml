@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/white_2dp" android:padding="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/text_size_10" android:textStyle="normal" android:textColor="@color/text_primary_color" android:id="@id/tv_time" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    <LinearLayout android:orientation="horizontal" android:id="@id/vg_solo" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14.0dip">
+        <View android:layout_gravity="center_vertical" android:background="@color/pubg_solo_color" android:layout_width="18.0dip" android:layout_height="1.0dip" />
+        <TextView android:textSize="@dimen/text_size_9" android:textColor="@color/pubg_solo_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:text="@string/mode_solo" android:includeFontPadding="false" />
+        <TextView android:textSize="@dimen/text_size_9" android:textColor="@color/pubg_solo_color" android:layout_gravity="center_vertical" android:id="@id/tv_solo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="14.0dip" android:includeFontPadding="false" />
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:id="@id/vg_duo" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8.0dip">
+        <View android:layout_gravity="center_vertical" android:background="@color/pubg_duo_color" android:layout_width="18.0dip" android:layout_height="1.0dip" />
+        <TextView android:textSize="@dimen/text_size_9" android:textColor="@color/pubg_duo_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:text="@string/mode_duo" android:includeFontPadding="false" />
+        <TextView android:textSize="@dimen/text_size_9" android:textColor="@color/pubg_duo_color" android:layout_gravity="center_vertical" android:id="@id/tv_duo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="14.0dip" android:includeFontPadding="false" />
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:id="@id/vg_squad" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8.0dip">
+        <View android:layout_gravity="center_vertical" android:background="@color/pubg_squad_color" android:layout_width="18.0dip" android:layout_height="1.0dip" />
+        <TextView android:textSize="@dimen/text_size_9" android:textColor="@color/pubg_squad_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:text="@string/mode_squad" android:includeFontPadding="false" />
+        <TextView android:textSize="@dimen/text_size_9" android:textColor="@color/pubg_squad_color" android:layout_gravity="center_vertical" android:id="@id/tv_squad" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="14.0dip" android:includeFontPadding="false" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/iv_card" android:layout_width="fill_parent" android:layout_height="200.0dip" android:scaleType="centerCrop" />
+    <TextView android:id="@id/tv_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:layout_marginBottom="8.0dip" android:maxLines="1" android:layout_below="@id/iv_card" style="@style/TextStyle_Bold_14" />
+    <TextView android:id="@id/tv_index" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignBaseline="@id/tv_name" android:layout_alignParentRight="true" style="@style/TextStyle_Normal_14" />
+</RelativeLayout>

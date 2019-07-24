@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/dark_blue" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:id="@id/gl_steam_value_card_x" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <RelativeLayout android:id="@id/vg_steam_value_card_operator_panel" android:background="@drawable/white_bg_without_stroke" android:layout_width="fill_parent" android:layout_height="30.0dip">
+        <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_centerInParent="true">
+            <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:layout_gravity="center_vertical" android:id="@id/tv_steam_value_card_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/fold" />
+            <ImageView android:textColor="@color/white" android:layout_gravity="center_vertical" android:id="@id/iv_steam_value_card_sign" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:src="@drawable/list_expand" android:includeFontPadding="false" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

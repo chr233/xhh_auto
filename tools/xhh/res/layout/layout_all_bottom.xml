@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@drawable/layout_all_bottom_bg" android:layout_width="fill_parent" android:layout_height="34.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <View android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_alignParentTop="true" />
+    <LinearLayout android:orientation="horizontal" android:id="@id/ll_my_game_card_all_action" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true">
+        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:layout_gravity="center_vertical" android:id="@id/tv_layout_all_action_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/all" android:includeFontPadding="false" />
+        <ImageView android:layout_gravity="center_vertical" android:id="@id/iv_layout_all_action" android:layout_width="5.0dip" android:layout_height="7.0dip" android:layout_marginLeft="3.0dip" android:src="@drawable/ic_arrow_more" android:tint="@color/text_secondary_color" />
+    </LinearLayout>
+</RelativeLayout>

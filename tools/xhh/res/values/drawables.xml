@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="drawable" name="ic_menu_camera">@android:drawable/ic_menu_camera</item>
+    <item type="drawable" name="ic_menu_gallery">@android:drawable/ic_menu_gallery</item>
+    <item type="drawable" name="ic_menu_manage">@android:drawable/ic_menu_manage</item>
+    <item type="drawable" name="ic_menu_send">@android:drawable/ic_menu_send</item>
+    <item type="drawable" name="ic_menu_share">@android:drawable/ic_menu_share</item>
+    <item type="drawable" name="ic_menu_slideshow">@android:drawable/ic_menu_slideshow</item>
+    <item type="drawable" name="notification_template_icon_bg">#3333b5e5</item>
+    <item type="drawable" name="notification_template_icon_low_bg">#0cffffff</item>
+</resources>

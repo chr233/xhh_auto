@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="10.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/iv_item_game_with_time" android:layout_width="116.0dip" android:layout_height="56.0dip" android:scaleType="centerCrop" />
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="56.0dip" android:layout_marginLeft="10.0dip">
+        <TextView android:textSize="@dimen/text_size_13" android:textColor="@color/text_primary_color" android:ellipsize="marquee" android:id="@id/tv_item_game_with_time_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" android:singleLine="true" android:includeFontPadding="false" />
+        <ProgressBar android:id="@id/pb_item_game_with_time" android:layout_width="fill_parent" android:layout_height="4.0dip" android:layout_marginBottom="6.0dip" android:progressDrawable="@drawable/progress_bg" android:layout_alignParentBottom="true" style="?android:attr/progressBarStyleHorizontal" />
+        <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="4.0dip" android:layout_above="@id/pb_item_game_with_time">
+            <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true">
+                <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_secondary_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/total_time" android:includeFontPadding="false" />
+                <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/text_primary_color" android:layout_gravity="center_vertical" android:id="@id/tv_item_game_with_total_time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:includeFontPadding="false" />
+            </LinearLayout>
+            <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true">
+                <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_secondary_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/in_two_weeks" android:includeFontPadding="false" />
+                <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/text_primary_color" android:layout_gravity="center_vertical" android:id="@id/tv_item_game_with_two_weeks" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:includeFontPadding="false" />
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

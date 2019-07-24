@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@drawable/toast_bg_white" android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:layout_width="200.0dip" android:layout_height="130.0dip" android:layout_marginLeft="20.0dip" android:layout_marginRight="20.0dip" android:layout_centerInParent="true">
+        <LinearLayout android:gravity="center" android:layout_gravity="center_horizontal" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="29.0dip">
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/rb_checked" />
+            <TextView android:textSize="@dimen/text_size_16" android:textColor="@color/text_primary_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dip" android:text="签到成功！" />
+        </LinearLayout>
+        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/interactive_color" android:layout_gravity="center_horizontal" android:id="@id/tv_award" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" />
+        <TextView android:layout_gravity="center_horizontal" android:id="@id/tv_msg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" style="@style/TextStyle_Normal_12" />
+    </LinearLayout>
+</RelativeLayout>
