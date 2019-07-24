@@ -1,20 +1,27 @@
 ## 使用方法
-1. 修改config_sample.json，填入自己的账号凭据
+1. 修改config_sample.json，填入自己的账号凭据,[方糖skey获取](http://sc.ftqq.com)
 2. 将文件另存为config.json
 3. python3 ./start.py
 
 PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
 ```json
-[{
-"pkey":"……",
-"imei":"……",
-"heybox_id":"……"
-},
 {
-"pkey":"……",
-"imei":"……",
-"heybox_id":"……"
-}]
+  "accounts": [
+    {
+      "pkey": "这里填pkey",
+      "imei": "这里填imei",
+      "heybox_id": "黑盒数字ID"
+    },
+    {
+      "pkey": "这里填pkey",
+      "imei": "这里填imei",
+      "heybox_id": "黑盒数字ID"
+    }
+  ],
+  "settings": {
+    "ftqqskey": "这里填方糖的SKEY(用于接收微信推送)，留空关闭该功能"
+  }
+}
 ```
 
 ## 凭据获取方法
