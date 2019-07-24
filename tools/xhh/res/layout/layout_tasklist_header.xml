@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dip" android:layout_marginBottom="4.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:id="@id/rl_exchange" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_primary_color" android:id="@id/tv_available" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="9.0dip" android:text="@string/hcoin_avaliable" android:layout_centerVertical="true" />
+        <TextView android:textSize="@dimen/text_size_14" android:textStyle="normal" android:textColor="@color/interactive_color" android:id="@id/tv_mcoin" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toRightOf="@id/tv_available" android:layout_centerVertical="true" />
+        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="7.0dip" android:src="@drawable/hcoin_big" android:layout_toRightOf="@id/tv_mcoin" android:layout_centerVertical="true" />
+        <LinearLayout android:orientation="horizontal" android:id="@id/ll_exchange" android:paddingLeft="10.0dip" android:paddingRight="10.0dip" android:layout_width="wrap_content" android:layout_height="26.0dip" android:layout_margin="10.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true">
+            <ImageView android:layout_gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/market_icon" />
+            <TextView android:textColor="@color/white" android:layout_gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" android:text="@string/goto_exchange" />
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="@dimen/list_item_height_xl">
+        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:gravity="center" android:id="@id/tv_can_get" android:layout_width="wrap_content" android:layout_height="30.0dip" android:text="@string/hcoin_can_get_today" android:layout_centerHorizontal="true" />
+        <ProgressBar android:id="@id/pb_mcoin" android:layout_width="fill_parent" android:layout_height="10.0dip" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:max="100" android:progress="50" android:indeterminate="false" android:progressDrawable="@drawable/blue_progress_bar" android:layout_below="@id/tv_can_get" style="?android:attr/progressBarStyleHorizontal" />
+        <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/ll_earned" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4.0dip" android:layout_below="@id/pb_mcoin">
+            <TextView android:textSize="@dimen/text_size_12" android:textStyle="normal" android:textColor="@color/interactive_color" android:id="@id/tv_earned" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="2.0dip" />
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/hcoin" />
+        </LinearLayout>
+        <LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:layout_marginBottom="4.0dip" android:layout_above="@id/pb_mcoin" android:layout_alignParentRight="true">
+            <TextView android:textSize="@dimen/text_size_12" android:textStyle="normal" android:textColor="@color/text_hint_color" android:id="@id/tv_total" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" />
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/hcoin_gray" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:descendantFocusability="blocksDescendants" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/text_size_18" android:textStyle="normal" android:textColor="@color/white" android:id="@id/tv_title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="16.0dip" android:layout_marginRight="15.0dip" />
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dip">
+        <ImageView android:layout_gravity="center_vertical" android:layout_width="9.0dip" android:layout_height="9.0dip" android:layout_marginLeft="15.0dip" android:src="@drawable/ic_time" />
+        <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_hint_color" android:layout_gravity="center_vertical" android:id="@id/tv_time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" />
+        <View android:layout_gravity="center_vertical" android:background="#ffe0dfe7" android:layout_width="0.5dip" android:layout_height="9.0dip" android:layout_marginLeft="10.0dip" />
+        <ImageView android:layout_gravity="center_vertical" android:layout_width="10.0dip" android:layout_height="8.0dip" android:layout_marginLeft="10.0dip" android:src="@drawable/ic_visits" />
+        <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_hint_color" android:layout_gravity="center_vertical" android:id="@id/tv_click_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" />
+    </LinearLayout>
+    <TextView android:textSize="@dimen/text_size_13" android:textColor="@color/white_alpha80" android:id="@id/tv_comment" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="8.0dip" android:layout_marginRight="15.0dip" android:layout_marginBottom="8.0dip" />
+    <View android:background="@color/white_alpha25" android:layout_width="fill_parent" android:layout_height="2.0dip" />
+</LinearLayout>

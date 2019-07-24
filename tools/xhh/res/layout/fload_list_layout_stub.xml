@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <View android:id="@id/dim_layout" android:background="#ff000000" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+    <ListView android:scrollbarSize="3.0dip" android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb" android:id="@id/listview_floder" android:background="#ffffffff" android:paddingLeft="10.0dip" android:paddingTop="2.0dip" android:paddingRight="10.0dip" android:paddingBottom="2.0dip" android:scrollbars="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginTop="?android:actionBarSize" android:listSelector="@drawable/layout_selector" android:divider="#ffe0e0e0" android:dividerHeight="1.0dip" />
+</FrameLayout>

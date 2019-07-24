@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/iv_image" android:layout_width="190.0dip" android:layout_height="100.0dip" android:scaleType="centerCrop" android:layout_alignParentTop="true" />
+    <View android:background="@drawable/translucent_back_bg_4_dp" android:layout_width="190.0dip" android:layout_height="100.0dip" android:alpha="0.5" />
+    <TextView android:textSize="@dimen/text_size_16" android:textColor="@color/white" android:id="@id/tv_game_set_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="35.0dip" android:layout_centerHorizontal="true" />
+    <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/white" android:id="@id/tv_game_set_sub_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="55.0dip" android:layout_centerHorizontal="true" android:alpha="0.5" />
+</RelativeLayout>

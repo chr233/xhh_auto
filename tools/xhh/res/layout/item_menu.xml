@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@drawable/list_item_bg" android:layout_width="fill_parent" android:layout_height="74.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/iv_item_menu_icon" android:layout_width="32.0dip" android:layout_height="38.0dip" android:layout_marginTop="8.0dip" android:layout_centerHorizontal="true" />
+    <ImageView android:id="@id/iv_tips" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="-6.0dip" android:layout_marginRight="-6.0dip" android:src="@drawable/ic_msg_red_point" android:layout_alignTop="@id/iv_item_menu_icon" android:layout_alignRight="@id/iv_item_menu_icon" />
+    <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_primary_color" android:id="@id/tv_item_menu_content" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="50.0dip" android:layout_centerHorizontal="true" />
+</RelativeLayout>

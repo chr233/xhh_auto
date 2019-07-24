@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="50.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_centerVertical="true">
+        <RelativeLayout android:layout_gravity="center_horizontal" android:id="@id/vg_item_grid_layout_value_wrapper" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <TextView android:id="@id/tv_item_grid_layout_value" android:layout_marginLeft="2.0dip" android:layout_marginRight="2.0dip" android:singleLine="true" android:layout_centerHorizontal="true" style="@style/SteamDetailValueTextStyle" />
+            <TextView android:id="@id/tv_item_grid_layout_secondary_value" android:layout_toRightOf="@id/tv_item_grid_layout_value" android:layout_alignBaseline="@id/tv_item_grid_layout_value" style="@style/SteamDetailValueSecondaryTextStyle" />
+        </RelativeLayout>
+        <TextView android:layout_gravity="center_horizontal" android:id="@id/tv_item_grid_layout_desc" style="@style/SteamDetailValueDescTextStyle" />
+    </LinearLayout>
+    <View android:id="@id/v_item_grid_layout_divider" android:background="@color/divider_color_alpha_20" android:layout_width="@dimen/divider_height" android:layout_height="fill_parent" android:layout_marginTop="15.0dip" android:layout_marginBottom="15.0dip" android:layout_alignParentRight="true" />
+</RelativeLayout>

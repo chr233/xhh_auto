@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@drawable/list_item_bg" android:layout_width="fill_parent" android:layout_height="45.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_primary_color" android:id="@id/tv_item_friend_ranking_num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="16.0dip" android:layout_centerVertical="true" />
+    <ImageView android:id="@id/iv_item_friend_ranking_avatar" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_marginLeft="40.0dip" android:scaleType="centerCrop" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_primary_color" android:id="@id/tv_item_friend_ranking_nickname" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="76.0dip" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:gravity="center" android:id="@id/tv_item_friend_ranking_region" android:layout_width="36.0dip" android:layout_height="wrap_content" android:layout_marginLeft="227.0dip" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_14" android:textStyle="normal" android:textColor="@color/text_primary_color" android:id="@id/tv_item_friend_ranking_rating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="291.0dip" android:layout_centerVertical="true" />
+    <ImageView android:layout_width="wrap_content" android:layout_height="14.0dip" android:layout_marginRight="10.0dip" android:src="@drawable/right_arrow" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+    <View android:id="@id/v_item_friend_ranking_divider" android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:layout_alignParentBottom="true" />
+</RelativeLayout>

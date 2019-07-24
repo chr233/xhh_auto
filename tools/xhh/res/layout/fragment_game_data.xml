@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout android:id="@id/srl_fragment_game_data" android:layout_width="fill_parent" android:layout_height="fill_parent" style="@style/smartRefreshStyle">
+        <android.support.v4.widget.NestedScrollView android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <RelativeLayout android:id="@id/vg_fragment_game_data_game_info" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dip">
+                    <include layout="@layout/view_game_info_card" />
+                </RelativeLayout>
+                <include android:id="@id/vg_fragment_game_data_inventory" layout="@layout/view_my_friend_card" />
+                <include android:id="@id/vg_steam_detail_inventory_private_card" android:visibility="gone" layout="@layout/view_inventory_private_card" />
+                <include android:id="@id/vg_fragment_game_data_friend" layout="@layout/view_friend_ranking_card_x" />
+                <include android:id="@id/vg_fragment_game_data_achievement" android:visibility="gone" layout="@layout/view_single_achievement_card" />
+                <RelativeLayout android:id="@id/vg_fragment_game_data_badge" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:layout_marginTop="4.0dip" android:layout_marginRight="4.0dip">
+                    <include layout="@layout/item_badges_list" />
+                </RelativeLayout>
+                <LinearLayout android:orientation="vertical" android:id="@id/vg_fragment_game_data_achievement_list" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:layout_marginTop="4.0dip" android:layout_marginRight="4.0dip">
+                    <include android:id="@id/vg_fragment_game_data_achievement_title" layout="@layout/item_achievement_title" />
+                    <android.support.v7.widget.RecyclerView android:id="@id/rv_fragment_game_data_achievement_list" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <Space android:layout_width="fill_parent" android:layout_height="4.0dip" />
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</android.support.design.widget.CoordinatorLayout>

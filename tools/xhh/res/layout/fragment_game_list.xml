@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="horizontal" android:id="@id/vg_filter" android:layout_width="fill_parent" android:layout_height="32.0dip" />
+    <include layout="@layout/divider" />
+    <com.handmark.pulltorefresh.library.PullToRefreshRecyclerView android:id="@id/rv" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+</LinearLayout>

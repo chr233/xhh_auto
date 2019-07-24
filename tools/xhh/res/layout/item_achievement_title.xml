@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@color/tablayout_bg" android:layout_width="fill_parent" android:layout_height="30.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="horizontal" android:id="@id/vg_item_achievement_title_recently" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginLeft="64.0dip">
+        <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_secondary_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/complete_recently" />
+        <ImageView android:layout_gravity="center_vertical" android:id="@id/iv_item_achievement_title_recently" android:visibility="gone" android:layout_width="7.0dip" android:layout_height="7.0dip" android:layout_marginLeft="4.0dip" android:src="@drawable/list_expand" />
+    </LinearLayout>
+    <RelativeLayout android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginRight="10.0dip" android:layout_alignParentRight="true">
+        <LinearLayout android:orientation="horizontal" android:id="@id/vg_item_achievement_title_person" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="fill_parent">
+            <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_secondary_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/complete_player_count" />
+            <ImageView android:layout_gravity="center_vertical" android:id="@id/iv_item_achievement_title_person" android:visibility="gone" android:layout_width="7.0dip" android:layout_height="7.0dip" android:layout_marginLeft="4.0dip" android:src="@drawable/list_expand" />
+        </LinearLayout>
+        <LinearLayout android:orientation="horizontal" android:id="@id/vg_item_achievement_title_point" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_alignParentRight="true">
+            <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_secondary_color" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/achievement_point_and_num" />
+            <ImageView android:layout_gravity="center_vertical" android:id="@id/iv_item_achievement_title_point" android:visibility="gone" android:layout_width="7.0dip" android:layout_height="7.0dip" android:layout_marginLeft="4.0dip" android:src="@drawable/list_expand" />
+        </LinearLayout>
+    </RelativeLayout>
+    <View android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_alignParentBottom="true" />
+</RelativeLayout>

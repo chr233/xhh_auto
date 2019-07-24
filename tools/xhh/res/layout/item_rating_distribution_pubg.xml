@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:paddingLeft="6.0px" android:paddingRight="6.0px" android:layout_width="wrap_content" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:id="@id/tv_value" android:layout_width="20.0px" android:layout_height="wrap_content" android:layout_alignParentBottom="true" />
+    <View android:id="@id/view_checked" android:background="#7fe1e6eb" android:visibility="gone" android:layout_width="20.0px" android:layout_height="fill_parent" android:layout_centerHorizontal="true" />
+</RelativeLayout>

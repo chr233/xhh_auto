@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.v7.widget.CardView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="60.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="60.0dip" android:layout_centerInParent="true" app:cardCornerRadius="4.0dip" app:cardElevation="0.0dip" app:cardPreventCornerOverlap="false">
+        <LinearLayout android:orientation="vertical" android:id="@id/vg_content" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/text_secondary_color" android:layout_gravity="center_horizontal" android:id="@id/tv_please_choose_reason" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:layout_marginBottom="10.0dip" android:text="@string/please_choose_forbid_reason" />
+            <include android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" layout="@layout/divider" />
+            <ProgressBar android:id="@id/progress" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="10.0dip" />
+            <android.support.v7.widget.RecyclerView android:id="@id/rv_reason" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

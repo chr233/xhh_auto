@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@color/tablayout_bg" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView android:id="@id/iv_item_single_achievement_image" android:layout_width="44.0dip" android:layout_height="44.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="7.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="7.0dip" android:scaleType="centerCrop" />
+        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="7.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="7.0dip">
+            <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_primary_color" android:id="@id/tv_item_single_achievement_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" />
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="1.0dip">
+                <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/tile_bg_color" android:id="@id/tv_item_single_achievement_time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:layout_centerVertical="true" />
+                <RelativeLayout android:layout_width="88.0dip" android:layout_height="wrap_content" android:layout_alignParentRight="true">
+                    <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_primary_color" android:id="@id/tv_item_single_achievement_percent" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:layout_centerVertical="true" />
+                    <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/interactive_color" android:id="@id/tv_item_single_achievement_point" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+                </RelativeLayout>
+            </RelativeLayout>
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="1.0dip">
+                <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_hint_color" android:id="@id/tv_item_single_achievement_desc" android:layout_width="fill_parent" android:layout_height="wrap_content" android:includeFontPadding="false" android:layout_toLeftOf="@id/pb_item_single_achievement_count_percent" />
+                <ProgressBar android:id="@id/pb_item_single_achievement_count_percent" android:visibility="visible" android:layout_width="98.0dip" android:layout_height="4.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:progressDrawable="@drawable/progress_bg" android:layout_alignParentRight="true" style="?android:attr/progressBarStyleHorizontal" />
+            </RelativeLayout>
+            <FrameLayout android:id="@id/vg_item_single_achievement_pb_wrapper" android:visibility="gone" android:layout_width="193.0dip" android:layout_height="14.0dip" android:layout_marginTop="6.0dip">
+                <ProgressBar android:id="@id/pb_item_single_achievement_pb" android:layout_width="193.0dip" android:layout_height="14.0dip" android:progressDrawable="@drawable/progress_bg_wide" style="?android:attr/progressBarStyleHorizontal" />
+                <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/tablayout_bg" android:layout_gravity="center_vertical" android:id="@id/tv_item_single_achievement_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="46.0dip" />
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <View android:id="@id/v_item_single_achievement_divider" android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_marginLeft="64.0dip" android:layout_marginRight="10.0dip" android:layout_alignParentBottom="true" />
+</RelativeLayout>

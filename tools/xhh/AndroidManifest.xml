@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.max.xiaoheihe" platformBuildVersionCode="25" platformBuildVersionName="7.1.1">
+    <permission android:name="com.max.xiaoheihe.permission.JPUSH_MESSAGE" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.max.xiaoheihe.permission.JPUSH_MESSAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <permission android:name="com.max.xiaoheihe.permission.MIPUSH_RECEIVE" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.max.xiaoheihe.permission.MIPUSH_RECEIVE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <meta-data android:name="android.support.VERSION" android:value="25.3.1"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <permission android:name="com.max.xiaoheihe.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.max.xiaoheihe.permission.C2D_MESSAGE"/>
+    <application android:allowBackup="true" android:hardwareAccelerated="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:name="com.max.xiaoheihe.app.HeyBoxApplication" android:supportsRtl="true" android:theme="@style/AppTheme">
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:label="@string/app_name" android:launchMode="singleTask" android:name="com.max.xiaoheihe.MainActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustNothing|stateAlwaysHidden"/>
+        <activity android:name="com.max.xiaoheihe.module.account.RegisterOrLoginActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustNothing|stateAlwaysHidden"/>
+        <activity android:name="com.max.xiaoheihe.SplashActivity" android:screenOrientation="portrait" android:theme="@style/splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="com.max.xiaoheihe.module.game.GameDetailsActivity" android:screenOrientation="portrait" android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="com.max.xiaoheihe.module.video.VideoActivity"/>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:hardwareAccelerated="true" android:name="com.max.xiaoheihe.module.news.NewsActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name="com.max.xiaoheihe.module.account.QuestCenterActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.favour.FavourActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:hardwareAccelerated="true" android:name="com.max.xiaoheihe.module.webview.WebActionActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name="com.max.xiaoheihe.module.account.SettingActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.bbs.UserMessageActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="com.max.xiaoheihe.module.bbs.PostActivity" android:screenOrientation="portrait" android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:name="com.max.xiaoheihe.module.bbs.WritePostActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.bbs.LinkListActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.GameCommentsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.MineActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="com.max.xiaoheihe.module.game.SearchActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustNothing|stateVisible"/>
+        <activity android:name="com.max.xiaoheihe.module.account.UpdateAccountActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.UpdatePwdActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.GameBundlesActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.GameListActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.SteamDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.BadgesListActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.bbs.ImageActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.MeHomeActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.pubg.PUBGDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.pubg.PUBGPlayerLeaderboardsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.pubg.PUBGPlayerOverViewActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.pubg.PUBGFriendRankActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.MyActivityActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.bbs.SuggestionListActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.bbs.UserNotifyListActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.bbs.UserAwardListActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.GameNewsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.pubg.PUBGFollowListActivity" android:screenOrientation="portrait"/>
+        <service android:enabled="true" android:name="com.max.xiaoheihe.module.account.UpdateService"/>
+        <activity android:name="com.max.xiaoheihe.module.account.FeedBackActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.GameAccountActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.game.GamePlayerRankActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.SetPushStateActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.max.xiaoheihe.module.account.FriendRankActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="keyboardHidden|orientation" android:exported="false" android:name="com.umeng.socialize.media.WBShareCallBackActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:launchMode="singleTask" android:name="com.sina.weibo.sdk.share.WbShareTransActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:exported="true" android:name="com.max.xiaoheihe.wxapi.WXEntryActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:launchMode="singleTask" android:name="com.umeng.qq.tencent.AuthActivity" android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="tencent1105910806"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:name="com.umeng.qq.tencent.AssistActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:excludeFromRecents="true" android:name="com.umeng.socialize.editorpage.ShareActivity" android:theme="@style/Theme.UMDefault"/>
+        <meta-data android:name="UMENG_APPKEY" android:value="593e52209f06fd77ee00087f"/>
+        <meta-data android:name="UMENG_CHANNEL" android:value="heybox_google"/>
+        <activity android:configChanges="keyboardHidden|orientation" android:exported="false" android:name="cn.jpush.android.ui.PushActivity" android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <action android:name="cn.jpush.android.ui.PushActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.max.xiaoheihe"/>
+            </intent-filter>
+        </activity>
+        <service android:exported="false" android:name="cn.jpush.android.service.PushService" android:process=":mult">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTER"/>
+                <action android:name="cn.jpush.android.intent.REPORT"/>
+                <action android:name="cn.jpush.android.intent.PushService"/>
+                <action android:name="cn.jpush.android.intent.PUSH_TIME"/>
+            </intent-filter>
+        </service>
+        <service android:enabled="true" android:exported="true" android:name="cn.jpush.android.service.DaemonService">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.DaemonService"/>
+                <category android:name="com.max.xiaoheihe"/>
+            </intent-filter>
+        </service>
+        <receiver android:enabled="true" android:exported="false" android:name="cn.jpush.android.service.PushReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY"/>
+                <category android:name="com.max.xiaoheihe"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false" android:name="cn.jpush.android.service.AlarmReceiver"/>
+        <receiver android:enabled="true" android:name="com.max.xiaoheihe.app.NotificationReceiver">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/>
+                <category android:name="com.max.xiaoheihe"/>
+            </intent-filter>
+        </receiver>
+        <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default"/>
+        <meta-data android:name="JPUSH_APPKEY" android:value="12256824695935d52d4ac813"/>
+        <service android:enabled="true" android:name="com.xiaomi.push.service.XMPushService" android:process=":pushservice"/>
+        <service android:enabled="true" android:exported="false" android:name="com.xiaomi.push.service.XMJobService" android:permission="android.permission.BIND_JOB_SERVICE" android:process=":pushservice"/>
+        <service android:enabled="true" android:exported="true" android:name="com.xiaomi.mipush.sdk.PushMessageHandler"/>
+        <service android:enabled="true" android:name="com.xiaomi.mipush.sdk.MessageHandleService"/>
+        <receiver android:exported="true" android:name="com.xiaomi.push.service.receivers.NetworkStatusReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false" android:name="com.xiaomi.push.service.receivers.PingReceiver" android:process=":pushservice">
+            <intent-filter>
+                <action android:name="com.xiaomi.push.PING_TIMER"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="true" android:name="com.max.xiaoheihe.app.MIUiNotificationReceiver">
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.MESSAGE_ARRIVED"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.ERROR"/>
+            </intent-filter>
+        </receiver>
+        <activity android:name="com.lling.photopicker.PhotoPickerActivity" android:screenOrientation="portrait"/>
+        <activity android:exported="false" android:name="com.google.android.gms.common.api.GoogleApiActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.google.android.gms.measurement.AppMeasurementReceiver"/>
+        <receiver android:enabled="true" android:exported="true" android:name="com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver" android:permission="android.permission.INSTALL_PACKAGES">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+            </intent-filter>
+        </receiver>
+        <service android:enabled="true" android:exported="false" android:name="com.google.android.gms.measurement.AppMeasurementService"/>
+        <service android:enabled="true" android:exported="false" android:name="com.google.android.gms.measurement.AppMeasurementJobService" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <receiver android:exported="true" android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <category android:name="com.max.xiaoheihe"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false" android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver"/>
+        <service android:exported="true" android:name="com.google.firebase.iid.FirebaseInstanceIdService">
+            <intent-filter android:priority="-500">
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <provider android:authorities="com.max.xiaoheihe.firebaseinitprovider" android:exported="false" android:initOrder="100" android:name="com.google.firebase.provider.FirebaseInitProvider"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+    </application>
+</manifest>

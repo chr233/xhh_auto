@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:gravity="center" android:id="@id/frame_content" android:background="@drawable/gradient_login_bg" android:fitsSystemWindows="true" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:id="@id/ll_btn_and_image" android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <ImageView android:layout_gravity="center_horizontal" android:orientation="vertical" android:id="@id/welcome_img" android:layout_width="150.0dip" android:layout_height="wrap_content" android:layout_marginTop="110.0dip" android:src="@drawable/logo" android:scaleType="centerInside" />
+        <LinearLayout android:gravity="bottom" android:layout_gravity="bottom|center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <include android:id="@id/ll_2" android:visibility="gone" layout="@layout/include_login" />
+                <include android:id="@id/ll_3" android:visibility="gone" layout="@layout/include_findpwd_one" />
+                <include android:id="@id/ll_5" android:visibility="gone" layout="@layout/include_register_one" />
+                <include android:id="@id/ll_7" android:visibility="gone" layout="@layout/include_findpwd_two" />
+                <include android:id="@id/ll_8" android:visibility="gone" layout="@layout/include_findpwd_three" />
+                <include android:id="@id/ll_9" android:visibility="gone" layout="@layout/include_register_three" />
+                <LinearLayout android:orientation="vertical" android:id="@id/ll_btn" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true">
+                    <View android:layout_width="1.0px" android:layout_height="0.0dip" android:layout_weight="1.0" />
+                    <TextView android:textSize="@dimen/text_size_14" android:typeface="sans" android:textColor="@color/tile_bg_color" android:layout_gravity="center|right" android:id="@id/tv_pass_login" android:padding="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/skip_login" />
+                    <Button android:textSize="@dimen/text_size_14" android:typeface="sans" android:textColor="@color/text_primary_color" android:id="@id/bt_register" android:background="@drawable/btn_white" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="10.0dip" android:text="@string/register" android:alpha="0.8" />
+                    <Button android:textSize="@dimen/text_size_14" android:typeface="sans" android:textColor="@color/white" android:id="@id/bt_login" android:background="@drawable/btn_tran_white" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/login" />
+                    <LinearLayout android:id="@id/ll_third_party_login" android:paddingLeft="10.0dip" android:paddingRight="10.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="10.0dip">
+                        <RelativeLayout android:gravity="center_horizontal" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                            <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/vg_login_by_weixin" android:paddingTop="10.0dip" android:paddingBottom="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="100.0dip">
+                                <ImageView android:id="@id/iv_login_by_weixin" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_login_by_weixin" />
+                                <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/tile_bg_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:text="@string/login_by_weixin" />
+                            </LinearLayout>
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </FrameLayout>
+    <ImageView android:id="@id/ib_icon_back" android:visibility="gone" android:layout_width="40.0dip" android:layout_height="45.0dip" android:src="@drawable/arrow_back_normal" android:scaleType="centerInside" />
+</FrameLayout>

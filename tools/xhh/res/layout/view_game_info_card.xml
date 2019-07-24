@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <include android:id="@id/vg_view_game_info_card" layout="@layout/item_game_with_time" />
+    <include android:id="@id/vg_view_game_info_card_grid" layout="@layout/view_steam_value_card_x" />
+</LinearLayout>

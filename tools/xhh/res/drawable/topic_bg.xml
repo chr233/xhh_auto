@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/window_bg_color" />
+    <stroke android:width="1.0dip" android:color="@color/tab_layout_divider_color" />
+</shape>

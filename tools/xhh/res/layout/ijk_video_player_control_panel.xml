@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@id/rl_control_panel_container" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/ll_loading_container" android:paddingLeft="20.0dip" android:paddingTop="5.0dip" android:paddingRight="20.0dip" android:paddingBottom="5.0dip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true">
+        <ProgressBar android:id="@id/pb_loading" android:layout_width="50.0dip" android:layout_height="50.0dip" style="@style/Widget.AppCompat.ProgressBar" />
+        <TextView android:textColor="@android:color/white" android:gravity="center" android:id="@id/tv_loading_description" android:layout_width="200.0dip" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/ll_error_container" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true">
+        <TextView android:textSize="14.0sp" android:textColor="@android:color/white" android:gravity="center" android:id="@id/tv_error_message" android:layout_width="200.0dip" android:layout_height="wrap_content" />
+        <Button android:textSize="12.0sp" android:textColor="@android:color/white" android:id="@id/btn_error_action" android:background="@drawable/ijk_video_player_round_corner_white" android:paddingLeft="15.0dip" android:paddingRight="15.0dip" android:layout_width="wrap_content" android:layout_height="30.0dip" android:layout_marginTop="10.0dip" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/ll_volume_brightness_container" android:background="@drawable/ijk_video_player_volume_brightness_bg" android:paddingTop="10.0dip" android:paddingBottom="10.0dip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="50.0dip" android:minWidth="100.0dip" android:layout_centerHorizontal="true">
+        <ImageView android:id="@id/iv_volume_brightness" android:layout_width="20.0dip" android:layout_height="20.0dip" />
+        <TextView android:textColor="@android:color/white" android:id="@id/tv_volume_brightness" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" />
+    </LinearLayout>
+</RelativeLayout>

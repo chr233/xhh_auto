@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="30.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/iv_refreshing" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:src="@drawable/ic_refreshing" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_secondary_color" android:id="@id/tv_my_friend" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="50.0dip" android:text="@string/my_friend" android:layout_centerVertical="true" />
+    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_secondary_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="16.0dip" android:text="@string/invite_to_heybox" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+    <View android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_alignParentBottom="true" />
+    <View android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_alignParentTop="true" />
+</RelativeLayout>

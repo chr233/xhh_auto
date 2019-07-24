@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:layout_marginTop="4.0dip" android:layout_marginRight="4.0dip" app:cardCornerRadius="2.0dip" app:cardElevation="0.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <FrameLayout android:layout_width="fill_parent" android:layout_height="124.0dip">
+        <ImageView android:id="@id/iv_steam_info_card_head_image" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="centerCrop" />
+        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <RelativeLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="42.0dip">
+                <RelativeLayout android:id="@id/rl_steam_info_card_avatar_wrapper" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="8.0dip" android:layout_marginRight="8.0dip" android:layout_marginBottom="8.0dip" android:layout_centerVertical="true">
+                    <ImageView android:id="@id/iv_steam_info_card_avatar" android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/steam_logo" android:scaleType="centerCrop" />
+                </RelativeLayout>
+                <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/white" android:id="@id/tv_steam_info_card_username" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:layout_toRightOf="@id/rl_steam_info_card_avatar_wrapper" android:layout_centerVertical="true" />
+                <ImageView android:layout_width="14.0dip" android:layout_height="14.0dip" android:layout_marginLeft="6.0dip" android:src="@drawable/steam_logo" android:layout_toRightOf="@id/tv_steam_info_card_username" android:layout_centerVertical="true" />
+            </RelativeLayout>
+            <LinearLayout android:orientation="horizontal" android:background="@drawable/black_gradient" android:layout_width="fill_parent" android:layout_height="50.0dip">
+                <LinearLayout android:layout_gravity="center_vertical" android:orientation="vertical" android:paddingLeft="10.0dip" android:paddingRight="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="18.0dip">
+                    <TextView android:textSize="@dimen/text_size_22" android:textStyle="normal" android:textColor="@color/white" android:id="@id/tv_steam_info_card_value_1" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_hint_color" android:id="@id/tv_steam_info_card_key_1" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout android:layout_gravity="center_vertical" android:orientation="vertical" android:paddingLeft="10.0dip" android:paddingRight="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="18.0dip">
+                    <TextView android:textSize="@dimen/text_size_22" android:textStyle="normal" android:textColor="@color/white" android:id="@id/tv_steam_info_card_value_2" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_hint_color" android:id="@id/tv_steam_info_card_key_2" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout android:layout_gravity="center_vertical" android:orientation="vertical" android:paddingLeft="10.0dip" android:paddingRight="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="18.0dip">
+                    <TextView android:textSize="@dimen/text_size_22" android:textStyle="normal" android:textColor="@color/white" android:id="@id/tv_steam_info_card_value_3" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_hint_color" android:id="@id/tv_steam_info_card_key_3" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <FrameLayout android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0">
+                    <ImageView android:layout_gravity="center|right" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:src="@drawable/right_arrow" android:alpha="0.7" />
+                </FrameLayout>
+            </LinearLayout>
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="32.0dip">
+                <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/text_hint_color" android:id="@id/tv_recent_get" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/recent_get" android:layout_centerVertical="true" />
+                <com.max.xiaoheihe.view.ScrollSingleLayout android:id="@id/ll_steam_info_card_recent_get" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_toLeftOf="@id/rl_steam_info_card_more_data" android:layout_toRightOf="@id/tv_recent_get" android:layout_centerVertical="true" />
+                <RelativeLayout android:id="@id/rl_steam_info_card_more_data" android:background="@drawable/btn_white_alpha20_2dp" android:paddingLeft="6.0dip" android:paddingTop="4.0dip" android:paddingRight="6.0dip" android:paddingBottom="4.0dip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true">
+                    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="更多数据" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </FrameLayout>
+</android.support.v7.widget.CardView>
