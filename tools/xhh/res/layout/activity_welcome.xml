@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@id/rl_welcome" android:background="@drawable/bg_welcome" android:fitsSystemWindows="true" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/ll_skip_ads" android:background="@drawable/black_alpha_60_5dp" android:padding="10.0dip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="30.0dip" android:layout_marginRight="30.0dip" android:layout_alignParentRight="true">
-        <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/skip" android:layout_alignParentRight="true" />
-        <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/white" android:id="@id/tv_skip_ads" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" android:layout_alignParentRight="true" />
-        <ImageView android:id="@id/iv_skip_ads" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" android:src="@drawable/right_arrow" />
-    </LinearLayout>
-</RelativeLayout>

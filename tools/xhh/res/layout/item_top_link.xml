@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@drawable/list_item_bg" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="46.0dip">
-        <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/interactive_color" android:gravity="center" android:background="@drawable/blue_stroke_2dp" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" android:layout_width="wrap_content" android:layout_height="16.0dip" android:layout_marginLeft="10.0dip" android:text="@string/post_stick_tag" />
-        <TextView android:ellipsize="end" android:id="@id/tv_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dip" android:layout_marginRight="10.0dip" android:maxLines="1" style="@style/TextStyle_Bold_12" />
-    </LinearLayout>
-    <include android:id="@id/divider" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" layout="@layout/divider" />
-</LinearLayout>

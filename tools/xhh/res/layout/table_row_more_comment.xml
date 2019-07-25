@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@id/rl_root" android:paddingTop="5.0dip" android:paddingBottom="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/interactive_color" android:id="@id/tv_see_all" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
-    <TextView android:textSize="@dimen/text_size_12" android:typeface="sans" android:textColor="@color/interactive_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/check_more" android:layout_toLeftOf="@id/tv_see_all" android:layout_centerVertical="true" />
-</RelativeLayout>

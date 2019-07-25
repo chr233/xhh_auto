@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:orientation="vertical" android:background="#ff0f0f10" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/iv_share_image" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <ImageView android:id="@id/iv_2d_barcodes" android:layout_width="50.0dip" android:layout_height="50.0dip" android:layout_marginLeft="15.0dip" android:layout_marginBottom="15.0dip" android:src="@drawable/heybox_2d_barcodes" android:layout_alignLeft="@id/iv_share_image" android:layout_alignBottom="@id/iv_share_image" />
-    <TextView android:textSize="@dimen/text_size_11" android:textColor="@color/white_alpha50" android:gravity="center|left" android:id="@id/tv_share_desc" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/share_pubg_desc" android:layout_toRightOf="@id/iv_2d_barcodes" android:layout_alignBottom="@id/iv_2d_barcodes" />
-</RelativeLayout>

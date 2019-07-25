@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.flyco.tablayout.CommonTabLayout android:id="@id/tl_sort_type" android:layout_width="wrap_content" android:layout_height="36.0dip" style="@style/SortTabLayout" />
-    <include android:id="@id/sort_type_divider" layout="@layout/divider" />
-</LinearLayout>

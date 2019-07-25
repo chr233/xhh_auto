@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:background="@color/tablayout_bg" android:paddingLeft="10.0dip" android:paddingRight="10.0dip" android:layout_width="fill_parent" android:layout_height="46.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView android:id="@id/tv_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:layout_centerVertical="true" style="@style/TextStyle_Bold_13" />
-    <com.max.xiaoheihe.view.SwitchButton.SwitchButton android:id="@id/sb_state" android:paddingTop="5.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" app:offDrawable="@drawable/ios_off" app:thumbDrawable="@drawable/ios_thumb" app:thumb_marginTop="-2.5dip" app:thumb_marginBottom="-6.0dip" app:thumb_marginLeft="-5.0dip" app:thumb_marginRight="-5.0dip" app:onColor="#ff43d95d" app:animationVelocity="8" app:measureFactor="1.5" />
-</RelativeLayout>

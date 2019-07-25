@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:background="@drawable/stroke_white_244" android:layout_width="44.0dip" android:layout_height="44.0dip" android:layout_marginLeft="2.0dip" android:layout_marginRight="2.0dip" android:layout_marginBottom="2.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/iv_item_achievement_icon" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="centerCrop" />
-</RelativeLayout>

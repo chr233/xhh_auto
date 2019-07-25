@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:background="@android:color/black" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView android:id="@id/ssiv" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-    <com.max.xiaoheihe.view.ZoomImageView android:id="@id/iv_image_full" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="centerInside" android:layout_centerInParent="true" />
-    <ProgressBar android:id="@id/progress_bar" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true" style="?android:attr/progressBarStyleSmall" />
-</RelativeLayout>

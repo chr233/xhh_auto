@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@id/load" android:orderInCategory="100" android:title="load" app:showAsAction="ifRoom" />
-    <item android:id="@id/error" android:orderInCategory="100" android:title="error" app:showAsAction="ifRoom" />
-    <item android:id="@id/nonet" android:orderInCategory="100" android:title="nonet" app:showAsAction="ifRoom" />
-    <item android:id="@id/empty" android:orderInCategory="100" android:title="empty" app:showAsAction="ifRoom" />
-    <item android:id="@id/content" android:orderInCategory="100" android:title="content" app:showAsAction="ifRoom" />
-</menu>
