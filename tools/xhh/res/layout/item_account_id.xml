@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:background="@drawable/list_item_bg" android:layout_width="fill_parent" android:layout_height="45.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/iv_avatar" android:layout_width="34.0dip" android:layout_height="34.0dip" android:layout_marginLeft="10.0dip" android:layout_centerVertical="true" />
-    <ImageView android:id="@id/iv_more" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="14.0dip" android:src="@drawable/right_arrow" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
-    <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_secondary_color" android:ellipsize="end" android:id="@id/tv_id" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="15.0dip" android:singleLine="true" android:layout_toLeftOf="@id/iv_more" android:layout_centerVertical="true" />
-    <TextView android:textSize="@dimen/text_size_13" android:textColor="@color/text_primary_color" android:ellipsize="end" android:id="@id/tv_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:singleLine="true" android:layout_toLeftOf="@id/tv_id" android:layout_toRightOf="@id/iv_avatar" android:layout_centerVertical="true" />
-    <include android:id="@id/divider" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_marginLeft="10.0dip" android:layout_alignParentBottom="true" layout="@layout/divider" />
-</RelativeLayout>

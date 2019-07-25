@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="fill_parent" android:layout_height="36.0dip" android:layout_marginTop="15.0dip" android:layout_marginBottom="15.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditText android:gravity="center" android:layout_gravity="center_horizontal" android:id="@id/et_pwd" android:background="@color/window_bg_color" android:layout_width="fill_parent" android:layout_height="36.0dip" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:maxLength="20" android:digits="@string/digits" android:layout_centerInParent="true" android:inputType="textPassword" />
-</RelativeLayout>

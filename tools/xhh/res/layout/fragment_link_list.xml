@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <include layout="@layout/layout_sample_refresh_rv" />
-    <ImageView android:id="@id/iv_write_post" android:layout_width="48.0dip" android:layout_height="48.0dip" android:layout_marginRight="22.0dip" android:layout_marginBottom="46.0dip" android:src="@drawable/ic_write_post" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" />
-</RelativeLayout>

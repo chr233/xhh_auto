@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_gravity="bottom" android:id="@id/bottom_navigation_bar_container" android:layout_width="fill_parent" android:layout_height="@dimen/bottom_navigation_height"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <FrameLayout android:id="@id/bottom_navigation_bar_overLay" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-    <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/bottom_navigation_bar_item_container" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-</FrameLayout>

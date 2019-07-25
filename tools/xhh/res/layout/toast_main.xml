@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:background="@drawable/toast_bg_white" android:layout_width="wrap_content" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="200.0dip" android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:layout_marginRight="20.0dip" android:layout_centerInParent="true">
-        <ImageView android:id="@id/iv_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" android:src="@drawable/toast_normal" />
-        <TextView android:textSize="@dimen/text_size_13" android:textColor="@color/text_primary_color" android:id="@id/tv_toast" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12.0dip" android:layout_marginBottom="18.0dip" android:layout_centerInParent="true" />
-    </LinearLayout>
-</RelativeLayout>

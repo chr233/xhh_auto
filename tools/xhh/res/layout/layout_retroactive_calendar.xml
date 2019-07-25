@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:id="@id/vg_calendar_container" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textColor="@color/appbar_text_color" android:layout_gravity="center" android:id="@id/tv_current_month" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2.0dip" style="@style/TextStyle_Bold_12" />
-    <com.max.xiaoheihe.view.ezcalendarview.EZCalendarView android:id="@id/calendarView" android:background="@android:color/white" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:text="@string/replenish_rule" style="@style/TextStyle_Normal_10" />
-    <TextView android:id="@id/tv_rule_desc" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:layout_marginTop="2.0dip" android:layout_marginRight="20.0dip" android:layout_marginBottom="8.0dip" android:lineSpacingExtra="3.0dip" style="@style/TextStyle_Normal_10" />
-</LinearLayout>

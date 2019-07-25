@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@id/fixed_bottom_navigation_container" android:background="?selectableItemBackgroundBorderless" android:paddingLeft="@dimen/fixed_width_padding" android:paddingTop="@dimen/fixed_height_top_padding_inactive" android:paddingRight="@dimen/fixed_width_padding" android:paddingBottom="@dimen/fixed_height_bottom_padding" android:layout_width="fill_parent" android:layout_height="@dimen/fixed_height"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <FrameLayout android:layout_gravity="center|top" android:layout_width="@dimen/fixed_icon_badge_grid_width" android:layout_height="@dimen/fixed_icon_badge_grid_height">
-        <ImageView android:gravity="center" android:layout_gravity="center" android:id="@id/fixed_bottom_navigation_icon" android:layout_width="@dimen/fixed_icon_grid" android:layout_height="@dimen/fixed_icon_grid" android:scaleType="fitXY" />
-        <TextView android:gravity="center" android:layout_gravity="end|center|top" android:id="@id/fixed_bottom_navigation_badge" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/BadgeText" />
-    </FrameLayout>
-    <TextView android:textSize="@dimen/fixed_label_inactive" android:gravity="center" android:layout_gravity="bottom|center" android:id="@id/fixed_bottom_navigation_title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:lines="1" android:includeFontPadding="false" />
-</FrameLayout>

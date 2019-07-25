@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:orientation="vertical" android:background="@drawable/list_item_bg" android:layout_width="fill_parent" android:layout_height="45.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/iv_avatar" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_marginLeft="10.0dip" android:layout_centerVertical="true" />
-    <TextView android:id="@id/tv_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_toRightOf="@id/iv_avatar" android:layout_centerVertical="true" style="@style/TextStyle_Normal_12_dark" />
-    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:src="@drawable/right_arrow" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
-    <TextView android:id="@id/tv_rate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="40.0dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" style="@style/TextStyle_Bold_14" />
-    <View android:background="@color/divider_color" android:layout_width="fill_parent" android:layout_height="@dimen/divider_height" android:layout_marginLeft="10.0dip" android:layout_alignParentBottom="true" />
-</RelativeLayout>

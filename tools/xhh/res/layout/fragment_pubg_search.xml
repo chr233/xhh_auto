@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <include layout="@layout/layout_sample_refresh_rv" />
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout android:id="@id/srl_famous" android:layout_width="fill_parent" android:layout_height="fill_parent" style="@style/smartRefreshStyle">
-        <android.support.v7.widget.RecyclerView android:id="@id/rv_famous" android:scrollbars="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginLeft="4.0dip" android:layout_marginRight="4.0dip" android:scrollbarFadeDuration="1" />
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-    <LinearLayout android:orientation="vertical" android:id="@id/ll_no_result" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-</RelativeLayout>

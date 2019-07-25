@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:layout_gravity="center_vertical" android:id="@id/iv_item_simple_achievement" android:layout_width="14.0dip" android:layout_height="14.0dip" />
-    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_secondary_color" android:ellipsize="end" android:layout_gravity="center_vertical" android:id="@id/tv_item_simple_achievement" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="4.0dip" android:singleLine="true" />
-</LinearLayout>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/text_secondary_color" android:layout_gravity="center_horizontal" android:id="@id/tv_view_circle_process_title" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-    <FrameLayout android:layout_width="56.0dip" android:layout_height="56.0dip" android:layout_marginTop="6.0dip">
-        <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/text_hint_color" android:layout_gravity="center" android:id="@id/tv_view_circle_process_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-        <com.max.xiaoheihe.view.CircleProgressView android:layout_gravity="center" android:id="@id/cpv_view_circle_process" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-    </FrameLayout>
-</LinearLayout>

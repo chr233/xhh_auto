@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@id/wrap_layout" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.lling.photopicker.widgets.SquareImageView android:id="@id/imageview_photo" android:layout_width="fill_parent" android:layout_height="wrap_content" android:scaleType="centerCrop" />
-    <View android:id="@id/mask" android:background="#88000000" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-    <ImageView android:layout_gravity="center|right|top" android:id="@id/checkmark" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5.5dip" android:layout_marginRight="5.5dip" android:src="@drawable/btn_select_selector" />
-</FrameLayout>

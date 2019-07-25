@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:orientation="vertical" android:background="@drawable/list_item_bg" android:layout_width="120.0dip" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/iv_image" android:layout_width="120.0dip" android:layout_height="74.0dip" android:scaleType="centerCrop" />
-    <include android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignRight="@id/iv_image" android:layout_alignBottom="@id/iv_image" layout="@layout/game_score" />
-    <TextView android:textSize="@dimen/text_size_12" android:textStyle="normal" android:textColor="@color/text_primary_color" android:ellipsize="end" android:id="@id/tv_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:singleLine="true" android:includeFontPadding="false" android:layout_below="@id/iv_image" />
-    <include android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" android:layout_below="@id/tv_name" layout="@layout/discount_sale" />
-</RelativeLayout>

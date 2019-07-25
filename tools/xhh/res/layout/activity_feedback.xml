@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@id/rl_root" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:ptr="http://schemas.android.com/apk/res-auto">
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout android:id="@id/srl" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginBottom="55.0dip" style="@style/smartRefreshStyle">
-        <android.support.v7.widget.RecyclerView android:id="@id/rv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:overScrollMode="never" />
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-    <include android:id="@id/view_empty" layout="@layout/empty_view" />
-    <include layout="@layout/edit_comment" />
-</RelativeLayout>

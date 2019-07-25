@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:id="@id/vg_filter" android:background="@color/window_bg_color" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <include layout="@layout/divider" />
-    <android.support.v7.widget.RecyclerView android:id="@id/rv_topic" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-</LinearLayout>

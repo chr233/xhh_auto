@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@color/window_bg_color" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <RadioGroup android:id="@id/rg_filter_discount" android:visibility="gone" style="@style/RectRadioGroup" />
-    <LinearLayout android:orientation="horizontal" android:id="@id/vg_filter" android:layout_width="fill_parent" android:layout_height="32.0dip" />
-    <include layout="@layout/divider" />
-</LinearLayout>
