@@ -48,10 +48,11 @@ if __name__ == '__main__':
                 continue
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
-            #heybox1.auto()#自动完成每日任务，自动动态点赞
-            #heybox1.get_task_stats()#获取任务完成度
-            #heybox1.get_task_detail()#获取任务详情
-            heybox1.follow_user(13081382)
+            heybox1.auto()#自动完成每日任务，自动动态点赞
+            heybox1.get_task_stats()#获取任务完成度
+            heybox1.get_task_detail()#获取任务详情
+            
+            #heybox1.auto_follow_followers()
 
             mydata = heybox1.get_my_data()
             myprofile = heybox1.get_my_profile()
@@ -59,7 +60,7 @@ if __name__ == '__main__':
                 datalist.append(mydata + myprofile)
 
 
-        #send_result(datalist,settings['ftqqskey'])
+        send_result(datalist,settings['ftqqskey'])
         
     except ValueError as e:
         print('出错了',e)
