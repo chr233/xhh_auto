@@ -19,7 +19,7 @@ import urllib
 
 
 #小黑盒版本号,会自动设置为最新版
-_VERSION = '1.2.71'
+_VERSION = '1.1.36'
 
 #URL常量
 _TASK_STATS_ = 'https://api.xiaoheihe.cn/task/stats/'#任务状态
@@ -51,8 +51,8 @@ logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:
 class Heybox():
     Session = requests.session()
     Session2 = requests.session()#独立会话，只用于拉取文章页
-    Session.headers={}
-    Session2.headers={}
+    Session.headers = {}
+    Session2.headers = {}
     _headers = {}
     _cookies = {}
     _params = {}
@@ -157,7 +157,7 @@ class Heybox():
         self.logger.info('执行完毕')
 
     #批量关注粉丝[(userid,关系),……]
-    def simu_like_follows(self,followerlist,limit=-1):
+    def simu_follow_followers(self,followerlist,limit=-1):
         self.logger.info('批量关注粉丝')
         for item in followerlist:
             if (item[1] == 2):
@@ -199,7 +199,7 @@ class Heybox():
     def auto_follow_followers(self,limit=30):
         followerlist = self.get_follower_list()
 
-        self.simu_like_follows(followerlist)
+        self.simu_follow_followers(followerlist)
 
 
     #拉取首页文章列表(offset为偏移，30一个单位)，返回[(linkid,newsid),……]
@@ -496,40 +496,21 @@ class Heybox():
         url = _FOLLOW_USER_
 
         
-        '''headers = {
+        headers = {
             **self._headers,
             'Content-Type': 'application/x-www-form-urlencoded'
-        }'''
-        
-        headers = {
-
-            'Referer': 'http://api.maxjia.com/',
-            'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
-            'Cookie':'pkey='+self._cookies['pkey'],
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Host': 'api.xiaoheihe.cn',
-            'Connection': 'Keep-Alive',
-            'Accept-Encoding': 'gzip'
         }
-
-
+        
         data = {
             'following_id': userid,
         }
 
 
-        proxies = {
-            "http": "http://127.0.0.1:8888",
-            "https": "https://127.0.0.1:8888"
-           
-        }
-
-        print(headers)
-        print(data)
-
+        params = self._params
+        del params['hkey']
 
         self.__flush_params()
-        resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies,proxies=proxies, verify=False)
+        resp = self.Session.post(url=url,data=data,params=params,headers=headers,cookies=self._cookies)
 
         try:
             dict = resp.json()
@@ -930,6 +911,8 @@ class Heybox():
                 elif dict['msg'] == '不能给自己的评价点赞哟':
                     raise CantDoERROR
                 elif dict['msg'] == '系统时间不正确':
+                    raise UnknownERROR
+                elif dict['msg'] == '您今日的赞赏次数已用完':
                     raise UnknownERROR
                 elif dict['msg'] == 'invalid userid':
                     raise UserIDERROR
