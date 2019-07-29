@@ -19,6 +19,7 @@ config.json
 [Rr]eleases/
 x64/
 x86/
+#xhh_reserve/
 bld/
 [Bb]in/
 [Oo]bj/
