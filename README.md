@@ -2,9 +2,10 @@
 ## 本项目遵从GPL协议
 
 ## 使用方法
-1. 修改config_sample.json，填入自己的账号凭据,[方糖skey获取](http://sc.ftqq.com)
-2. 将文件另存为config.json
-3. python3 ./start.py
+1. 从[releases](https://github.com/chr233/xhh_auto/releases)下载最新的脚本
+2. 修改config_sample.json，填入自己的账号凭据,[方糖skey获取](http://sc.ftqq.com)
+3. 将文件另存为config.json
+4. python3 ./start.py
  * Linux用户记得先赋予脚本执行权限
 
 
