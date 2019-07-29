@@ -11,7 +11,7 @@ def send_result(datalist,skey):
     strlong = ""
     for item in datalist:
         format = (item[0],item[2],item[3],item[4],item[6],item[7],item[8],item[1],item[5],item[9])
-        s = '#### 昵称[%s] [%s级|%s/%s]\n##### 关注[%s] 粉丝[%d] 获赞[%s]\n##### H币[%s] 连续签到[%s]天\n##### [%s]\n##### ' + '=' * 10 + '\n'
+        s = '#### 昵称[%s] [%s级|%s/%s]\n##### 关注[%s] 粉丝[%d] 获赞[%s]\n##### H币[%s] 连续签到[%s]天\n##### [%s]\n##### ' + '=' * 30 + '\n'
         strlong+=s % format
     data = {
         'text':'小黑盒自动脚本',
