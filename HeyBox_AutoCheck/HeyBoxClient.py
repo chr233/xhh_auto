@@ -46,7 +46,7 @@ _FOLLOW_USER_CANCEL_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/can
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
 #logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d
 #%H:%M:%S')
-logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(level=logging.INFO,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 class Heybox():
     Session = requests.session()
@@ -78,6 +78,7 @@ class Heybox():
             '_time': '',
             'hkey': ''
         }
+
 
         self.logger = logging.getLogger(str(tag))
         self.logger.debug('初始化完成')
@@ -492,25 +493,17 @@ class Heybox():
 
     #关注用户(userid)
     def follow_user(self,userid):
-        #url ="https://httpbin.org/post"
         url = _FOLLOW_USER_
-
-        
         headers = {
             **self._headers,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-        
         data = {
             'following_id': userid,
         }
 
-
-        params = self._params
-        del params['hkey']
-
         self.__flush_params()
-        resp = self.Session.post(url=url,data=data,params=params,headers=headers,cookies=self._cookies)
+        resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
 
         try:
             dict = resp.json()
@@ -765,6 +758,7 @@ class Heybox():
         except ClientException as e:
             self.logger.error('获取任务状态出错')
             self.logger.error(e)
+            return(False)
         pass
 
     #获取任务详情，返回(bool,bool,bool)若为False代表该任务未完成
@@ -783,7 +777,6 @@ class Heybox():
             self.logger.info('签到%s|分享%s|点赞%s' % ('√'if task1 else '×','√'if task2 else '×','√'if task3 else '×'))
 
             return((task1,task2,task3))
-
         except ValueError as e:
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
@@ -938,20 +931,23 @@ class Heybox():
     
 
     #刷新web表单
-    def __flush_params(self):
+    def __flush_params(self):#,time,userid):
         def gen_hkey(time:int):
+            strhash = 'xiaoheihe/_time=' + str(time)
             md5 = hashlib.md5()
-            md5.update(str(time).encode('utf-8'))
+            md5.update(str(strhash).encode('utf-8'))
+            #md5.update(bytes(strhash,'utf-8'))
+            hash = md5.hexdigest()
+            hash = hash.replace('a','app')
+            hash = hash.replace('0','app')
+            md5 = hashlib.md5()
+            md5.update(hash.encode('utf-8'))
             hkey = md5.hexdigest()
             return(hkey)
-        asctime = self.__get_currenttime()
-        self._params['hkey'] = gen_hkey(asctime)    
-        self._params['_time'] = asctime   
 
-    #取时间戳
-    def __get_currenttime(self):
-        thetime = int(time.time())
-        return(thetime)
+        asctime = int(time.time())
+        self._params['hkey'] = gen_hkey(asctime)    
+        self._params['_time'] = asctime
 
 
 

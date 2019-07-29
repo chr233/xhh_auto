@@ -8,16 +8,16 @@ FTQQ_URL = 'https://sc.ftqq.com/%s.send'
 
 def send_result(datalist,skey):
     url = FTQQ_URL % skey
-    strlong =""
+    strlong = ""
     for item in datalist:
-        format = (item[0],item[2],item[3],item[4],item[6],item[7],item[8],item[1],item[5])
-        s = '#### 昵称[%s] [%s级|%s/%s]\n#### 关注[%s] 粉丝[%d] 获赞[%s]\n#### H币[%s] 连续签到[%s]天\n#### ==========\n'
+        format = (item[0],item[2],item[3],item[4],item[6],item[7],item[8],item[1],item[5],item[9])
+        s = '#### 昵称[%s] [%s级|%s/%s]\n##### 关注[%s] 粉丝[%d] 获赞[%s]\n##### H币[%s] 连续签到[%s]天\n##### [%s]\n##### ' + '=' * 10 + '\n'
         strlong+=s % format
     data = {
         'text':'小黑盒自动脚本',
         'desp':strlong
         }
-    resp=requests.post(url=url,data=data)
+    resp = requests.post(url=url,data=data)
     try:
         dict = resp.json()
         print('执行结束',dict)
@@ -29,7 +29,6 @@ if __name__ == '__main__':
     try:
         with open('config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
-
         try:
             accountlist = dict['accounts']
             settings = dict['settings']
@@ -48,20 +47,25 @@ if __name__ == '__main__':
                 continue
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
-            heybox1.auto()#自动完成每日任务，自动动态点赞
-            heybox1.get_task_stats()#获取任务完成度
+            #heybox1.auto_follow_followers()#自动关注粉丝
+            #heybox1.auto()#自动完成每日任务，自动动态点赞
+            b = heybox1.get_task_stats()#获取任务完成度
             heybox1.get_task_detail()#获取任务详情
-            
-            #heybox1.auto_follow_followers()
 
             mydata = heybox1.get_my_data()
             myprofile = heybox1.get_my_profile()
+            
             if mydata and myprofile:
-                datalist.append(mydata + myprofile)
+                data = list(mydata + myprofile)
+                data.append('任务全部完成' if b else '任务还未完成')
+                datalist.append(data)
 
+        try:
+            if(settings['ftqqskey'] and settings['ftqqskey'] != '这里填方糖的SKEY(用于接收微信推送)，留空关闭该功能'):
+                send_result(datalist,settings['ftqqskey'])
+        except KeyError as e:
+            print('未配置SKEY')
 
-        send_result(datalist,settings['ftqqskey'])
-        
     except ValueError as e:
         print('出错了',e)
     except HeyBoxClient.ClientException as e:
