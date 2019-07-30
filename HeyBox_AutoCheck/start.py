@@ -47,6 +47,7 @@ if __name__ == '__main__':
                 continue
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
+            #heybox1.get_auth_info()#打印手机号
             heybox1.auto_follow_followers()#自动关注粉丝
             heybox1.auto()#自动完成每日任务，自动动态点赞
             b = heybox1.get_task_stats()#获取任务完成度
