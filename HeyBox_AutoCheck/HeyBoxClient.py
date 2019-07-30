@@ -41,6 +41,7 @@ _USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人�
 _FOLLOWER_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#好友列表
 _FOLLOW_USER_ = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
 _FOLLOW_USER_CANCEL_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
+_GET_AUTH_INFO_='https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
 
 #LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
@@ -866,6 +867,29 @@ class Heybox():
             return(False)
         pass
 
+    #获取自己的认证信息，返回(有密码?,手机号)
+    def get_auth_info(self):
+        url = _GET_AUTH_INFO_
+        self.__flush_params()
+        resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+
+            has_password = dict['result'][0]['has_password']
+            src_id = dict['result'][0]['src_id']
+
+            self.logger.info('手机号[%s]' % src_id)
+            return((has_password,src_id))
+        except ValueError as e:
+            self.logger.error('获取安全信息出错')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('获取安全信息出错')
+            self.logger.error(e)
+            return(False)
+        pass
 
     #获取小黑盒最新版本
     def check_version(self):
