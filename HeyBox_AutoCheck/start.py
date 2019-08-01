@@ -2,9 +2,21 @@
 import HeyBoxClient
 import json
 import requests
+import os
+
+'''
+小黑盒自动脚本，暂未实现登陆过程，凭据需要自行抓包获取
+
+本程序遵循GPLv3协议
+开源地址:https://github.com/chr233/xhh_auto/
+
+作者:Chr_
+电邮:chr@chrxw.com
+'''
+
 
 FTQQ_URL = 'https://sc.ftqq.com/%s.send'
-
+env_dist = os.environ
 
 def send_result(datalist,skey):
     url = FTQQ_URL % skey
@@ -47,12 +59,14 @@ if __name__ == '__main__':
                 continue
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
-            #heybox1.get_auth_info()#打印手机号
-            heybox1.auto_follow_followers()#自动关注粉丝
+            heybox1.auto_do_communitu_surver()
+
+            if env_dist.get('DEBUG'):
+                continue
+
             heybox1.auto()#自动完成每日任务，自动动态点赞
             b = heybox1.get_task_stats()#获取任务完成度
             heybox1.get_task_detail()#获取任务详情
-
             mydata = heybox1.get_my_data()
             myprofile = heybox1.get_my_profile()
             
@@ -62,7 +76,7 @@ if __name__ == '__main__':
                 datalist.append(data)
 
         try:
-            if(settings['ftqqskey'] and settings['ftqqskey'] != '这里填方糖的SKEY(用于接收微信推送)，留空关闭该功能'):
+            if(datalist and settings['ftqqskey'] and settings['ftqqskey'] != '这里填方糖的SKEY(用于接收微信推送)，留空关闭该功能'):
                 send_result(datalist,settings['ftqqskey'])
         except KeyError as e:
             print('未配置SKEY')
