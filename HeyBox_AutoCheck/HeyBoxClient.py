@@ -8,10 +8,13 @@ from requests.exceptions import RequestException
 import logging
 from bs4 import BeautifulSoup
 import urllib
-
+import os
 
 '''
-小黑盒自动脚本，暂未实现登陆过程，凭据需要自行抓包获取
+Python3实现的小黑盒客户端
+
+本程序遵循GPLv3协议
+开源地址:https://github.com/chr233/xhh_auto/
 
 作者:Chr_
 电邮:chr@chrxw.com
@@ -41,19 +44,32 @@ _USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人�
 _FOLLOWER_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#好友列表
 _FOLLOW_USER_ = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
 _FOLLOW_USER_CANCEL_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
-_GET_AUTH_INFO_='https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
+_GET_AUTH_INFO_ = 'https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
+_GET_ACTIVE_ROLL_ROOM_ = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'#拉取ROLL房列表
+_ACHIEVE_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'#检查有没有解锁新成就
+_BBS_QA_STATE_ = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'#社区答题提交
+_COMMUNITY_SURVEY_ = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'#社区答题
+_UPDATE_PROFILE_='https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
+_NOTIFY_ALERT_='https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
+_FOLLOW_ALERT_='https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
+_SEND_MESSAGE_='https://api.xiaoheihe.cn/chat/send_message/'#发送私信
+
+env_dist = os.environ
+
+if env_dist.get('DEBUG'):
+    LEVEL = logging.DEBUG
+else:
+    LEVEL = logging.INFO
 
 #LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
-#logging.basicConfig(level=logging.DEBUG,format=LOG_FORMAT, datefmt='%Y-%m-%d
-#%H:%M:%S')
-logging.basicConfig(level=logging.INFO,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
+
+logging.basicConfig(level=LEVEL,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 class Heybox():
     Session = requests.session()
-    Session2 = requests.session()#独立会话，只用于拉取文章页
     Session.headers = {}
-    Session2.headers = {}
+    Session.headers = {}
     _headers = {}
     _cookies = {}
     _params = {}
@@ -79,7 +95,6 @@ class Heybox():
             '_time': '',
             'hkey': ''
         }
-
 
         self.logger = logging.getLogger(str(tag))
         self.logger.debug('初始化完成')
@@ -140,16 +155,26 @@ class Heybox():
             self.logger.info('批量模式开启，目标为[%d]条动态' % len(likelist))
         i = 1
         likedcount = 0
+        errorcount = 0
         for item in likelist:
             self.logger.info('第[%d]条动态' % i)
             if not item[2]:
-                self.like_follow(item[0],item[1])
-                likedcount = 0
+                status = self.like_follow(item[0],item[1])
+                if status == True:
+                    if errorcount >= 1:
+                       errorcount-=1
+                    if likedcount >= 1:
+                       likedcount-=1
+                else:
+                    errorcount+=1
+                    if errorcount == 6:
+                        self.logger.info('连续多条动态点赞出错，可能点赞次数用尽，终止任务')
+                        break
             else:
                 self.logger.info('已点赞，跳过')
                 likedcount+=1
-                if(likedcount == 5):
-                    self.logger.info('连续5条动态已点赞，终止任务')
+                if likedcount == 6:
+                    self.logger.info('连续多条动态已点赞，终止任务')
                     break
             i+=1
             limit-=1
@@ -180,7 +205,11 @@ class Heybox():
         self.share(idlist[0][1])
 
         self.simu_view_like_newses(idlist,10)
+
+        auto_follow_followers(30)
         self.auto_like_follows(100)
+
+        self.check_achieve_alert()
 
     #[自动]批量模拟浏览文章
     def auto_simu_view_newses(self,limit=10):
@@ -197,12 +226,14 @@ class Heybox():
         likelist = self.get_follow_post()
         self.simu_like_follows(likelist,limit)
         return(True)
-    #自动关注粉丝
+    #[自动]关注粉丝
     def auto_follow_followers(self,limit=30):
         followerlist = self.get_follower_list()
-
         self.simu_follow_followers(followerlist)
-
+    #自动 完成社区答题
+    def auto_do_communitu_surver(self):
+         self.get_community_survey()
+         self.get_bbs_qa_state()
 
     #拉取首页文章列表(offset为偏移，30一个单位)，返回[(linkid,newsid),……]
     def get_news_list(self,offset=0):
@@ -215,9 +246,7 @@ class Heybox():
             'rec_mark': 'timeline',
             **self._params
         }
-
         resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
-
         try:
             dict = resp.json()
         except ValueError as e:
@@ -252,9 +281,7 @@ class Heybox():
             'filters': 'post_link|follow_game|game_purchase|game_achieve|game_comment|roll_room',
             **self._params
         }
-
         resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
-
         try:
             dict = resp.json()
             self.__check_status(dict)
@@ -281,9 +308,8 @@ class Heybox():
                         type = 0
                 except KeyError:
                     continue
-
                 likelist.append((linkid,type,is_award_link))
-            
+
             self.logger.info('拉取了[%d]条动态' % len(likelist))
             return(likelist)
         except ValueError as e:
@@ -361,6 +387,53 @@ class Heybox():
             return(False)    
         pass
     
+    #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
+    def get_active_roll_room(self,offset=0):
+        url = _GET_ACTIVE_ROLL_ROOM_
+        self.__flush_params()
+        params = {
+            'filter_passwd':'1',
+            'sort_types':'price',
+            'page_type':'home',
+            'offset':offset,
+            'limit':'30',
+            **self._params
+        }
+        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            try:
+                self.__check_status(dict)
+            except ClientException as e:
+                self.logger.error('拉取ROLL房列表出错')
+                self.logger.error(e)
+                return(False)
+            try:
+                #TODO HREE
+                roomlist = []
+                for room in dict['result']['rooms']:
+                    try:
+                        link_id = room['link_id']
+                        room_id = room['room_id']
+                        people = room['people']
+                        price = room['price']
+                        self.logger.info('价格%s 人数%s' % (price,people))
+                        roomlist.append((link_id,room_id,people,price))
+                    except KeyError as e:
+                        continue
+                self.logger.debug('拉取%d个房间' % len(roomlist))
+                return(roomlist)
+            
+            except KeyError as e:
+                self.logger.error('拉取ROLL房列表出错')
+                self.logger.error(e)
+                return(False)
+        except ValueError as e:
+            self.logger.error('拉取ROLL房列表出错')
+            self.logger.error(e)
+            return(False)    
+        pass
+
     #拉取粉丝列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
     def get_follower_list(self,offset=0):
         url = _FOLLOWER_LIST_
@@ -404,8 +477,6 @@ class Heybox():
             return(False)    
         pass
 
-
-
     #给新闻点赞(linkid,newsid,[index])
     def like_news(self,linkid,newsid,index=1):
         url = _AWARD_LINK_
@@ -443,7 +514,7 @@ class Heybox():
             return(False)
         try:
             self.__check_status(dict)
-        except AlreadyDone:
+        except IGNORE:
             self.logger.info('已经点过赞了')
             return(True)
         except ClientException as e:
@@ -479,11 +550,14 @@ class Heybox():
             return(False)
         try:
             self.__check_status(dict)
-        except AlreadyDone:
+        except IGNORE:
             self.logger.info('已经点过赞了')
             return(True)
         except CantDoERROR:
             self.logger.error('无法给自己的评测点赞')
+            return(False)
+        except NoMorelikeERROR as e:
+            self.logger.error('点赞次数用尽')
             return(False)
         except ClientException as e:
             self.logger.error('点赞出错')
@@ -562,7 +636,7 @@ class Heybox():
             'user_heybox_id' : self._params['heybox_id']
         }
 
-        resp = self.Session2.get(url=url,headers=headers,cookies=cookies)
+        resp = self.Session.get(url=url,headers=headers,cookies=cookies)
         try:
             dict = resp.json()
             self.__check_status(dict)
@@ -625,7 +699,7 @@ class Heybox():
             self.logger.error('签到出错')
             self.logger.error(e)
             return(False)
-        except AlreadyDone:
+        except IGNORE:
             self.logger.info('已经签过到了')
             return(True)
         except ClientException as e:
@@ -634,6 +708,119 @@ class Heybox():
             return(False)
         pass
 
+    #发送消息,(userid,text)
+    def send_message(self,userid,text):
+        url=_SEND_MESSAGE_
+        self.__flush_params()
+        params = {
+            'userid':userid,
+            **self._params
+        }
+
+        headers={
+            'Content-Type': 'application/x-www-form-urlencoded',
+            **self._headers
+        }
+
+        data={
+            'text':text,
+            'img':''
+        }
+        resp = self.Session.post(url=url,headers=headers,cookies=self._cookies,params=params,data=data)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+            self.logger.info('发送私信成功')
+        except ValueError as e:
+            self.logger.error('发送私信出错')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('发送私信出错')
+            self.logger.error(e)
+            return(False)
+        pass
+
+
+    #拉取社区答题题目,返回html
+    def get_community_survey(self):
+        url = _COMMUNITY_SURVEY_
+
+        headers = {
+            'Host': 'api.xiaoheihe.cn',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+            'Accept-Encoding': 'gzip, deflate',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+            'X-Requested-With': 'com.max.xiaoheihe'            
+        }
+
+        cookies = { 
+            **self._cookies,
+            'user_pkey' : self._cookies['pkey'],
+            'user_heybox_id' : self._params['heybox_id']
+        }
+
+        self.__flush_params()
+
+        resp = self.Session.get(url=url,headers=headers,params=self._params,cookies=cookies)
+        try:
+            html = resp.text
+            if html:
+                self.logger.info('拉取完成，字数:%d' % len(html))
+            else:
+                self.logger.error('拉取内容为空，可能遇到错误')
+            return(html)
+        except ValueError as e:
+            self.logger.error('拉取题目出错')
+            self.logger.error(e)
+            return(False)    
+        pass
+
+    #获取答题情况，调用可以完成答题任务(1:第一次完成答题,2:已经作答,False:出错)
+    def get_bbs_qa_state(self):
+        url = _BBS_QA_STATE_
+
+        self.__flush_params()
+
+        headers = {
+            'Host': 'api.xiaoheihe.cn',
+            'Connection': 'keep-alive',
+            'Accept': '*/*',
+            'X-Requested-With': 'XMLHttpRequest',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.143 Mobile Safari/537.36',
+            'Referer': _COMMUNITY_SURVEY_ + '?' + urllib.parse.urlencode(query=self._params),
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+        }
+
+        cookies = {
+            **self._cookies,
+            'user_heybox_id':self._params['heybox_id']
+        }
+
+        resp = self.Session.get(url=url,headers=self._headers,cookies=cookies)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+            state =int( dict['result']['state'])
+            if state==1:
+                self.logger.info('答题完成，获得100经验')
+            elif state==2:
+                self.logger.info('已经答过题了，无法重复答题')
+            else:
+                self.logger.error('答题出错,未知返回值')
+            return(state)
+        except ValueError as e:
+            self.logger.error('答题出错')
+            return(False)
+        except ClientException as e:
+            self.logger.error('答题出错')
+            self.logger.error(e)
+            return(False)
+        pass
 
     #拉取文章正文内容(newsid,[index])
     def get_news_detail(self,newsid,index=1):
@@ -672,7 +859,7 @@ class Heybox():
         if index == 0:
             params['al'] = 'set_top'
 
-        resp = self.Session2.get(url=url,params=params,headers=headers,cookies=cookies)
+        resp = self.Session.get(url=url,params=params,headers=headers,cookies=cookies)
         try:
             html = resp.text
             soup = BeautifulSoup(html,'lxml')
@@ -725,7 +912,7 @@ class Heybox():
         if index == 0:
             params['al'] = 'set_top'
 
-        resp = self.Session2.get(url=url,params=params,headers=headers,cookies=cookies)
+        resp = self.Session.get(url=url,params=params,headers=headers,cookies=cookies)
         try:
             html = resp.text
             soup = BeautifulSoup(html,'lxml')
@@ -738,6 +925,98 @@ class Heybox():
             return(False)    
         pass
 
+    
+    #修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
+    def update_profile(self,birthday=0,career='在校学生',education='本科',gender=1,nickname='',email=''):
+        url = _UPDATE_PROFILE_
+        headers = {
+            **self._headers,
+            'Content-Type': 'multipart/form-data; boundary=d50fc2ff-427f-4883-a775-0495678a3f14'
+        }
+        data = {
+            'following_id': userid,
+        }
+
+        #self.__flush_params()
+        #resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
+
+        #TODO HERE
+
+        self.logger.warn('该函数尚未实现')
+        return(False)
+
+
+    #查询有无新成就,返回True,False
+    def check_achieve_alert(self):
+        url = _ACHIEVE_LIST_
+        self.__flush_params()
+        params = {
+            'userid':self._params['heybox_id'],
+            'only_event':1,
+            **self._params
+        }
+
+        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            try:
+                self.__check_status(dict)
+            except ClientException as e:
+                self.logger.error('查询新成就出错')
+                self.logger.error(e)
+                return(False)
+
+            try:
+                desc = dict['result']['achieve_event']['desc']
+                text = dict['result']['achieve_event']['text']
+
+                self.logger.info('解锁新成就[%s][%s]' % (text,desc))
+                return(True)
+            except KeyError as e:
+                self.logger.info('无新成就')
+                return(False)
+        except ValueError as e:
+            self.logger.error('查询新成就出错')
+            self.logger.error(e)
+            return(False)    
+        pass
+
+
+    #查询有无新消息,返回True,False
+    def check_notice(self):
+        return 
+        url = _ACHIEVE_LIST_
+        self.__flush_params()
+        params = {
+            'userid':self._params['heybox_id'],
+            'only_event':1,
+            **self._params
+        }
+
+        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            try:
+                self.__check_status(dict)
+            except ClientException as e:
+                self.logger.error('查询新成就出错')
+                self.logger.error(e)
+                return(False)
+
+            try:
+                desc = dict['result']['achieve_event']['desc']
+                text = dict['result']['achieve_event']['text']
+
+                self.logger.info('解锁新成就[%s][%s]' % (text,desc))
+                return(True)
+            except KeyError as e:
+                self.logger.info('无新成就')
+                return(False)
+        except ValueError as e:
+            self.logger.error('查询新成就出错')
+            self.logger.error(e)
+            return(False)    
+        pass
 
 
     #获取任务状态，返回False代表有任务未完成
@@ -916,31 +1195,32 @@ class Heybox():
             if dict['status'] == 'ok':
                 return
             if dict['status'] == 'ignore':
-                raise AlreadyDone
+                raise IGNORE
             if dict['status'] == 'failed':
-                self.logger.info(dict)
                 if dict['msg'] == '操作已经完成':
-                    raise AlreadyDone
+                    raise IGNORE
                 elif dict['msg'] == '不能进行重复的操作哦':
-                    raise AlreadyDone
+                    raise IGNORE
                 elif dict['msg'] == '帖子已被删除':
                     raise OBJnotExist
                 elif dict['msg'] == '不能给自己的评价点赞哟':
                     raise CantDoERROR
                 elif dict['msg'] == '系统时间不正确':
-                    raise UnknownERROR
+                    raise TimeERROR
                 elif dict['msg'] == '您今日的赞赏次数已用完':
-                    raise UnknownERROR
+                    raise NoMorelikeERROR
                 elif dict['msg'] == 'invalid userid':
                     raise UserIDERROR
                 elif dict['msg'] == '参数错误':
                     raise ParamsERROR
-                self.logger.error('未知返回值')
+                self.logger.error('遇到未知错误')
                 self.logger.error(dict)
                 raise UnknownERROR
             if dict['status'] == 'relogin':
                 raise TokenERROR
         else:
+            self.logger.error('未知返回值')
+            self.logger.error(dict)
             raise UnknownERROR
 
     #检查任务返回值
@@ -983,9 +1263,10 @@ class ClientException(Exception):
         self.errorinfo = ErrorInfo
     def __str__(self):
         return self.errorinfo
+#=======
 #凭据错误
 class TokenERROR(ClientException):
-    def __init__(self,ErrorInfo='请重新登陆'):
+    def __init__(self,ErrorInfo='凭据错误，请检查配置文件'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
     def __str__(self):
@@ -998,7 +1279,7 @@ class UserIDERROR(ClientException):
     def __str__(self):
         return self.errorinfo
 #任务已完成
-class AlreadyDone(ClientException):
+class IGNORE(ClientException):
     def __init__(self,ErrorInfo='操作已经完成'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
@@ -1018,16 +1299,30 @@ class CantDoERROR(ClientException):
         self.errorinfo = ErrorInfo
     def __str__(self):
         return self.errorinfo
-#未知错误
-class UnknownERROR(ClientException):
-    def __init__(self,ErrorInfo='未知错误'):
+#参数错误
+class ParamsERROR(ClientException):
+    def __init__(self,ErrorInfo='参数错误'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
     def __str__(self):
         return self.errorinfo
-#参数错误
-class ParamsERROR(ClientException):
-    def __init__(self,ErrorInfo='参数错误'):
+#时间错误
+class TimeERROR(ClientException):
+    def __init__(self,ErrorInfo='时间错误'):
+        super().__init__(self)
+        self.errorinfo = ErrorInfo
+    def __str__(self):
+        return self.errorinfo
+#赞赏次数已用完
+class NoMorelikeERROR(ClientException):
+    def __init__(self,ErrorInfo='赞赏次数已用完'):
+        super().__init__(self)
+        self.errorinfo = ErrorInfo
+    def __str__(self):
+        return self.errorinfo
+#未知错误
+class UnknownERROR(ClientException):
+    def __init__(self,ErrorInfo='未知错误'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
     def __str__(self):
