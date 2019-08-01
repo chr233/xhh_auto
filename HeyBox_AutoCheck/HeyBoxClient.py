@@ -206,7 +206,7 @@ class Heybox():
 
         self.simu_view_like_newses(idlist,10)
 
-        auto_follow_followers(30)
+        self.auto_follow_followers(30)
         self.auto_like_follows(100)
 
         self.check_achieve_alert()
