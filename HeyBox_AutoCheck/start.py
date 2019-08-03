@@ -59,9 +59,17 @@ if __name__ == '__main__':
                 continue
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
-            heybox1.auto_do_communitu_surver()
+            #heybox1.auto_do_communitu_surver()
+            heybox1.auto()
+            try:
+                pass
+            except HeyBoxClient.ClientException as e:
+                print(e)
+                continue
+
 
             if env_dist.get('DEBUG'):
+                pass
                 continue
 
             heybox1.auto()#自动完成每日任务，自动动态点赞
