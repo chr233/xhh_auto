@@ -134,12 +134,28 @@ class Heybox():
         else:
             self.logger.info('批量模式开启，目标为[%d]篇文章' % len(idlist))
         i = 1
+        likedcount = 0
+        errorcount = 0
         for item in idlist:
             info = self.simu_view_news(item[0],item[1],i)
             if not info[1]:
-                self.like_news(item[0],item[1],i)
+                status = self.like_news(item[0],item[1],i)
+                if status == True:
+                    if errorcount >= 1:
+                       errorcount-=1
+                    if likedcount >= 1:
+                       likedcount-=1
+                else:
+                    errorcount+=1
+                    if errorcount == 3:
+                        self.logger.info('连续多条新闻点赞出错，可能点赞次数用尽，终止任务')
+                        break
             else:
                 self.logger.info('已点赞，跳过')
+                likedcount+=1
+                if likedcount == 5:
+                    self.logger.info('连续多条动态已点赞，终止任务')
+                    break
             i+=1
             limit-=1
             if limit == 0:
@@ -167,13 +183,13 @@ class Heybox():
                        likedcount-=1
                 else:
                     errorcount+=1
-                    if errorcount == 6:
+                    if errorcount == 3:
                         self.logger.info('连续多条动态点赞出错，可能点赞次数用尽，终止任务')
                         break
             else:
                 self.logger.info('已点赞，跳过')
                 likedcount+=1
-                if likedcount == 6:
+                if likedcount == 5:
                     self.logger.info('连续多条动态已点赞，终止任务')
                     break
             i+=1
@@ -1213,6 +1229,8 @@ class Heybox():
                     raise UserIDERROR
                 elif dict['msg'] == '参数错误':
                     raise ParamsERROR
+                elif dict['msg']=='自己不能粉自己哦':
+                    raise CantDoERROR
                 self.logger.error('遇到未知错误')
                 self.logger.error(dict)
                 raise UnknownERROR
