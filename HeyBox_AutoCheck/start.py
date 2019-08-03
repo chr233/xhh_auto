@@ -48,6 +48,14 @@ if __name__ == '__main__':
             print('配置文件错误，请参考config_sample.json',e)
         i = 0
         datalist = []
+
+        idlist=[]
+        for item in accountlist:
+            try:
+                idlist.append(accountlist['heybox_id'])
+            except KeyError:
+                continue
+
         for item in accountlist:
             i+=1
             try:
@@ -60,7 +68,7 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
             #heybox1.auto_do_communitu_surver()
-            heybox1.auto()
+            heybox1.follow_user()
             try:
                 pass
             except HeyBoxClient.ClientException as e:
