@@ -49,11 +49,12 @@ _GET_ACTIVE_ROLL_ROOM_ = 'https://api.xiaoheihe.cn/store/get_all_active_roll_roo
 _ACHIEVE_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'#检查有没有解锁新成就
 _BBS_QA_STATE_ = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'#社区答题提交
 _COMMUNITY_SURVEY_ = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'#社区答题
-_UPDATE_PROFILE_='https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
-_NOTIFY_ALERT_='https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
-_FOLLOW_ALERT_='https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
-_SEND_MESSAGE_='https://api.xiaoheihe.cn/chat/send_message/'#发送私信
-
+_UPDATE_PROFILE_ = 'https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
+_NOTIFY_ALERT_ = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
+_FOLLOW_ALERT_ = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
+_SEND_MESSAGE_ = 'https://api.xiaoheihe.cn/chat/send_message/'#发送私信
+_RECOMMEND_FOLLOWING_ = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/following'#拉取推荐关注列表
+_GET_ADS_INFO_ = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
 env_dist = os.environ
 
 if env_dist.get('DEBUG'):
@@ -97,7 +98,10 @@ class Heybox():
         }
 
         self.logger = logging.getLogger(str(tag))
-        self.logger.debug('初始化完成')
+        if heybox_id:
+            self.logger.debug('初始化完成 @ [%s]' % heybox_id)
+        else:
+            self.logger.debug('初始化完成')
 
         return super().__init__()
 
@@ -207,6 +211,9 @@ class Heybox():
                 self.logger.info('尝试关注新粉丝@[%s]' % item[0])
                 self.follow_user(item[0])
                 time.sleep(1)
+            elif (item[1] == 0):
+                self.logger.info('尝试关注用户@[%s]' % item[0])
+                self.follow_user(item[0])
             limit-=1
             if limit == 0:
                 break
@@ -245,11 +252,19 @@ class Heybox():
     #[自动]关注粉丝
     def auto_follow_followers(self,limit=30):
         followerlist = self.get_follower_list()
-        self.simu_follow_followers(followerlist)
-    #自动 完成社区答题
+        self.simu_follow_followers(followerlist,limit)
+
+    #[自动]关注推荐关注
+    def auto_follow_recomment(self,limit=30):
+        reclist = self.get_recommend_follow_list()
+        self.simu_follow_followers(reclist,limit)
+
+    #自动 完成社区答题(不加入auto方法)
     def auto_do_communitu_surver(self):
          self.get_community_survey()
          self.get_bbs_qa_state()
+
+    
 
     #拉取首页文章列表(offset为偏移，30一个单位)，返回[(linkid,newsid),……]
     def get_news_list(self,offset=0):
@@ -450,6 +465,41 @@ class Heybox():
             return(False)    
         pass
 
+    #拉取推荐关注列表(offset),返回[(id,关系)……] 关系:0:没关系,1我->对方,2我<-对方,3我<->对方
+    def get_recommend_follow_list(self,offset=0):
+        url = _RECOMMEND_FOLLOWING_
+        self.__flush_params()
+        params = {
+            'offset':offset,
+            'limit':'30',
+            **self._params
+        }
+
+        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+            self.logger.info('开始拉取推荐关注列表')
+            result = []
+            try:
+                for item in dict['result']['rec_users']:
+                    result.append((item['userid'],item['is_follow']))
+                return(result)
+            except KeyError as e:
+                self.logger.error('拉取推荐关注列表出错')
+                self.logger.error(e)
+                return(False)
+        except ValueError as e:
+            self.logger.error('拉取推荐关注列表出错')
+            self.logger.error(e)
+            return(False)    
+        except ClientException as e:
+            self.logger.error('拉取推荐关注列表出错')
+            self.logger.error(e)
+            return(False)  
+        pass
+
+
     #拉取粉丝列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
     def get_follower_list(self,offset=0):
         url = _FOLLOWER_LIST_
@@ -491,6 +541,28 @@ class Heybox():
             self.logger.error('拉取粉丝列表出错')
             self.logger.error(e)
             return(False)    
+        pass
+
+    #拉取广告信息
+    def get_ads_info(self):
+        url = _GET_ADS_INFO_
+        self.__flush_params()
+        resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+            self.logger.info('拉取广告信息')
+            title = dict['result']['title']
+            self.logger.info('标题:[%s]' % title)
+            return(title)
+        except ValueError as e:
+            self.logger.error('拉取广告信息')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('拉取广告信息')
+            self.logger.error(e)
+            return(False)
         pass
 
     #给新闻点赞(linkid,newsid,[index])
@@ -569,7 +641,7 @@ class Heybox():
         except IGNORE:
             self.logger.info('已经点过赞了')
             return(True)
-        except CantDoERROR:
+        except CantSupportMyselfERROR:
             self.logger.error('无法给自己的评测点赞')
             return(False)
         except NoMorelikeERROR as e:
@@ -584,6 +656,10 @@ class Heybox():
 
     #关注用户(userid)
     def follow_user(self,userid):
+        if userid == self._params['heybox_id']:
+            self.logger.error('不能粉自己哦')
+            return(False)
+
         url = _FOLLOW_USER_
         headers = {
             **self._headers,
@@ -603,8 +679,6 @@ class Heybox():
             self.logger.error('关注用户出错')
             self.logger.error(e)
             return(False)
-        try:
-            self.__check_status(dict)
         except ClientException as e:
             self.logger.error('关注用户出错')
             self.logger.error(e)
@@ -726,19 +800,19 @@ class Heybox():
 
     #发送消息,(userid,text)
     def send_message(self,userid,text):
-        url=_SEND_MESSAGE_
+        url = _SEND_MESSAGE_
         self.__flush_params()
         params = {
             'userid':userid,
             **self._params
         }
 
-        headers={
+        headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
             **self._headers
         }
 
-        data={
+        data = {
             'text':text,
             'img':''
         }
@@ -821,10 +895,10 @@ class Heybox():
         try:
             dict = resp.json()
             self.__check_status(dict)
-            state =int( dict['result']['state'])
-            if state==1:
-                self.logger.info('答题完成，获得100经验')
-            elif state==2:
+            state = int(dict['result']['state'])
+            if state == 1:
+                self.logger.info('答题完成，获得10经验')
+            elif state == 2:
                 self.logger.info('已经答过题了，无法重复答题')
             else:
                 self.logger.error('答题出错,未知返回值')
@@ -954,7 +1028,8 @@ class Heybox():
         }
 
         #self.__flush_params()
-        #resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
+        #resp =
+        #self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
 
         #TODO HERE
 
@@ -1218,9 +1293,9 @@ class Heybox():
                 elif dict['msg'] == '不能进行重复的操作哦':
                     raise IGNORE
                 elif dict['msg'] == '帖子已被删除':
-                    raise OBJnotExist
+                    raise OBJnotExistERROR
                 elif dict['msg'] == '不能给自己的评价点赞哟':
-                    raise CantDoERROR
+                    raise CantSupportMyselfERROR
                 elif dict['msg'] == '系统时间不正确':
                     raise TimeERROR
                 elif dict['msg'] == '您今日的赞赏次数已用完':
@@ -1229,8 +1304,10 @@ class Heybox():
                     raise UserIDERROR
                 elif dict['msg'] == '参数错误':
                     raise ParamsERROR
-                elif dict['msg']=='自己不能粉自己哦':
-                    raise CantDoERROR
+                elif dict['msg'] == '自己不能粉自己哦':
+                    raise CantFollowMyselfERROR
+                elif dict['msg'] == '您今日的关注次数已用完':
+                    raise NoMoreFollowERROR
                 self.logger.error('遇到未知错误')
                 self.logger.error(dict)
                 raise UnknownERROR
@@ -1304,15 +1381,29 @@ class IGNORE(ClientException):
     def __str__(self):
         return self.errorinfo
 #对象不存在/已删除
-class OBJnotExist(ClientException):
+class OBJnotExistERROR(ClientException):
     def __init__(self,ErrorInfo='对象不存在或者已被删除'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
     def __str__(self):
         return self.errorinfo
 #无法给自己的评测点赞
-class CantDoERROR(ClientException):
+class CantSupportMyselfERROR(ClientException):
     def __init__(self,ErrorInfo='无法给自己的评测点赞'):
+        super().__init__(self)
+        self.errorinfo = ErrorInfo
+    def __str__(self):
+        return self.errorinfo
+#无法粉自己
+class CantFollowMyselfERROR(ClientException):
+    def __init__(self,ErrorInfo='无法粉自己哦'):
+        super().__init__(self)
+        self.errorinfo = ErrorInfo
+    def __str__(self):
+        return self.errorinfo
+#关注次数用完
+class NoMoreFollowERROR(ClientException):
+    def __init__(self,ErrorInfo='无法粉自己哦'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
     def __str__(self):
