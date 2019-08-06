@@ -52,7 +52,7 @@ if __name__ == '__main__':
         idlist=[]
         for item in accountlist:
             try:
-                idlist.append(accountlist['heybox_id'])
+                idlist.append(item['heybox_id'])
             except KeyError:
                 continue
 
@@ -67,8 +67,16 @@ if __name__ == '__main__':
                 continue
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
-            #heybox1.auto_do_communitu_surver()
-            heybox1.follow_user()
+
+
+            if i == len(accountlist):
+                pass
+
+                #heybox1.follow_user(13081382)
+                #heybox1.auto_do_communitu_surver()
+            else:
+                pass
+                continue
             try:
                 pass
             except HeyBoxClient.ClientException as e:
@@ -99,9 +107,6 @@ if __name__ == '__main__':
 
     except ValueError as e:
         print('出错了',e)
-    except HeyBoxClient.ClientException as e:
-        print('出错了',e)
-
     except FileNotFoundError as e:
         print('未找到配置文件，请将config_sample.json重命名为config.json并填入账号凭据',e)
     except json.JSONDecodeError as e:
