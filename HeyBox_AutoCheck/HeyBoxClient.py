@@ -158,7 +158,7 @@ class Heybox():
                 self.logger.info('已点赞，跳过')
                 likedcount+=1
                 if likedcount == 5:
-                    self.logger.info('连续多条动态已点赞，终止任务')
+                    self.logger.info('连续多条新闻已点赞，终止任务')
                     break
             i+=1
             limit-=1
@@ -684,6 +684,71 @@ class Heybox():
             self.logger.error(e)
             return(False)
         self.logger.info('关注用户[%s]成功' % userid)
+        return(True)
+
+    #取关用户(userid)
+    def unfollow_user(self,userid):
+        if userid == self._params['heybox_id']:
+            self.logger.error('不能取关自己哦')
+            return(False)
+
+        url = _FOLLOW_USER_CANCEL_
+        headers = {
+            **self._headers,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        data = {
+            'following_id': userid,
+        }
+
+        self.__flush_params()
+        resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
+
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+        except ValueError as e:
+            self.logger.error('取关用户出错')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('取关用户出错')
+            self.logger.error(e)
+            return(False)
+        self.logger.info('取关用户[%s]成功' % userid)
+        return(True)
+
+
+    #关注列表过滤([(userid),……])
+    def follow_user(self,userid):
+        if userid == self._params['heybox_id']:
+            self.logger.error('不能取关自己哦')
+            return(False)
+
+        url = _FOLLOW_USER_CANCEL_
+        headers = {
+            **self._headers,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        data = {
+            'following_id': userid,
+        }
+
+        self.__flush_params()
+        resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
+
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+        except ValueError as e:
+            self.logger.error('取关用户出错')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('取关用户出错')
+            self.logger.error(e)
+            return(False)
+        self.logger.info('取关用户[%s]成功' % userid)
         return(True)
 
     #分享

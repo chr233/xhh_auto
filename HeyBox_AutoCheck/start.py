@@ -68,6 +68,10 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
+            
+            mydata = heybox1.get_my_data()
+            myprofile = heybox1.get_my_profile()
+
 
             if i == len(accountlist):
                 pass
