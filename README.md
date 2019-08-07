@@ -1,5 +1,5 @@
 ### 本项目仅供学习使用，请勿用于非法用途
-### 本项目遵从GPL协议
+### 本项目遵从 GPL v3.0 协议
 
 ## 使用方法
 1. 从[releases](https://github.com/chr233/xhh_auto/releases)下载最新的脚本
