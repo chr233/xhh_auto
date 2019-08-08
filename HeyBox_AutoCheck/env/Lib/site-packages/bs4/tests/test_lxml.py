@@ -36,7 +36,7 @@ class LXMLTreeBuilderSmokeTest(SoupTest, HTMLTreeBuilderSmokeTest):
 
     @property
     def default_builder(self):
-        return LXMLTreeBuilder()
+        return LXMLTreeBuilder
 
     def test_out_of_range_entity(self):
         self.assertSoupEquals(
@@ -79,7 +79,7 @@ class LXMLXMLTreeBuilderSmokeTest(SoupTest, XMLTreeBuilderSmokeTest):
 
     @property
     def default_builder(self):
-        return LXMLTreeBuilderForXML()
+        return LXMLTreeBuilderForXML
 
     def test_namespace_indexing(self):
         # We should not track un-prefixed namespaces as we can only hold one
