@@ -18,7 +18,7 @@ http://www.crummy.com/software/BeautifulSoup/bs4/doc/
 """
 
 __author__ = "Leonard Richardson (leonardr@segfault.org)"
-__version__ = "4.7.1"
+__version__ = "4.8.0"
 __copyright__ = "Copyright (c) 2004-2019 Leonard Richardson"
 # Use of this source code is governed by the MIT license.
 __license__ = "MIT"
@@ -98,8 +98,10 @@ class BeautifulSoup(Tag):
         name a specific parser, so that Beautiful Soup gives you the
         same results across platforms and virtual environments.
 
-        :param builder: A specific TreeBuilder to use instead of looking one
-        up based on `features`. You shouldn't need to use this.
+        :param builder: A TreeBuilder subclass to instantiate (or
+        instance to use) instead of looking one up based on
+        `features`. You only need to use this if you've implemented a
+        custom TreeBuilder.
 
         :param parse_only: A SoupStrainer. Only parts of the document
         matching the SoupStrainer will be considered. This is useful
@@ -118,11 +120,17 @@ class BeautifulSoup(Tag):
         :param kwargs: For backwards compatibility purposes, the
         constructor accepts certain keyword arguments used in
         Beautiful Soup 3. None of these arguments do anything in
-        Beautiful Soup 4 and there's no need to actually pass keyword
-        arguments into the constructor.
+        Beautiful Soup 4; they will result in a warning and then be ignored.
+
+        Apart from this, any keyword arguments passed into the BeautifulSoup
+        constructor are propagated to the TreeBuilder constructor. This
+        makes it possible to configure a TreeBuilder beyond saying
+        which one to use.
+
         """
 
         if 'convertEntities' in kwargs:
+            del kwargs['convertEntities']
             warnings.warn(
                 "BS4 does not respect the convertEntities argument to the "
                 "BeautifulSoup constructor. Entities are always converted "
@@ -177,13 +185,17 @@ class BeautifulSoup(Tag):
             warnings.warn("You provided Unicode markup but also provided a value for from_encoding. Your from_encoding will be ignored.")
             from_encoding = None
 
-        if len(kwargs) > 0:
-            arg = list(kwargs.keys()).pop()
-            raise TypeError(
-                "__init__() got an unexpected keyword argument '%s'" % arg)
-
-        if builder is None:
-            original_features = features
+        # We need this information to track whether or not the builder
+        # was specified well enough that we can omit the 'you need to
+        # specify a parser' warning.
+        original_builder = builder
+        original_features = features
+            
+        if isinstance(builder, type):
+            # A builder class was passed in; it needs to be instantiated.
+            builder_class = builder
+            builder = None
+        elif builder is None:
             if isinstance(features, str):
                 features = [features]
             if features is None or len(features) == 0:
@@ -194,9 +206,16 @@ class BeautifulSoup(Tag):
                     "Couldn't find a tree builder with the features you "
                     "requested: %s. Do you need to install a parser library?"
                     % ",".join(features))
-            builder = builder_class()
-            if not (original_features == builder.NAME or
-                    original_features in builder.ALTERNATE_NAMES):
+
+        # At this point either we have a TreeBuilder instance in
+        # builder, or we have a builder_class that we can instantiate
+        # with the remaining **kwargs.
+        if builder is None:
+            builder = builder_class(**kwargs)
+            if not original_builder and not (
+                    original_features == builder.NAME or
+                    original_features in builder.ALTERNATE_NAMES
+            ):
                 if builder.is_xml:
                     markup_type = "XML"
                 else:
@@ -231,7 +250,10 @@ class BeautifulSoup(Tag):
                         markup_type=markup_type
                     )
                     warnings.warn(self.NO_PARSER_SPECIFIED_WARNING % values, stacklevel=2)
-
+        else:
+            if kwargs:
+                warnings.warn("Keyword arguments to the BeautifulSoup constructor will be ignored. These would normally be passed into the TreeBuilder constructor, but a TreeBuilder instance was passed in as `builder`.")
+                    
         self.builder = builder
         self.is_xml = builder.is_xml
         self.known_xml = self.is_xml

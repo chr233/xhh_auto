@@ -94,7 +94,7 @@ class LXMLTreeBuilderForXML(TreeBuilder):
             parser = parser(target=self, strip_cdata=False, encoding=encoding)
         return parser
 
-    def __init__(self, parser=None, empty_element_tags=None):
+    def __init__(self, parser=None, empty_element_tags=None, **kwargs):
         # TODO: Issue a warning if parser is present but not a
         # callable, since that means there's no way to create new
         # parsers for different encodings.
@@ -103,6 +103,7 @@ class LXMLTreeBuilderForXML(TreeBuilder):
             self.empty_element_tags = set(empty_element_tags)
         self.soup = None
         self.nsmaps = [self.DEFAULT_NSMAPS_INVERTED]
+        super(LXMLTreeBuilderForXML, self).__init__(**kwargs)
         
     def _getNsTag(self, tag):
         # Split the namespace URL out of a fully-qualified lxml tag

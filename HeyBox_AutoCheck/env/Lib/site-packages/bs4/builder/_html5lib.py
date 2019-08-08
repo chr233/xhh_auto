@@ -199,7 +199,7 @@ class AttrList(object):
     def __setitem__(self, name, value):
         # If this attribute is a multi-valued attribute for this element,
         # turn its value into a list.
-        list_attr = HTML5TreeBuilder.cdata_list_attributes
+        list_attr = self.element.cdata_list_attributes
         if (name in list_attr['*']
             or (self.element.name in list_attr
                 and name in list_attr[self.element.name])):

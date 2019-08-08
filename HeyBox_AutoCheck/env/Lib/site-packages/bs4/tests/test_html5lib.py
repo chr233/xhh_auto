@@ -22,7 +22,7 @@ class HTML5LibBuilderSmokeTest(SoupTest, HTML5TreeBuilderSmokeTest):
 
     @property
     def default_builder(self):
-        return HTML5TreeBuilder()
+        return HTML5TreeBuilder
 
     def test_soupstrainer(self):
         # The html5lib tree builder does not support SoupStrainers.
