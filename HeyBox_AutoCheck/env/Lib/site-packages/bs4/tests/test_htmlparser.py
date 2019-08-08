@@ -9,9 +9,7 @@ from bs4.builder._htmlparser import BeautifulSoupHTMLParser
 
 class HTMLParserTreeBuilderSmokeTest(SoupTest, HTMLTreeBuilderSmokeTest):
 
-    @property
-    def default_builder(self):
-        return HTMLParserTreeBuilder()
+    default_builder = HTMLParserTreeBuilder
 
     def test_namespaced_system_doctype(self):
         # html.parser can't handle namespaced doctypes, so skip this one.

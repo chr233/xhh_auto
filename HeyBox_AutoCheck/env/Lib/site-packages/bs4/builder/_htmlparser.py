@@ -214,12 +214,15 @@ class HTMLParserTreeBuilder(HTMLTreeBuilder):
     NAME = HTMLPARSER
     features = [NAME, HTML, STRICT]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parser_args=None, parser_kwargs=None, **kwargs):
+        super(HTMLParserTreeBuilder, self).__init__(**kwargs)
+        parser_args = parser_args or []
+        parser_kwargs = parser_kwargs or {}
         if CONSTRUCTOR_TAKES_STRICT and not CONSTRUCTOR_STRICT_IS_DEPRECATED:
-            kwargs['strict'] = False
+            parser_kwargs['strict'] = False
         if CONSTRUCTOR_TAKES_CONVERT_CHARREFS:
-            kwargs['convert_charrefs'] = False
-        self.parser_args = (args, kwargs)
+            parser_kwargs['convert_charrefs'] = False
+        self.parser_args = (parser_args, parser_kwargs)
 
     def prepare_markup(self, markup, user_specified_encoding=None,
                        document_declared_encoding=None, exclude_encodings=None):

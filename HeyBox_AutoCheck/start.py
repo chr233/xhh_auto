@@ -3,6 +3,7 @@ import HeyBoxClient
 import json
 import requests
 import os
+import test
 
 '''
 小黑盒自动脚本，暂未实现登陆过程，凭据需要自行抓包获取
@@ -38,7 +39,12 @@ def send_result(datalist,skey):
 
 
 if __name__ == '__main__':
+
+    test.main()
+    exit
+
     try:
+        raise HeyBoxClient.ClientException
         with open('config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
         try:
