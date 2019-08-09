@@ -39,12 +39,7 @@ def send_result(datalist,skey):
 
 
 if __name__ == '__main__':
-
-    test.main()
-    exit
-
     try:
-        raise HeyBoxClient.ClientException
         with open('config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
         try:
@@ -74,31 +69,18 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
-            
-            mydata = heybox1.get_my_data()
-            myprofile = heybox1.get_my_profile()
-
-
-            if i == len(accountlist):
-                pass
-
-                #heybox1.follow_user(13081382)
-                #heybox1.auto_do_communitu_surver()
-            else:
-                pass
-                continue
-            try:
-                pass
-            except HeyBoxClient.ClientException as e:
-                print(e)
+            if env_dist.get('MODE')=='DEBUG':
+                #调试模式
+                if i == len(accountlist):
+                    #heybox1.follow_user()
+                    #heybox1.auto_do_communitu_surver()
+                    pass
+                
                 continue
 
-
-            if env_dist.get('DEBUG'):
-                pass
-                continue
-
+            #正常逻辑
             heybox1.auto()#自动完成每日任务，自动动态点赞
+            heybox1.auto_clean_follering_list(400)#整理关注列表，清理单向关注
             b = heybox1.get_task_stats()#获取任务完成度
             heybox1.get_task_detail()#获取任务详情
             mydata = heybox1.get_my_data()

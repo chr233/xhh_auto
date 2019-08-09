@@ -41,7 +41,8 @@ _SHARE_CLICK_ = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
 _SHARE_QQ_ = 'https://api.xiaoheihe.cn/task/shared/'#QQ分享
 _VERSION_CHECK_ = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'#检查更新
 _USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人资料
-_FOLLOWER_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#好友列表
+_FOLLOWER_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#粉丝列表
+_FOLLOWING_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'#关注列表
 _FOLLOW_USER_ = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
 _FOLLOW_USER_CANCEL_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
 _GET_AUTH_INFO_ = 'https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
@@ -57,7 +58,7 @@ _RECOMMEND_FOLLOWING_ = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/foll
 _GET_ADS_INFO_ = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
 env_dist = os.environ
 
-if env_dist.get('DEBUG'):
+if env_dist.get('MODE')=='DEBUG':
     LEVEL = logging.DEBUG
 else:
     LEVEL = logging.INFO
@@ -222,6 +223,8 @@ class Heybox():
 
     #[自动]
     def auto(self):#,viewcount,likecount,sharecount,followcount):
+        self.get_ads_info()
+        self.check_achieve_alert()
         self.sign()
         idlist = self.get_news_list()
         self.simu_view_news(idlist[0][0],idlist[0][1],0)
@@ -232,7 +235,6 @@ class Heybox():
         self.auto_follow_followers(30)
         self.auto_like_follows(100)
 
-        self.check_achieve_alert()
 
     #[自动]批量模拟浏览文章
     def auto_simu_view_newses(self,limit=10):
@@ -249,13 +251,23 @@ class Heybox():
         likelist = self.get_follow_post()
         self.simu_like_follows(likelist,limit)
         return(True)
-    #[自动]关注粉丝
+    #[自动]关注新粉丝
     def auto_follow_followers(self,limit=30):
         followerlist = self.get_follower_list()
         self.simu_follow_followers(followerlist,limit)
 
-    #[自动]关注推荐关注
-    def auto_follow_recomment(self,limit=30):
+    #[自动]取关单向关注(取关粉丝-关注>value的用户)
+    def auto_clean_follering_list(self,value=500,limit=30):
+        followinglist=self.get_following_list()
+        self.followinglist_filter(followinglist,value)
+
+    #[自动]关注推荐关注(过滤后)
+    def auto_follow_filtered_recomment(self,limit=15):
+        reclist = self.get_recommend_follow_list()
+        reclist=self.followlist_filter(reclist,200)
+        self.simu_follow_followers(reclist,limit)
+    #[自动]关注推荐关注(未过滤)
+    def auto_follow_raw_recomment(self,limit=30):
         reclist = self.get_recommend_follow_list()
         self.simu_follow_followers(reclist,limit)
 
@@ -520,7 +532,6 @@ class Heybox():
                 self.logger.error('拉取粉丝列表出错')
                 self.logger.error(e)
                 return(False)
-
             try:
                 fan_num = dict['follow_cnt']['fan_num']
                 follow_num = dict['follow_cnt']['follow_num']
@@ -529,7 +540,6 @@ class Heybox():
                 result = []
                 for item in follow_list:
                     result.append((item['userid'],item['is_follow']))
-
                 self.logger.info('关注[%s] 粉丝[%s]' % (follow_num,fan_num))
                 return(result)
             
@@ -542,6 +552,48 @@ class Heybox():
             self.logger.error(e)
             return(False)    
         pass
+
+    #拉取关注列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
+    def get_following_list(self,offset=0):
+        url = _FOLLOWING_LIST_
+        self.__flush_params()
+        params = {
+            'userid':self._params['heybox_id'],
+            'offset':offset,
+            'limit':30,
+            **self._params
+        }
+
+        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            try:
+                self.__check_status(dict)
+            except ClientException as e:
+                self.logger.error('拉取关注列表出错')
+                self.logger.error(e)
+                return(False)
+            try:
+                fan_num = dict['follow_cnt']['fan_num']
+                follow_num = dict['follow_cnt']['follow_num']
+                follow_list = dict['follow_list']
+
+                result = []
+                for item in follow_list:
+                    result.append((item['userid'],item['is_follow']))
+                self.logger.info('关注[%s] 粉丝[%s]' % (follow_num,fan_num))
+                return(result)
+            
+            except KeyError as e:
+                self.logger.error('拉取关注列表出错')
+                self.logger.error(e)
+                return(False)
+        except ValueError as e:
+            self.logger.error('拉取关注列表出错')
+            self.logger.error(e)
+            return(False)    
+        pass
+
 
     #拉取广告信息
     def get_ads_info(self):
@@ -718,37 +770,48 @@ class Heybox():
         self.logger.info('取关用户[%s]成功' % userid)
         return(True)
 
+    #关注前对用户列表进行过滤,过滤掉粉丝数跟关注数差距太大的用户([(userid,[is_follow]),……],粉丝-关注的阈值，超过的被过滤)
+    def followlist_filter(self,idlist,value=200):
+        self.logger.info('过滤前共有[%d]个用户' % len(idlist))
+        filteredlist=[]
+        for userobj in idlist:
+            try:
+                #返回(关注,粉丝,获赞)
+                result = self.get_user_profile(userobj[0])
+                if result[1]-result[0]<=value:
+                    filteredlist.append(userobj)
+                else:
+                    self.logger.debug('过滤用户[%s]关注[%s]粉丝[%s]获赞[%s]'% (userobj[0],result[0],result[1],result[2]))
+            except ValueError:
+                self.logger.error('过滤出错')
+                self.logger.error(e)
+            except ClientException as e:
+                self.logger.error('过滤出错')
+                self.logger.error(e)
+        self.logger.info('过滤后共有[%d]个用户' % len(filteredlist))
+        return(filteredlist)
 
-    #关注列表过滤([(userid),……])
-    def follow_user(self,userid):
-        if userid == self._params['heybox_id']:
-            self.logger.error('不能取关自己哦')
-            return(False)
-
-        url = _FOLLOW_USER_CANCEL_
-        headers = {
-            **self._headers,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-        data = {
-            'following_id': userid,
-        }
-
-        self.__flush_params()
-        resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
-
-        try:
-            dict = resp.json()
-            self.__check_status(dict)
-        except ValueError as e:
-            self.logger.error('取关用户出错')
-            self.logger.error(e)
-            return(False)
-        except ClientException as e:
-            self.logger.error('取关用户出错')
-            self.logger.error(e)
-            return(False)
-        self.logger.info('取关用户[%s]成功' % userid)
+    #对已关注用户列表进行过滤,取关粉丝数跟关注数差距太大的用户([(userid,is_follow),……],粉丝-关注的阈值，超过的被过滤)
+    def followinglist_filter(self,idlist,value=500):
+        myprofile=self.get_my_profile()
+        self.logger.info('操作前有[%d]个用户' % len(idlist))
+        unfollowcount=0
+        for userobj in idlist:
+            try:
+                if userobj[1]==1:
+                    #返回(关注,粉丝,获赞)
+                    result = self.get_user_profile(userobj[0])
+                    if result[1]-result[0]>value:
+                        self.logger.debug('即将取关用户[%s]关注[%s]粉丝[%s]获赞[%s]'% (userobj[0],result[0],result[1],result[2]))
+                        self.unfollow_user(userobj[0])
+                        unfollowcount+=1
+            except ValueError:
+                self.logger.error('过滤出错')
+                self.logger.error(e)
+            except ClientException as e:
+                self.logger.error('过滤出错')
+                self.logger.error(e)
+        self.logger.info('取关了[%d]个用户' % unfollowcount)
         return(True)
 
     #分享
@@ -1084,21 +1147,8 @@ class Heybox():
     #修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
     def update_profile(self,birthday=0,career='在校学生',education='本科',gender=1,nickname='',email=''):
         url = _UPDATE_PROFILE_
-        headers = {
-            **self._headers,
-            'Content-Type': 'multipart/form-data; boundary=d50fc2ff-427f-4883-a775-0495678a3f14'
-        }
-        data = {
-            'following_id': userid,
-        }
-
-        #self.__flush_params()
-        #resp =
-        #self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
-
-        #TODO HERE
-
         self.logger.warn('该函数尚未实现')
+        raise DEFNotCompletedERROR
         return(False)
 
 
@@ -1490,6 +1540,13 @@ class TimeERROR(ClientException):
 #赞赏次数已用完
 class NoMorelikeERROR(ClientException):
     def __init__(self,ErrorInfo='赞赏次数已用完'):
+        super().__init__(self)
+        self.errorinfo = ErrorInfo
+    def __str__(self):
+        return self.errorinfo
+#函数未完成
+class DEFNotCompletedERROR(ClientException):
+    def __init__(self,ErrorInfo='函数未完成'):
         super().__init__(self)
         self.errorinfo = ErrorInfo
     def __str__(self):
