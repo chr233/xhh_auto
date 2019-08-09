@@ -37,10 +37,11 @@ PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
  * 安卓版本大于6.0，也可以使用`HttpCanary`和它自带的平行空间抓包（把小黑盒安装进平行空间，再对平行空间抓包）
  * 手机已root，可以使用最新版小黑盒，安装`xposed`+`justTrust`插件或者[手动将用户证书偷渡成系统证书](https://blog.chrxw.com/archives/2019/07/08/270.html)，然后使用任意抓包软件抓包即可
 2. 凭据位置
- * 抓取小黑盒请求后，pkey位于cookies中，heybox_id和imei在web表单中，请填入config.json即可使用本脚本。
+ 抓取小黑盒请求后，pkey位于cookies中，heybox_id和imei在web表单中，请填入config.json即可使用本脚本。
 
 ## TODO LIST
 1. 简单好用的账户管理器
 2. 支持直接登陆小黑盒账号
 3. 实现小黑盒客户端的大部分功能
 4. ~~自动参加ROLL房~~
+5. 受steam影响，小黑盒貌似开始转卖点卡了。对2和4的支持计划延后
