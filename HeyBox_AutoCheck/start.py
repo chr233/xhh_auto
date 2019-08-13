@@ -18,6 +18,7 @@ import test
 
 FTQQ_URL = 'https://sc.ftqq.com/%s.send'
 env_dist = os.environ
+path = os.getcwd()
 
 def send_result(datalist,skey):
     url = FTQQ_URL % skey
@@ -40,13 +41,13 @@ def send_result(datalist,skey):
 
 if __name__ == '__main__':
     try:
-        with open('config.json', 'r', encoding='utf-8') as f:
+        with open(path + '/config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
         try:
             accountlist = dict['accounts']
             settings = dict['settings']
         except KeyError as e:
-            print('配置文件错误，请参考config_sample.json',e)
+            print('当前路径' + path + ' 配置文件错误，请参考config_sample.json',e)
         i = 0
         datalist = []
 
@@ -100,6 +101,6 @@ if __name__ == '__main__':
     except ValueError as e:
         print('出错了',e)
     except FileNotFoundError as e:
-        print('未找到配置文件，请将config_sample.json重命名为config.json并填入账号凭据',e)
+        print('当前路径' + path + ' 未找到配置文件，请将config_sample.json重命名为config.json并填入账号凭据',e)
     except json.JSONDecodeError as e:
         print('config.json格式有误', e)
