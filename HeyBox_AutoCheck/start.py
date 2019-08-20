@@ -69,7 +69,10 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
-            #heybox1.auto_clean_follering_list()
+
+            #a=heybox1.get_follow_post(100)
+            #print(a)
+            #print(len(a))
 
             if env_dist.get('MODE')=='DEBUG':
                 #调试模式

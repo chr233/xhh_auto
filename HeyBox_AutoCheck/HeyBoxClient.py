@@ -58,7 +58,7 @@ _RECOMMEND_FOLLOWING_ = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/foll
 _GET_ADS_INFO_ = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
 env_dist = os.environ
 
-if env_dist.get('MODE')=='DEBUG':
+if env_dist.get('MODE') == 'DEBUG':
     LEVEL = logging.DEBUG
 else:
     LEVEL = logging.INFO
@@ -237,7 +237,7 @@ class Heybox():
         self.get_ads_info()
         self.check_achieve_alert()
         self.sign()
-        idlist = self.get_news_list()
+        idlist = self.get_news_list(30)
         self.simu_view_news(idlist[0][0],idlist[0][1],0)
         self.share(idlist[0][1])
 
@@ -249,17 +249,17 @@ class Heybox():
 
     #[自动]批量模拟浏览文章
     def auto_simu_view_newses(self,limit=10):
-        idlist = self.get_news_list()
+        idlist = self.get_news_list(30)
         self.simu_view_newses(idlist,limit)
         return(True)
     #[自动]批量模拟浏览并点赞文章
     def auto_simu_view_like_newses(self,limit=10):
-        idlist = self.get_news_list()
+        idlist = self.get_news_list(30)
         self.simu_view_like_newses(idlist,limit)
         return(True)
     #[自动]批量点赞动态
     def auto_like_follows(self,limit=10):
-        likelist = self.get_follow_post()
+        likelist = self.get_follow_post(30)
         self.simu_like_follows(likelist,limit)
         return(True)
     #[自动]关注新粉丝
@@ -269,13 +269,13 @@ class Heybox():
 
     #[自动]取关单向关注(取关粉丝-关注>value的用户)
     def auto_clean_follering_list(self,value=50,limit=30):
-        followinglist=self.get_following_list()
+        followinglist = self.get_following_list()
         self.followinglist_filter(followinglist,value)
 
     #[自动]关注推荐关注(过滤后)
     def auto_follow_filtered_recomment(self,limit=15):
         reclist = self.get_recommend_follow_list()
-        reclist=self.followlist_filter(reclist,200)
+        reclist = self.followlist_filter(reclist,200)
         self.simu_follow_followers(reclist,limit)
     #[自动]关注推荐关注(未过滤)
     def auto_follow_raw_recomment(self,limit=30):
@@ -287,10 +287,28 @@ class Heybox():
          self.get_community_survey()
          self.get_bbs_qa_state()
 
-    
+    #拉取首页文章列表(value为要拉取的数量)，返回[(linkid,newsid),……]
+    def get_news_list(self,value=30):
+        newslist = []
+        max = (value // 30) + 1
+        i = 0
+        while True:
+            templist = self._get_news_list(i*30)
+            if(templist):
+                self.logger.info('拉取第[%s]批文章' % str(i + 1))
+                newslist.extend(templist)
+                i+=1
+            else:
+                self.logger.error('拉取文章列表出错')
+                return(False)
+            if i == max:
+                break
+        newslist = newslist[:value]
+        return(newslist)
 
+    #旧的api,固定返回30个结果
     #拉取首页文章列表(offset为偏移，30一个单位)，返回[(linkid,newsid),……]
-    def get_news_list(self,offset=0):
+    def _get_news_list(self,offset=0):
         url = _NEWS_LIST_
         self.__flush_params()
         params = {
@@ -319,14 +337,34 @@ class Heybox():
         idlist = []
         for item in dict['result']:
             try:
-                idlist.append((item['linkid'],item['newsid']))
+                idlist.append((item['linkid'],item['newsid'])) 
             except KeyError:
                 continue
         self.logger.info('拉取了[%d]篇文章' % len(idlist))
         return(idlist)
-    
+
+    #拉取动态列表(value为要拉取的数量)，返回[(linkid,type,已点赞?),……]
+    def get_follow_post(self,value=30):
+        likelist = []
+        max = (value // 30) + 1
+        i = 0
+        while True:
+            templist = self._get_follow_post(i*30)
+            if(templist):
+                self.logger.info('拉取第[%s]批动态' % str(i + 1))
+                likelist.extend(templist)
+                i+=1
+            else:
+                self.logger.error('拉取关注页列表出错')
+                return(False)
+            if i == max:
+                break
+        likelist = likelist[:value]
+        return(likelist)
+
+    #旧api，固定返回30个结果
     #拉取动态列表(offset为偏移，30一个单位)，返回[(linkid,type,已点赞?),……]
-    def get_follow_post(self,offset=0):
+    def _get_follow_post(self,offset=0):
         url = _FOLLOW_POST_
         self.__flush_params()
         params = {
@@ -784,15 +822,15 @@ class Heybox():
     #关注前对用户列表进行过滤,过滤掉粉丝数跟关注数差距太大的用户([(userid,[is_follow]),……],粉丝-关注的阈值，超过的被过滤)
     def followlist_filter(self,idlist,value=50):
         self.logger.info('过滤前共有[%d]个用户' % len(idlist))
-        filteredlist=[]
+        filteredlist = []
         for userobj in idlist:
             try:
                 #返回(关注,粉丝,获赞)
                 result = self.get_user_profile(userobj[0])
-                if result[1]-result[0]<=value:
+                if result[1] - result[0] <= value:
                     filteredlist.append(userobj)
                 else:
-                    self.logger.debug('过滤用户[%s]关注[%s]粉丝[%s]获赞[%s]'% (userobj[0],result[0],result[1],result[2]))
+                    self.logger.debug('过滤用户[%s]关注[%s]粉丝[%s]获赞[%s]' % (userobj[0],result[0],result[1],result[2]))
             except ValueError:
                 self.logger.error('过滤出错')
                 self.logger.error(e)
@@ -804,16 +842,16 @@ class Heybox():
 
     #对已关注用户列表进行过滤,取关粉丝数跟关注数差距太大的用户([(userid,is_follow),……],粉丝-关注的阈值，超过的被过滤)
     def followinglist_filter(self,idlist,value=50):
-        myprofile=self.get_my_profile()
+        myprofile = self.get_my_profile()
         self.logger.info('操作前有[%d]个用户' % len(idlist))
-        unfollowcount=0
+        unfollowcount = 0
         for userobj in idlist:
             try:
-                if userobj[1]==1:
+                if userobj[1] == 1:
                     #返回(关注,粉丝,获赞)
                     result = self.get_user_profile(userobj[0])
-                    if result[1]-result[0]>value:
-                        self.logger.debug('即将取关用户[%s]关注[%s]粉丝[%s]获赞[%s]'% (userobj[0],result[0],result[1],result[2]))
+                    if result[1] - result[0] > value:
+                        self.logger.debug('即将取关用户[%s]关注[%s]粉丝[%s]获赞[%s]' % (userobj[0],result[0],result[1],result[2]))
                         self.unfollow_user(userobj[0])
                         unfollowcount+=1
             except ValueError:
