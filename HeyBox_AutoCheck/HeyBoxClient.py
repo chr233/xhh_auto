@@ -116,6 +116,17 @@ class Heybox():
             self.get_video_detail(newsid,index)
         return(info)
 
+
+    #[新版] 模拟浏览文章(linkid,newsid,[index]),返回(是视频?,已点赞?,已收藏?)
+    def adv_simu_view_news(self,linkid,newsid,index=1):
+        self.logger.info('模拟浏览第[%d]篇文章' % (index + 1))
+        info = self.get_news_link(linkid,newsid,index)
+        if info[0] == False:
+            self.get_news_detail(newsid,index)
+        else:
+            self.get_video_detail(newsid,index)
+        return(info)
+
     #批量模拟浏览文章[(linkid,newsid),……]
     def simu_view_newses(self,idlist,limit=0):
         if limit > 0:
@@ -257,7 +268,7 @@ class Heybox():
         self.simu_follow_followers(followerlist,limit)
 
     #[自动]取关单向关注(取关粉丝-关注>value的用户)
-    def auto_clean_follering_list(self,value=500,limit=30):
+    def auto_clean_follering_list(self,value=50,limit=30):
         followinglist=self.get_following_list()
         self.followinglist_filter(followinglist,value)
 
@@ -771,7 +782,7 @@ class Heybox():
         return(True)
 
     #关注前对用户列表进行过滤,过滤掉粉丝数跟关注数差距太大的用户([(userid,[is_follow]),……],粉丝-关注的阈值，超过的被过滤)
-    def followlist_filter(self,idlist,value=200):
+    def followlist_filter(self,idlist,value=50):
         self.logger.info('过滤前共有[%d]个用户' % len(idlist))
         filteredlist=[]
         for userobj in idlist:
@@ -792,7 +803,7 @@ class Heybox():
         return(filteredlist)
 
     #对已关注用户列表进行过滤,取关粉丝数跟关注数差距太大的用户([(userid,is_follow),……],粉丝-关注的阈值，超过的被过滤)
-    def followinglist_filter(self,idlist,value=500):
+    def followinglist_filter(self,idlist,value=50):
         myprofile=self.get_my_profile()
         self.logger.info('操作前有[%d]个用户' % len(idlist))
         unfollowcount=0
