@@ -69,6 +69,8 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
+            #heybox1.auto_clean_follering_list()
+
             if env_dist.get('MODE')=='DEBUG':
                 #调试模式
                 if i == len(accountlist):
@@ -77,7 +79,7 @@ if __name__ == '__main__':
                     pass
                 
                 continue
-
+            
             #正常逻辑
             heybox1.auto()#自动完成每日任务，自动动态点赞
             heybox1.auto_clean_follering_list(400)#整理关注列表，清理单向关注
