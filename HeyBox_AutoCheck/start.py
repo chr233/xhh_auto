@@ -50,7 +50,7 @@ if __name__ == '__main__':
         i = 0
         datalist = []
 
-        idlist=[]
+        idlist = []
         for item in accountlist:
             try:
                 idlist.append(item['heybox_id'])
@@ -69,12 +69,11 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
-
-            #a=heybox1.get_follow_post(100)
+            #a=heybox1.get_follow_post(100,False)
             #print(a)
             #print(len(a))
-
-            if env_dist.get('MODE')=='DEBUG':
+            
+            if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
                 if i == len(accountlist):
                     #heybox1.follow_user()
