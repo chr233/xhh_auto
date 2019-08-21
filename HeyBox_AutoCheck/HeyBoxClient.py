@@ -290,7 +290,7 @@ class Heybox():
     #拉取首页文章列表(value为要拉取的数量)，返回[(linkid,newsid),……]
     def get_news_list(self,value=30):
         newslist = []
-        i=0
+        i = 0
         while True:
             templist = self._get_news_list(i * 30)
             if(templist):
@@ -299,8 +299,8 @@ class Heybox():
                 i+=1
             else:
                 self.logger.error('拉取文章列表出错')
-                return(False)
-            if len(newslist)>=value or i > 30:#防止请求过多被屏蔽
+                break
+            if len(newslist) >= value or i > 30:#防止请求过多被屏蔽
                 break
         newslist = newslist[:value]
         return(newslist)
@@ -355,8 +355,8 @@ class Heybox():
                 i+=1
             else:
                 self.logger.error('拉取关注页列表出错')
-                return(False)
-            if len(likelist)>=value or i > 30:#防止请求过多被屏蔽
+                break
+            if len(likelist) >= value or i > 30:#防止请求过多被屏蔽
                 break
         likelist = likelist[:value]
         return(likelist)
@@ -492,8 +492,8 @@ class Heybox():
                 i+=1
             else:
                 self.logger.error('拉取ROLL房列表出错')
-                return(False)
-            if len(roomlist)>=value or i > 30:
+                break
+            if len(roomlist) >= value or i > 30:
                 break
         roomlist = roomlist[:value]
         return(roomlist)
@@ -546,11 +546,9 @@ class Heybox():
             return(False)    
         pass
 
-
-    #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
+    #拉取推荐关注列表(value,要拉取的数量),返回[(id,关系)……] 关系:0:没关系,1我->对方,2我<-对方,3我<->对方
     def get_recommend_follow_list(self,value=30):
         recfollowlist = []
-        max = (value // 30) + 1 #多拉取1次，防止拉取的数量不够
         i = 0
         while True:
             templist = self._get_recommend_follow_list(i * 30)
@@ -560,8 +558,8 @@ class Heybox():
                 i+=1
             else:
                 self.logger.error('拉取推荐关注列表出错')
-                return(False)
-            if len(recfollowlist)>=value or i > 30:
+                break
+            if len(recfollowlist) >= value or i > 2:
                 break
         recfollowlist = recfollowlist[:value]
         return(recfollowlist)
@@ -601,9 +599,29 @@ class Heybox():
             return(False)  
         pass
 
+    #拉取粉丝列表(value要拉取的数量),(linkid,newsid,[index]),返回[(id,关系)……]
+    #关系:1我->对方,2我<-对方,3我<->对方
+    def get_follower_list(self,value=30):
+        followerlist = []
+        i = 0
+        while True:
+            templist = self._get_follower_list(i * 30)
+            if(templist):
+                self.logger.info('拉取第[%s]批粉丝列表' % str(i + 1))
+                followerlist.extend(templist)
+                i+=1
+            else:
+                self.logger.error('拉取粉丝列表出错')
+                break
+            if len(followerlist) >= value or i > 2:
+                break
+        followerlist = followerlist[:value]
+        return(followerlist)
 
-    #拉取粉丝列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
-    def get_follower_list(self,offset=0):
+    #旧api，固定返回30个结果
+    #拉取粉丝列表(offset)(linkid,newsid,[index]),返回[(id,关系)……]
+    #关系:1我->对方,2我<-对方,3我<->对方
+    def _get_follower_list(self,offset=0):
         url = _FOLLOWER_LIST_
         self.__flush_params()
         params = {
@@ -643,8 +661,28 @@ class Heybox():
             return(False)    
         pass
 
+    #拉取粉丝列表(value要拉取的数量),(linkid,newsid,[index]),返回[(id,关系)……]
+    #关系:1我->对方,2我<-对方,3我<->对方
+    def get_following_list(self,value=30):
+        followinglist = []
+        i = 0
+        while True:
+            templist = self._get_following_list(i * 30)
+            if(templist):
+                self.logger.info('拉取第[%s]批粉丝列表' % str(i + 1))
+                followinglist.extend(templist)
+                i+=1
+            else:
+                self.logger.error('拉取粉丝列表出错')
+                break
+            if len(followinglist) >= value or i > 2:
+                break
+        followinglist = followinglist[:value]
+        return(followinglist)
+
+    #旧api，固定返回30个结果
     #拉取关注列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
-    def get_following_list(self,offset=0):
+    def _get_following_list(self,offset=0):
         url = _FOLLOWING_LIST_
         self.__flush_params()
         params = {

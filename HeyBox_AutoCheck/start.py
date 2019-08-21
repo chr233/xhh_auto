@@ -69,9 +69,9 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
-            #a=heybox1.get_follow_post(100,False)
-            #print(a)
-            #print(len(a))
+            a=heybox1.get_active_roll_room(40)
+            print(a)
+            print(len(a))
             
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
