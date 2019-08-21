@@ -290,10 +290,9 @@ class Heybox():
     #拉取首页文章列表(value为要拉取的数量)，返回[(linkid,newsid),……]
     def get_news_list(self,value=30):
         newslist = []
-        max = (value // 30) + 1
-        i = 0
+        i=0
         while True:
-            templist = self._get_news_list(i*30)
+            templist = self._get_news_list(i * 30)
             if(templist):
                 self.logger.info('拉取第[%s]批文章' % str(i + 1))
                 newslist.extend(templist)
@@ -301,7 +300,7 @@ class Heybox():
             else:
                 self.logger.error('拉取文章列表出错')
                 return(False)
-            if i == max:
+            if len(newslist)>=value or i > 30:#防止请求过多被屏蔽
                 break
         newslist = newslist[:value]
         return(newslist)
@@ -343,13 +342,13 @@ class Heybox():
         self.logger.info('拉取了[%d]篇文章' % len(idlist))
         return(idlist)
 
-    #拉取动态列表(value为要拉取的数量)，返回[(linkid,type,已点赞?),……]
-    def get_follow_post(self,value=30):
+    #拉取动态列表(value为要拉取的数量,ignoreliked是否忽略已点赞动态)，返回[(linkid,type,已点赞?),……]
+    def get_follow_post(self,value=30,ignoreliked=True):
         likelist = []
-        max = (value // 30) + 1
+        max = (value // 30) + 1 #多拉取1次，防止拉取的数量不够
         i = 0
         while True:
-            templist = self._get_follow_post(i*30)
+            templist = self._get_follow_post(i * 30,ignoreliked)
             if(templist):
                 self.logger.info('拉取第[%s]批动态' % str(i + 1))
                 likelist.extend(templist)
@@ -357,14 +356,14 @@ class Heybox():
             else:
                 self.logger.error('拉取关注页列表出错')
                 return(False)
-            if i == max:
+            if len(likelist)>=value or i > 30:#防止请求过多被屏蔽
                 break
         likelist = likelist[:value]
         return(likelist)
 
     #旧api，固定返回30个结果
-    #拉取动态列表(offset为偏移，30一个单位)，返回[(linkid,type,已点赞?),……]
-    def _get_follow_post(self,offset=0):
+    #拉取动态列表(offset为偏移，30一个单位,ignoreliked是否忽略已点赞动态)，返回[(linkid,type,已点赞?),……]
+    def _get_follow_post(self,offset=0,ignoreliked=True):
         url = _FOLLOW_POST_
         self.__flush_params()
         params = {
@@ -400,7 +399,8 @@ class Heybox():
                         type = 0
                 except KeyError:
                     continue
-                likelist.append((linkid,type,is_award_link))
+                if (ignoreliked == True and is_award_link == False) or ignoreliked == False :
+                    likelist.append((linkid,type,is_award_link))
 
             self.logger.info('拉取了[%d]条动态' % len(likelist))
             return(likelist)
@@ -480,7 +480,27 @@ class Heybox():
         pass
     
     #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
-    def get_active_roll_room(self,offset=0):
+    def get_active_roll_room(self,value=30):
+        roomlist = []
+        max = (value // 30) + 1 #多拉取1次，防止拉取的数量不够
+        i = 0
+        while True:
+            templist = self._get_active_roll_room(i * 30)
+            if(templist):
+                self.logger.info('拉取第[%s]批ROLL房列表' % str(i + 1))
+                roomlist.extend(templist)
+                i+=1
+            else:
+                self.logger.error('拉取ROLL房列表出错')
+                return(False)
+            if len(roomlist)>=value or i > 30:
+                break
+        roomlist = roomlist[:value]
+        return(roomlist)
+
+    #旧api，固定返回30个结果
+    #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
+    def _get_active_roll_room(self,offset=0):
         url = _GET_ACTIVE_ROLL_ROOM_
         self.__flush_params()
         params = {
@@ -526,8 +546,29 @@ class Heybox():
             return(False)    
         pass
 
+
+    #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
+    def get_recommend_follow_list(self,value=30):
+        recfollowlist = []
+        max = (value // 30) + 1 #多拉取1次，防止拉取的数量不够
+        i = 0
+        while True:
+            templist = self._get_recommend_follow_list(i * 30)
+            if(templist):
+                self.logger.info('拉取第[%s]批推荐关注列表' % str(i + 1))
+                recfollowlist.extend(templist)
+                i+=1
+            else:
+                self.logger.error('拉取推荐关注列表出错')
+                return(False)
+            if len(recfollowlist)>=value or i > 30:
+                break
+        recfollowlist = recfollowlist[:value]
+        return(recfollowlist)
+
+    #旧api，固定返回30个结果
     #拉取推荐关注列表(offset),返回[(id,关系)……] 关系:0:没关系,1我->对方,2我<-对方,3我<->对方
-    def get_recommend_follow_list(self,offset=0):
+    def _get_recommend_follow_list(self,offset=0):
         url = _RECOMMEND_FOLLOWING_
         self.__flush_params()
         params = {
