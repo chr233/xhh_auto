@@ -3,7 +3,6 @@ import HeyBoxClient
 import json
 import requests
 import os
-import test
 
 '''
 小黑盒自动脚本，暂未实现登陆过程，凭据需要自行抓包获取
@@ -39,6 +38,11 @@ def send_result(datalist,skey):
 
 
 if __name__ == '__main__':
+
+    heybox1=HeyBoxClient.Heybox('','','','qwq')
+    heybox1.check_script_version()
+
+    pass
     try:
         with open('config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
@@ -69,9 +73,7 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
-            a=heybox1.get_active_roll_room(40)
-            print(a)
-            print(len(a))
+            
             
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式

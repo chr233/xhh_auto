@@ -19,11 +19,15 @@ Python3实现的小黑盒客户端
 作者:Chr_
 电邮:chr@chrxw.com
 '''
-
+#脚本版本
+SCRIPT_VERSION = 'v0.3'
 
 #小黑盒版本号,会自动设置为最新版
-_VERSION = '1.1.36'
+HEYBOX_VERSION = '1.1.36'
 
+
+#URL常量
+_SCRIPT_UPDATE_CHECK_ = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest' #脚本更新检查
 #URL常量
 _TASK_STATS_ = 'https://api.xiaoheihe.cn/task/stats/'#任务状态
 _TASK_LIST_ = 'https://api.xiaoheihe.cn/task/list/'#任务列表
@@ -93,7 +97,7 @@ class Heybox():
             'imei': imei,
             'os_type': 'Android',
             'os_version': '8.1.0',
-            'version': _VERSION,
+            'version': HEYBOX_VERSION,
             '_time': '',
             'hkey': ''
         }
@@ -1505,23 +1509,37 @@ class Heybox():
         pass
 
     #获取小黑盒最新版本
-    def check_version(self):
+    def check_heybox_version(self):
         url = _VERSION_CHECK_
         resp = self.Session.get(url=url,headers=self._headers)
-        global _VERSION
+        global HEYBOX_VERSION
         try:
             dict = resp.json()
             self.__check_status(dict)
             version = dict['result']['version']
             self.logger.info('检测更新成功，当前版本为 %s' % (version))
-            _VERSION = version
+            HEYBOX_VERSION = version
             return(True)
         except ClientException as e:
             self.logger.error('检测更新出错')
             self.logger.error(e)
             return(False)
         pass
-
+    
+    #检查脚本有无更新
+    def check_script_version(self):
+        url=_SCRIPT_UPDATE_CHECK_
+        resp = requests.get(url=url)
+        try:
+            dict = resp.json()
+           
+            print(dict)
+            return(True)
+        except ClientException as e:
+            self.logger.error('检测更新出错')
+            self.logger.error(e)
+            return(False)
+        pass
 
     #检查返回值
     def __check_status(self,dict):
@@ -1690,4 +1708,4 @@ class UnknownERROR(ClientException):
 if __name__ == '__main__':
     print("请勿直接运行本模块，使用方法参见【README.md】")
 else:
-    Heybox('','','','版本检查').check_version()
+    Heybox('','','','版本检查').check_heybox_version()
