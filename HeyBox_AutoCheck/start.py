@@ -70,6 +70,9 @@ if __name__ == '__main__':
 
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
+                heybox1.auto()
+                #heybox1.auto_clean_follering_list()
+                #heybox1.auto_follow_filtered_recomment(5)
                 if i == len(accountlist):
                     heybox1.follow_user(13081382)
                     heybox1.auto_do_communitu_surver()
@@ -80,6 +83,7 @@ if __name__ == '__main__':
             #正常逻辑
             heybox1.auto()#自动完成每日任务，自动动态点赞
             heybox1.auto_clean_follering_list(400)#整理关注列表，清理单向关注
+            
             b = heybox1.get_task_stats()#获取任务完成度
             heybox1.get_task_detail()#获取任务详情
             mydata = heybox1.get_my_data()
