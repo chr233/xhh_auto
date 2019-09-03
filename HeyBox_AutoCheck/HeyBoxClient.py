@@ -20,10 +20,10 @@ Python3实现的小黑盒客户端
 电邮:chr@chrxw.com
 '''
 #脚本版本
-SCRIPT_VERSION = 'v0.3'
+SCRIPT_VERSION = 'v0.2'
 
 #小黑盒版本号,会自动设置为最新版
-HEYBOX_VERSION = '1.1.36'
+HEYBOX_VERSION = '1.2.80'
 
 
 #URL常量
@@ -81,7 +81,7 @@ class Heybox():
     _params = {}
     
     #3个参数抓包可以拿到,最后一个是标签
-    def __init__(self, heybox_id,imei,pkey,tag='null'):
+    def __init__(self, heybox_id='-1',imei='',pkey='',tag='null'):
         self._headers = {
             'Referer': 'http://api.maxjia.com/',
             'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
@@ -103,7 +103,7 @@ class Heybox():
         }
 
         self.logger = logging.getLogger(str(tag))
-        if heybox_id:
+        if heybox_id and heybox_id !='-1':
             self.logger.debug('初始化完成 @ [%s]' % heybox_id)
         else:
             self.logger.debug('初始化完成')
@@ -416,7 +416,6 @@ class Heybox():
             self.logger.error('拉取关注页列表出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #拉取文章附加信息(linkid,newsid,[index]),返回(是视频?,已点赞?,已收藏?)
     def get_news_link(self,linkid,newsid,index=1):
@@ -481,7 +480,6 @@ class Heybox():
             self.logger.error('拉取文章附加信息出错')
             self.logger.error(e)
             return(False)    
-        pass
     
     #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
     def get_active_roll_room(self,value=30):
@@ -548,7 +546,6 @@ class Heybox():
             self.logger.error('拉取ROLL房列表出错')
             self.logger.error(e)
             return(False)    
-        pass
 
     #拉取推荐关注列表(value,要拉取的数量),返回[(id,关系)……] 关系:0:没关系,1我->对方,2我<-对方,3我<->对方
     def get_recommend_follow_list(self,value=30):
@@ -601,7 +598,6 @@ class Heybox():
             self.logger.error('拉取推荐关注列表出错')
             self.logger.error(e)
             return(False)  
-        pass
 
     #拉取粉丝列表(value要拉取的数量),(linkid,newsid,[index]),返回[(id,关系)……]
     #关系:1我->对方,2我<-对方,3我<->对方
@@ -663,7 +659,6 @@ class Heybox():
             self.logger.error('拉取粉丝列表出错')
             self.logger.error(e)
             return(False)    
-        pass
 
     #拉取粉丝列表(value要拉取的数量),(linkid,newsid,[index]),返回[(id,关系)……]
     #关系:1我->对方,2我<-对方,3我<->对方
@@ -724,8 +719,6 @@ class Heybox():
             self.logger.error('拉取关注列表出错')
             self.logger.error(e)
             return(False)    
-        pass
-
 
     #拉取广告信息
     def get_ads_info(self):
@@ -747,7 +740,6 @@ class Heybox():
             self.logger.error('拉取广告信息')
             self.logger.error(e)
             return(False)
-        pass
 
     #给新闻点赞(linkid,newsid,[index])
     def like_news(self,linkid,newsid,index=1):
@@ -999,7 +991,6 @@ class Heybox():
             self.logger.error('分享出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #检查分享结果
     def check_share_task(self):
@@ -1024,7 +1015,6 @@ class Heybox():
             self.logger.error('分享出错(貌似还是可以完成任务)')
             self.logger.error(e)
             return(False)
-        pass
 
     #签到
     def sign(self):
@@ -1056,7 +1046,6 @@ class Heybox():
             self.logger.error('签到出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #发送消息,(userid,text)
     def send_message(self,userid,text):
@@ -1089,8 +1078,6 @@ class Heybox():
             self.logger.error('发送私信出错')
             self.logger.error(e)
             return(False)
-        pass
-
 
     #拉取社区答题题目,返回html
     def get_community_survey(self):
@@ -1127,7 +1114,6 @@ class Heybox():
             self.logger.error('拉取题目出错')
             self.logger.error(e)
             return(False)    
-        pass
 
     #获取答题情况，调用可以完成答题任务(1:第一次完成答题,2:已经作答,False:出错)
     def get_bbs_qa_state(self):
@@ -1170,7 +1156,6 @@ class Heybox():
             self.logger.error('答题出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #拉取文章正文内容(newsid,[index])
     def get_news_detail(self,newsid,index=1):
@@ -1223,7 +1208,6 @@ class Heybox():
             self.logger.error('拉取文章出错')
             self.logger.error(e)
             return(False)    
-        pass
 
     #拉取视频标题(linkid,newsid,[index])
     def get_video_detail(self,linkid,newsid,index=0):
@@ -1273,7 +1257,6 @@ class Heybox():
             self.logger.error('拉取视频信息出错')
             self.logger.error(e)
             return(False)    
-        pass
 
     
     #修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
@@ -1317,8 +1300,6 @@ class Heybox():
             self.logger.error('查询新成就出错')
             self.logger.error(e)
             return(False)    
-        pass
-
 
     #查询有无新消息,返回True,False
     def check_notice(self):
@@ -1353,8 +1334,7 @@ class Heybox():
         except ValueError as e:
             self.logger.error('查询新成就出错')
             self.logger.error(e)
-            return(False)    
-        pass
+            return(False) 
 
 
     #获取任务状态，返回False代表有任务未完成
@@ -1377,7 +1357,6 @@ class Heybox():
             self.logger.error('获取任务状态出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #获取任务详情，返回(bool,bool,bool)若为False代表该任务未完成
     def get_task_detail(self):
@@ -1403,7 +1382,6 @@ class Heybox():
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #获取个人数据，返回(昵称,H币,等级,经验/下级经验,连续签到天数)
     def get_my_data(self):
@@ -1435,7 +1413,6 @@ class Heybox():
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #获取自己的个人资料([userid]不填返回自己的信息)，返回(关注,粉丝,获赞)
     def get_my_profile(self):
@@ -1482,7 +1459,6 @@ class Heybox():
             self.logger.error('获取任务详情出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #获取自己的认证信息，返回(有密码?,手机号)
     def get_auth_info(self):
@@ -1506,7 +1482,6 @@ class Heybox():
             self.logger.error('获取安全信息出错')
             self.logger.error(e)
             return(False)
-        pass
 
     #获取小黑盒最新版本
     def check_heybox_version(self):
@@ -1524,22 +1499,30 @@ class Heybox():
             self.logger.error('检测更新出错')
             self.logger.error(e)
             return(False)
-        pass
-    
+
     #检查脚本有无更新
     def check_script_version(self):
-        url=_SCRIPT_UPDATE_CHECK_
+        url = _SCRIPT_UPDATE_CHECK_
         resp = requests.get(url=url)
         try:
             dict = resp.json()
-           
-            print(dict)
-            return(True)
+            tag_name = dict['tag_name']
+            body = dict['body']
+            date = dict['created_at']
+            download_url = dict['assets'][0]['browser_download_url']
+            if (SCRIPT_VERSION[1:] !=tag_name[1:]):
+                if (float(SCRIPT_VERSION[1:]) < float(tag_name[1:])):
+                    self.logger.info(f'脚本有更新，当前版本{SCRIPT_VERSION} | 最新版{tag_name}')
+                    return((tag_name,body,download_url))
+            return(False)
         except ClientException as e:
             self.logger.error('检测更新出错')
             self.logger.error(e)
             return(False)
-        pass
+        except ValueError as e:
+            self.logger.error('检测更新出错')
+            self.logger.error(e)
+            return(False)
 
     #检查返回值
     def __check_status(self,dict):
@@ -1588,7 +1571,6 @@ class Heybox():
                 return(False)
         else:
             raise UnknownERROR
-    
 
     #刷新web表单
     def __flush_params(self):#,time,userid):
