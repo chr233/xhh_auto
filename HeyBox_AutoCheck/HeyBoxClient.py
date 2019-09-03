@@ -76,6 +76,7 @@ class Heybox():
     Session = requests.session()
     Session.headers = {}
     Session.headers = {}
+    heybox_id = -1
     _headers = {}
     _cookies = {}
     _params = {}
@@ -101,9 +102,9 @@ class Heybox():
             '_time': '',
             'hkey': ''
         }
-
+        self.heybox_id = heybox_id
         self.logger = logging.getLogger(str(tag))
-        if heybox_id and heybox_id !='-1':
+        if heybox_id and heybox_id != '-1':
             self.logger.debug('初始化完成 @ [%s]' % heybox_id)
         else:
             self.logger.debug('初始化完成')
@@ -248,7 +249,7 @@ class Heybox():
         self.simu_view_like_newses(idlist,10)
 
         self.auto_follow_followers(30)
-        self.auto_like_follows(100)
+        self.auto_like_follows(30)
 
 
     #[自动]批量模拟浏览文章
@@ -263,7 +264,7 @@ class Heybox():
         return(True)
     #[自动]批量点赞动态
     def auto_like_follows(self,limit=10):
-        likelist = self.get_follow_post(30)
+        likelist = self.get_follow_post(limit)
         self.simu_like_follows(likelist,limit)
         return(True)
     #[自动]关注新粉丝
@@ -272,14 +273,14 @@ class Heybox():
         self.simu_follow_followers(followerlist,limit)
 
     #[自动]取关单向关注(取关粉丝-关注>value的用户)
-    def auto_clean_follering_list(self,value=50,limit=30):
+    def auto_clean_follering_list(self,value=20):
         followinglist = self.get_following_list()
         self.followinglist_filter(followinglist,value)
 
     #[自动]关注推荐关注(过滤后)
     def auto_follow_filtered_recomment(self,limit=15):
         reclist = self.get_recommend_follow_list()
-        reclist = self.followlist_filter(reclist,200)
+        reclist = self.followlist_filter(reclist,100)
         self.simu_follow_followers(reclist,limit)
     #[自动]关注推荐关注(未过滤)
     def auto_follow_raw_recomment(self,limit=30):
@@ -349,18 +350,19 @@ class Heybox():
     #拉取动态列表(value为要拉取的数量,ignoreliked是否忽略已点赞动态)，返回[(linkid,type,已点赞?),……]
     def get_follow_post(self,value=30,ignoreliked=True):
         likelist = []
-        max = (value // 30) + 1 #多拉取1次，防止拉取的数量不够
+        max = (value // 30) + 5 #拉取的最大批数
         i = 0
         while True:
             templist = self._get_follow_post(i * 30,ignoreliked)
             if(templist):
                 self.logger.info('拉取第[%s]批动态' % str(i + 1))
                 likelist.extend(templist)
+                list(set(likelist))
                 i+=1
             else:
                 self.logger.error('拉取关注页列表出错')
                 break
-            if len(likelist) >= value or i > 30:#防止请求过多被屏蔽
+            if len(likelist) >= value or i > max:#防止请求过多被屏蔽
                 break
         likelist = likelist[:value]
         return(likelist)
@@ -386,7 +388,10 @@ class Heybox():
                 try:
                     linkid = item['link']['linkid']
                     type = item['content_type']
+                    is_web = item['link']['is_web']
+                    is_favour = item['link']['is_favour']
                     is_award_link = bool(item['link']['is_award_link'])
+                    userid = item['user']['userid']
                     if type == 'post_link':#发帖
                         type = 1
                     elif type == 'follow_game':#关注游戏
@@ -403,7 +408,9 @@ class Heybox():
                         type = 0
                 except KeyError:
                     continue
-                if (ignoreliked == True and is_award_link == False) or ignoreliked == False :
+                if type == 5 and userid == self.heybox_id:#过滤自己的评测
+                    continue
+                if is_award_link == False or ignoreliked == False :
                     likelist.append((linkid,type,is_award_link))
 
             self.logger.info('拉取了[%d]条动态' % len(likelist))
@@ -816,7 +823,7 @@ class Heybox():
             self.__check_status(dict)
         except IGNORE:
             self.logger.info('已经点过赞了')
-            return(True)
+            return(False)
         except CantSupportMyselfERROR:
             self.logger.error('无法给自己的评测点赞')
             return(False)
@@ -1510,7 +1517,7 @@ class Heybox():
             body = dict['body']
             date = dict['created_at']
             download_url = dict['assets'][0]['browser_download_url']
-            if (SCRIPT_VERSION[1:] !=tag_name[1:]):
+            if (SCRIPT_VERSION[1:] != tag_name[1:]):
                 if (float(SCRIPT_VERSION[1:]) < float(tag_name[1:])):
                     self.logger.info(f'脚本有更新，当前版本{SCRIPT_VERSION} | 最新版{tag_name}')
                     return((tag_name,body,download_url))
