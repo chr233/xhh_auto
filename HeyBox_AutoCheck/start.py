@@ -38,11 +38,6 @@ def send_result(datalist,skey):
 
 
 if __name__ == '__main__':
-
-    heybox1=HeyBoxClient.Heybox('','','','qwq')
-    heybox1.check_script_version()
-
-    pass
     try:
         with open('config.json', 'r', encoding='utf-8') as f:
             dict = json.loads(f.read())
@@ -73,13 +68,11 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
 
-            
-            
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
                 if i == len(accountlist):
-                    #heybox1.follow_user()
-                    #heybox1.auto_do_communitu_surver()
+                    heybox1.follow_user(13081382)
+                    heybox1.auto_do_communitu_surver()
                     pass
                 
                 continue
