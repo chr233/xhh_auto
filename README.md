@@ -5,8 +5,10 @@
 1. 从[releases](https://github.com/chr233/xhh_auto/releases)下载最新的脚本
 2. 修改config_sample.json，填入自己的账号凭据,[方糖skey获取](http://sc.ftqq.com)
 3. 将文件另存为config.json
-4. python3 ./start.py
- * Linux用户记得先赋予脚本执行权限
+4. 切换到脚本所在目录
+5. `pip install -r requirements.txt`
+6. `python3 ./start.py`
+ * Linux用户记得先赋予脚本执行权限 `chmod 755 *.py`
 
 
 PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
@@ -44,4 +46,4 @@ PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
 2. 支持直接登陆小黑盒账号
 3. 实现小黑盒客户端的大部分功能
 4. ~~自动参加ROLL房~~
-5. 受steam影响，小黑盒貌似开始转卖点卡了。对2和4的支持计划延后
+ * 受steam影响，小黑盒貌似开始转卖点卡了。对2和4的支持计划延后
