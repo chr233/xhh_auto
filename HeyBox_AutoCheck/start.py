@@ -70,10 +70,11 @@ if __name__ == '__main__':
 
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
-                heybox1.auto()
+                #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
                 #heybox1.auto_follow_filtered_recomment(5)
                 if i == len(accountlist):
+                    heybox1.auto_follow_followers(30)
                     heybox1.follow_user(13081382)
                     heybox1.auto_do_communitu_surver()
                     pass

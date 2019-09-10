@@ -37,7 +37,7 @@ _NEWS_LIST_ = 'https://api.xiaoheihe.cn/maxnews/app/list'#新闻列表
 _LINK_TREE_ = 'https://api.xiaoheihe.cn/bbs/app/link/tree'#文章附加信息
 _NEWS_DETAIL_ = 'https://api.xiaoheihe.cn/maxnews/app/detail/'#文章页
 _VIDEO_VIEW_ = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'#视频页框架
-_GAME_INFO_ = 'https://api.xiaoheihe.cn/game/get_game_infos/'#游戏详情
+_GET_GAME_INFO_ = 'https://api.xiaoheihe.cn/game/get_game_infos/'#游戏详情
 _AWARD_LINK_ = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
 _COMMENT_UP_ = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
 _TASK_SIGN_ = 'https://api.xiaoheihe.cn/task/sign/'#签到
@@ -1073,6 +1073,38 @@ class Heybox():
             'img':''
         }
         resp = self.Session.post(url=url,headers=headers,cookies=self._cookies,params=params,data=data)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+            self.logger.info('发送私信成功')
+        except ValueError as e:
+            self.logger.error('发送私信出错')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('发送私信出错')
+            self.logger.error(e)
+            return(False)
+
+    # 读取游戏信息([appid,……])
+    def get_game_info(self,appids):
+        url = _GET_GAME_INFO_
+        self.__flush_params()
+        params = {
+            'userid':userid,
+            **self._params
+        }
+
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            **self._headers
+        }
+
+        data = {
+            'text':text,
+            'img':''
+        }
+        resp = self.Session.get(url=url,headers=headers,cookies=self._cookies,params=params,data=data)
         try:
             dict = resp.json()
             self.__check_status(dict)
