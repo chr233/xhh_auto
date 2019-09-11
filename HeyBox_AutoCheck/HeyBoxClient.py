@@ -25,53 +25,53 @@ SCRIPT_VERSION = 'v0.2'
 #小黑盒版本号,会自动设置为最新版
 HEYBOX_VERSION = '1.2.80'
 
-
-#URL常量
-_SCRIPT_UPDATE_CHECK_ = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest' #脚本更新检查
-#URL常量
-_TASK_STATS_ = 'https://api.xiaoheihe.cn/task/stats/'#任务状态
-_TASK_LIST_ = 'https://api.xiaoheihe.cn/task/list/'#任务列表
-_FOLLOW_ALERT_ = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注更新提醒
-_FOLLOW_POST_ = 'https://api.xiaoheihe.cn/bbs/app/link/followed/post'#关注列表
-_NEWS_LIST_ = 'https://api.xiaoheihe.cn/maxnews/app/list'#新闻列表
-_LINK_TREE_ = 'https://api.xiaoheihe.cn/bbs/app/link/tree'#文章附加信息
-_NEWS_DETAIL_ = 'https://api.xiaoheihe.cn/maxnews/app/detail/'#文章页
-_VIDEO_VIEW_ = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'#视频页框架
-_GET_GAME_INFO_ = 'https://api.xiaoheihe.cn/game/get_game_infos/'#游戏详情
-_AWARD_LINK_ = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
-_COMMENT_UP_ = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
-_TASK_SIGN_ = 'https://api.xiaoheihe.cn/task/sign/'#签到
-_SHARE_CLICK_ = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
-_SHARE_QQ_ = 'https://api.xiaoheihe.cn/task/shared/'#QQ分享
-_VERSION_CHECK_ = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'#检查更新
-_USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人资料
-_FOLLOWER_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#粉丝列表
-_FOLLOWING_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'#关注列表
-_FOLLOW_USER_ = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
-_FOLLOW_USER_CANCEL_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
-_GET_AUTH_INFO_ = 'https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
-_GET_ACTIVE_ROLL_ROOM_ = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'#拉取ROLL房列表
-_ACHIEVE_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'#检查有没有解锁新成就
-_BBS_QA_STATE_ = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'#社区答题提交
-_COMMUNITY_SURVEY_ = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'#社区答题
-_UPDATE_PROFILE_ = 'https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
-_NOTIFY_ALERT_ = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
-_FOLLOW_ALERT_ = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
-_SEND_MESSAGE_ = 'https://api.xiaoheihe.cn/chat/send_message/'#发送私信
-_RECOMMEND_FOLLOWING_ = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/following'#拉取推荐关注列表
-_GET_ADS_INFO_ = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
+#调试模式开启
 env_dist = os.environ
-
 if env_dist.get('MODE') == 'DEBUG':
     LEVEL = logging.DEBUG
 else:
     LEVEL = logging.INFO
-
 #LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
-
 logging.basicConfig(level=LEVEL,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
+
+
+
+#URL常量
+class URLS():
+    SCRIPT_UPDATE_CHECK = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest' #脚本更新检查
+    TASK_STATS = 'https://api.xiaoheihe.cn/task/stats/'#任务状态
+    TASK_LIST = 'https://api.xiaoheihe.cn/task/list/'#任务列表
+    FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注更新提醒
+    FOLLOW_POST = 'https://api.xiaoheihe.cn/bbs/app/link/followed/post'#关注列表
+    NEWS_LIST = 'https://api.xiaoheihe.cn/maxnews/app/list'#新闻列表
+    LINK_TREE = 'https://api.xiaoheihe.cn/bbs/app/link/tree'#文章附加信息
+    NEWS_DETAIL = 'https://api.xiaoheihe.cn/maxnews/app/detail/'#文章页
+    VIDEO_VIEW = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'#视频页框架
+    GET_GAME_INFO = 'https://api.xiaoheihe.cn/game/get_game_infos/'#游戏详情
+    AWARD_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
+    COMMENT_UP = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
+    TASK_SIGN = 'https://api.xiaoheihe.cn/task/sign/'#签到
+    SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
+    SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'#检查分享
+    VERSION_CHECK = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'#检查更新
+    USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人资料
+    FOLLOWER_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#粉丝列表
+    FOLLOWING_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'#关注列表
+    FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
+    FOLLOW_USER_CANCEL = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
+    GET_AUTH_INFO = 'https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
+    GET_ACTIVE_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'#拉取ROLL房列表
+    ACHIEVE_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'#检查有没有解锁新成就
+    BBS_QA_STATE = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'#社区答题提交
+    COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'#社区答题
+    UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
+    NOTIFY_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
+    FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
+    SEND_MESSAGE = 'https://api.xiaoheihe.cn/chat/send_message/'#发送私信
+    RECOMMEND_FOLLOWING = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/following'#拉取推荐关注列表
+    GET_ADS_INFO = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
 class Heybox():
     Session = requests.session()
     Session.headers = {}
@@ -110,6 +110,60 @@ class Heybox():
             self.logger.debug('初始化完成')
 
         return super().__init__()
+    
+    #[自动]
+    def auto(self):#,viewcount,likecount,sharecount,followcount):
+        self.get_ads_info()
+        self.check_achieve_alert()
+        self.sign()
+        idlist = self.get_news_list(30)
+        self.simu_view_news(idlist[0][0],idlist[0][1],0)
+        self.share(idlist[0][1])
+
+        self.simu_view_like_newses(idlist,10)
+
+        self.auto_follow_followers(30)
+        self.auto_like_follows(30)
+
+
+    #[自动]批量模拟浏览文章
+    def auto_simu_view_newses(self,limit=10):
+        idlist = self.get_news_list(30)
+        self.simu_view_newses(idlist,limit)
+        return(True)
+    #[自动]批量模拟浏览并点赞文章
+    def auto_simu_view_like_newses(self,limit=10):
+        idlist = self.get_news_list(30)
+        self.simu_view_like_newses(idlist,limit)
+        return(True)
+    #[自动]批量点赞动态
+    def auto_like_follows(self,limit=10):
+        likelist = self.get_follow_post(limit)
+        self.simu_like_follows(likelist,limit)
+        return(True)
+    #[自动]关注新粉丝
+    def auto_follow_followers(self,limit=30):
+        followerlist = self.get_follower_list()
+        self.simu_follow_followers(followerlist,limit)
+
+    #[自动]取关单向关注(取关粉丝-关注>value的用户)
+    def auto_clean_follering_list(self,value=20):
+        followinglist = self.get_following_list()
+        self.followinglist_filter(followinglist,value)
+
+    #[自动]关注推荐关注(过滤后)
+    def auto_follow_filtered_recomment(self,limit=15):
+        reclist = self.get_recommend_follow_list()
+        reclist = self.followlist_filter(reclist,100)
+        self.simu_follow_followers(reclist,limit)
+    #[自动]关注推荐关注(未过滤)
+    def auto_follow_raw_recomment(self,limit=30):
+        reclist = self.get_recommend_follow_list()
+        self.simu_follow_followers(reclist,limit)
+
+
+
+
 
     #模拟浏览文章(linkid,newsid,[index]),返回(是视频?,已点赞?,已收藏?)
     def simu_view_news(self,linkid,newsid,index=1):
@@ -237,60 +291,6 @@ class Heybox():
         self.logger.info('执行完毕')
 
 
-    #[自动]
-    def auto(self):#,viewcount,likecount,sharecount,followcount):
-        self.get_ads_info()
-        self.check_achieve_alert()
-        self.sign()
-        idlist = self.get_news_list(30)
-        self.simu_view_news(idlist[0][0],idlist[0][1],0)
-        self.share(idlist[0][1])
-
-        self.simu_view_like_newses(idlist,10)
-
-        self.auto_follow_followers(30)
-        self.auto_like_follows(30)
-
-
-    #[自动]批量模拟浏览文章
-    def auto_simu_view_newses(self,limit=10):
-        idlist = self.get_news_list(30)
-        self.simu_view_newses(idlist,limit)
-        return(True)
-    #[自动]批量模拟浏览并点赞文章
-    def auto_simu_view_like_newses(self,limit=10):
-        idlist = self.get_news_list(30)
-        self.simu_view_like_newses(idlist,limit)
-        return(True)
-    #[自动]批量点赞动态
-    def auto_like_follows(self,limit=10):
-        likelist = self.get_follow_post(limit)
-        self.simu_like_follows(likelist,limit)
-        return(True)
-    #[自动]关注新粉丝
-    def auto_follow_followers(self,limit=30):
-        followerlist = self.get_follower_list()
-        self.simu_follow_followers(followerlist,limit)
-
-    #[自动]取关单向关注(取关粉丝-关注>value的用户)
-    def auto_clean_follering_list(self,value=20):
-        followinglist = self.get_following_list()
-        self.followinglist_filter(followinglist,value)
-
-    #[自动]关注推荐关注(过滤后)
-    def auto_follow_filtered_recomment(self,limit=15):
-        reclist = self.get_recommend_follow_list()
-        reclist = self.followlist_filter(reclist,100)
-        self.simu_follow_followers(reclist,limit)
-    #[自动]关注推荐关注(未过滤)
-    def auto_follow_raw_recomment(self,limit=30):
-        reclist = self.get_recommend_follow_list()
-        self.simu_follow_followers(reclist,limit)
-
-    #自动 完成社区答题(不加入auto方法)
-    def auto_do_communitu_surver(self):
-         self.get_community_survey()
-         self.get_bbs_qa_state()
 
     #拉取首页文章列表(value为要拉取的数量)，返回[(linkid,newsid),……]
     def get_news_list(self,value=30):
@@ -939,89 +939,93 @@ class Heybox():
             except ValueError:
                 self.logger.error('过滤出错')
                 self.logger.error(e)
+
             except ClientException as e:
                 self.logger.error('过滤出错')
                 self.logger.error(e)
         self.logger.info('取关了[%d]个用户' % unfollowcount)
         return(True)
 
-    #分享
+    #分享新闻，(新闻id,[序号])
     def share(self,newsid,index=1):
+        #模拟点击分享按钮
+        def simu_share(self,newsid,index=1):
+            url = URLS.SHARE_CLICK
+            self.__flush_params()
+            referer = {
+                'from_tag':-1,
+                'newsid':newsid,
+                'rec_mark':'timeline',
+                'pos':index + 1,
+                'index':index,
+                'page_tab':1,
+                'from_recommend_list':9,
+                'h_src':'LTE=',
+                **self._params
+            }
+
+            if index == 0:
+                referer['al'] = 'set_top'
+
+            headers = {
+                'Host': 'api.xiaoheihe.cn',
+                'Connection': 'keep-alive',
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36',
+                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+                'X-Requested-With': 'com.max.xiaoheihe',   
+                'Referer':_NEWS_DETAIL_ + str(newsid) + '?' + urllib.parse.urlencode(query=referer)
+            }
+
+            cookies = { 
+                'user_pkey' : self._cookies['pkey'],
+                'user_heybox_id' : self._params['heybox_id']
+            }
+
+            resp = self.Session.get(url=url,headers=headers,cookies=cookies)
+            try:
+                dict = resp.json()
+                self.__check_status(dict)
+                self.logger.debug('模拟点击分享按钮')
+                return(True)
+            except ValueError as e:
+                self.logger.error('分享出错')
+                self.logger.error(e)
+                return(False)
+            except ClientException as e:
+                self.logger.error('分享出错')
+                self.logger.error(e)
+                return(False)
+
+        #检查分享结果
+        def check_share_task(self):
+            url = _SHARE_CHECK_
+            self.__flush_params()
+            params = {
+                'shared_type':'normal',
+                'share_plat':'shareQQFriend',
+                **self._params
+            }
+
+            resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
+            try:
+                dict = resp.json()
+                self.__check_status(dict)
+                self.logger.info('检查分享结果')
+            except ValueError as e:
+                self.logger.error('分享出错')
+                self.logger.error(e)
+                return(False)
+            except ClientException as e:
+                self.logger.error('分享出错(貌似还是可以完成任务)')
+                self.logger.error(e)
+                return(False)
+
         self.simu_share(newsid,index)
         self.check_share_task()
 
-    #模拟点击分享按钮
-    def simu_share(self,newsid,index=1):
-        url = _SHARE_CLICK_
-        self.__flush_params()
-        referer = {
-            'from_tag':-1,
-            'newsid':newsid,
-            'rec_mark':'timeline',
-            'pos':index + 1,
-            'index':index,
-            'page_tab':1,
-            'from_recommend_list':9,
-            'h_src':'LTE=',
-            **self._params
-        }
 
-        if index == 0:
-            referer['al'] = 'set_top'
-
-        headers = {
-            'Host': 'api.xiaoheihe.cn',
-            'Connection': 'keep-alive',
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36',
-            'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
-            'Accept-Encoding': 'gzip, deflate',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-            'X-Requested-With': 'com.max.xiaoheihe',   
-            'Referer':_NEWS_DETAIL_ + str(newsid) + '?' + urllib.parse.urlencode(query=referer)
-        }
-
-        cookies = { 
-            'user_pkey' : self._cookies['pkey'],
-            'user_heybox_id' : self._params['heybox_id']
-        }
-
-        resp = self.Session.get(url=url,headers=headers,cookies=cookies)
-        try:
-            dict = resp.json()
-            self.__check_status(dict)
-            self.logger.info('模拟点击分享按钮')
-        except ValueError as e:
-            self.logger.error('分享出错')
-            self.logger.error(e)
-            return(False)
-        except ClientException as e:
-            self.logger.error('分享出错')
-            self.logger.error(e)
-            return(False)
-
-    #检查分享结果
-    def check_share_task(self):
-        url = _SHARE_QQ_
-        self.__flush_params()
-        params = {
-            'shared_type':'normal',
-            'share_plat':'shareQQFriend',
-            **self._params
-        }
-
-        resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
-        try:
-            dict = resp.json()
-            self.__check_status(dict)
-            self.logger.info('检查分享结果')
-        except ValueError as e:
-            self.logger.error('分享出错')
-            self.logger.error(e)
-            return(False)
-        except ClientException as e:
-            self.logger.error('分享出错(貌似还是可以完成任务)')
-            self.logger.error(e)
-            return(False)
 
     #签到
     def sign(self):
@@ -1118,6 +1122,10 @@ class Heybox():
             self.logger.error(e)
             return(False)
 
+    #完成社区答题
+    def do_communitu_surver(self):
+         self.get_community_survey()
+         self.get_bbs_qa_state()
     #拉取社区答题题目,返回html
     def get_community_survey(self):
         url = _COMMUNITY_SURVEY_
@@ -1568,9 +1576,11 @@ class Heybox():
         if dict:
             if dict['status'] == 'ok':
                 return
-            if dict['status'] == 'ignore':
+            elif dict['status'] == 'ignore':
                 raise IGNORE
-            if dict['status'] == 'failed':
+            elif dict['status'] == 'relogin':
+                raise TokenERROR
+            elif dict['status'] == 'failed':
                 if dict['msg'] == '操作已经完成':
                     raise IGNORE
                 elif dict['msg'] == '不能进行重复的操作哦':
@@ -1594,8 +1604,6 @@ class Heybox():
                 self.logger.error('遇到未知错误')
                 self.logger.error(dict)
                 raise UnknownERROR
-            if dict['status'] == 'relogin':
-                raise TokenERROR
         else:
             self.logger.error('未知返回值')
             self.logger.error(dict)
@@ -1609,15 +1617,14 @@ class Heybox():
             if dict['state'] == 'waiting':
                 return(False)
         else:
-            raise UnknownERROR
+            raise UnknownError
 
     #刷新web表单
-    def __flush_params(self):#,time,userid):
+    def __flush_params(self):
         def gen_hkey(time:int):
             strhash = 'xiaoheihe/_time=' + str(time)
             md5 = hashlib.md5()
             md5.update(str(strhash).encode('utf-8'))
-            #md5.update(bytes(strhash,'utf-8'))
             hash = md5.hexdigest()
             hash = hash.replace('a','app')
             hash = hash.replace('0','app')
@@ -1625,108 +1632,91 @@ class Heybox():
             md5.update(hash.encode('utf-8'))
             hkey = md5.hexdigest()
             return(hkey)
-
         asctime = int(time.time())
         self._params['hkey'] = gen_hkey(asctime)    
         self._params['_time'] = asctime
 
-
-
-#异常定义==========================
 #异常基类
+#====================================
 class ClientException(Exception):
     def __init__(self,ErrorInfo):
-        super().__init__(self)
+        super().__init__()
         self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
-#=======
+    def __str__(self): 
+        return (self.errorinfo)
+    def __repr__(self):
+        return (self.errorinfo)   
+#====================================
+#账户相关
+class AccountException(ClientException):
+    def __init__(self,ErrorInfo):
+        super().__init__(ErrorInfo)
+#返回值相关
+class ResponseExcrption(ClientException):
+    def __init__(self,ErrorInfo):
+        super().__init__(ErrorInfo)
+#其他错误
+class OtherException(ClientException):
+    def __init__(self,ErrorInfo):
+        super().__init__(ErrorInfo)
+#====================================
 #凭据错误
-class TokenERROR(ClientException):
-    def __init__(self,ErrorInfo='凭据错误，请检查配置文件'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+class TokenError(AccountException):
+    def __init__(self):
+        super().__init__('凭据错误，请检查配置文件')
 #用户ID错误
-class UserIDERROR(ClientException):
-    def __init__(self,ErrorInfo='USERID有误'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
-#任务已完成
-class IGNORE(ClientException):
-    def __init__(self,ErrorInfo='操作已经完成'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+class UseridError(AccountException):
+    def __init__(self):
+        super().__init__('UserID不正确，请检查配置文件')
+#====================================
 #对象不存在/已删除
-class OBJnotExistERROR(ClientException):
-    def __init__(self,ErrorInfo='对象不存在或者已被删除'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+class OBJnotExistERROR(ResponseExcrption):
+    def __init__(self):
+        super().__init__('对象不存在或者已被删除')
 #无法给自己的评测点赞
-class CantSupportMyselfERROR(ClientException):
-    def __init__(self,ErrorInfo='无法给自己的评测点赞'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+class CantSupportMyself(ResponseExcrption):
+    def __init__(self):
+        super().__init__('无法给自己的评测点赞')
 #无法粉自己
-class CantFollowMyselfERROR(ClientException):
-    def __init__(self,ErrorInfo='无法粉自己哦'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+class CantFollowMyselfException(ResponseExcrption):
+    def __init__(self):
+        super().__init__('无法粉自己哦')
 #关注次数用完
-class NoMoreFollowERROR(ClientException):
-    def __init__(self,ErrorInfo='无法粉自己哦'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+class NoMoreFollowERROR(ResponseExcrption):
+    def __init__(self):
+        super().__init__('无法粉自己哦')
 #参数错误
 class ParamsERROR(ClientException):
     def __init__(self,ErrorInfo='参数错误'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+        super().__init__()
+
 #时间错误
 class TimeERROR(ClientException):
     def __init__(self,ErrorInfo='时间错误'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+        super().__init__()
+
 #赞赏次数已用完
 class NoMorelikeERROR(ClientException):
     def __init__(self,ErrorInfo='赞赏次数已用完'):
         super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+#====================================
+#任务已完成
+class IGNORE(ClientException):
+    def __init__(self):
+        super().__init__('操作已经完成')
 #函数未完成
 class DEFNotCompletedERROR(ClientException):
     def __init__(self,ErrorInfo='函数未完成'):
         super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+
 #未知错误
-class UnknownERROR(ClientException):
+class UnknownError(ClientException):
     def __init__(self,ErrorInfo='未知错误'):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    def __str__(self):
-        return self.errorinfo
+        super().__init__()
+
 
 if __name__ == '__main__':
     print("请勿直接运行本模块，使用方法参见【README.md】")
 else:
+    raise TokenERROR()
     Heybox('','','','版本检查').check_heybox_version()
