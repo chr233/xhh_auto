@@ -47,7 +47,9 @@ class Integer(base.SimpleAsn1Type):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     namedValues: :py:class:`~pyasn1.type.namedval.NamedValues`
         Object representing non-default symbolic aliases for numbers
@@ -293,7 +295,9 @@ class Boolean(Integer):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s).Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     namedValues: :py:class:`~pyasn1.type.namedval.NamedValues`
         Object representing non-default symbolic aliases for numbers
@@ -377,7 +381,9 @@ class BitString(base.SimpleAsn1Type):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     namedValues: :py:class:`~pyasn1.type.namedval.NamedValues`
         Object representing non-default symbolic aliases for numbers
@@ -747,7 +753,9 @@ class OctetString(base.SimpleAsn1Type):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     encoding: :py:class:`str`
         Unicode codec ID to encode/decode :class:`unicode` (Python 2) or
@@ -1130,7 +1138,9 @@ class ObjectIdentifier(base.SimpleAsn1Type):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     Raises
     ------
@@ -1268,7 +1278,9 @@ class Real(base.SimpleAsn1Type):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     Raises
     ------
@@ -1552,7 +1564,9 @@ class Enumerated(Integer):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     namedValues: :py:class:`~pyasn1.type.namedval.NamedValues`
         Object representing non-default symbolic aliases for numbers
@@ -1620,10 +1634,9 @@ class SequenceOfAndSetOfBase(base.ConstructedAsn1Type):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
-
-    sizeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing collection size constraint
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type can only occur on explicit
+        `.isInconsistent` call.
 
     Examples
     --------
@@ -1645,7 +1658,7 @@ class SequenceOfAndSetOfBase(base.ConstructedAsn1Type):
         # support positional params for backward compatibility
         if args:
             for key, value in zip(('componentType', 'tagSet',
-                                   'subtypeSpec', 'sizeSpec'), args):
+                                   'subtypeSpec'), args):
                 if key in kwargs:
                     raise error.PyAsn1Error('Conflicting positional and keyword params!')
                 kwargs['componentType'] = value
@@ -1921,28 +1934,14 @@ class SequenceOfAndSetOfBase(base.ConstructedAsn1Type):
                     componentType.isSameTypeWith or
                     componentType.isSuperTypeOf)
 
-            if not subtypeChecker(value, matchTags, matchConstraints):
+            if not subtypeChecker(value, verifyConstraints and matchTags,
+                                  verifyConstraints and matchConstraints):
                 # TODO: we should wrap componentType with UnnamedType to carry
                 # additional properties associated with componentType
                 if componentType.typeId != Any.typeId:
                     raise error.PyAsn1Error(
                         'Component value is tag-incompatible: %r vs '
                         '%r' % (value, componentType))
-
-            else:
-                if not componentType.isSuperTypeOf(
-                        value, matchTags, matchConstraints):
-                    raise error.PyAsn1Error(
-                        'Component value is tag-incompatible: '
-                        '%r vs %r' % (value, componentType))
-
-        if verifyConstraints and value.isValue:
-            try:
-                self.subtypeSpec(value, idx)
-
-            except error.PyAsn1Error:
-                exType, exValue, exTb = sys.exc_info()
-                raise exType('%s at %s' % (exValue, self.__class__.__name__))
 
         componentValues[idx] = value
 
@@ -2043,6 +2042,41 @@ class SequenceOfAndSetOfBase(base.ConstructedAsn1Type):
 
         return True
 
+    @property
+    def isInconsistent(self):
+        """Run necessary checks to ensure |ASN.1| object consistency.
+
+        Default action is to verify |ASN.1| object against constraints imposed
+        by `subtypeSpec`.
+
+        Raises
+        ------
+        :py:class:`~pyasn1.error.PyAsn1tError` on any inconsistencies found
+        """
+        if self.componentType is noValue or not self.subtypeSpec:
+            return False
+
+        if self._componentValues is noValue:
+            return True
+
+        mapping = {}
+
+        for idx, value in self._componentValues.items():
+            # Absent fields are not in the mapping
+            if value is noValue:
+                continue
+
+            mapping[idx] = value
+
+        try:
+            # Represent SequenceOf/SetOf as a bare dict to constraints chain
+            self.subtypeSpec(mapping)
+
+        except error.PyAsn1Error:
+            exc = sys.exc_info()[1]
+            return exc
+
+        return False
 
 class SequenceOf(SequenceOfAndSetOfBase):
     __doc__ = SequenceOfAndSetOfBase.__doc__
@@ -2062,10 +2096,6 @@ class SequenceOf(SequenceOfAndSetOfBase):
     #: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection` object
     #: imposing constraints on |ASN.1| type initialization values.
     subtypeSpec = constraint.ConstraintsIntersection()
-
-    #: Default :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-    #: object imposing size constraint on |ASN.1| objects
-    sizeSpec = constraint.ConstraintsIntersection()
 
     # Disambiguation ASN.1 types identification
     typeId = SequenceOfAndSetOfBase.getTypeId()
@@ -2090,10 +2120,6 @@ class SetOf(SequenceOfAndSetOfBase):
     #: imposing constraints on |ASN.1| type initialization values.
     subtypeSpec = constraint.ConstraintsIntersection()
 
-    #: Default :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-    #: object imposing size constraint on |ASN.1| objects
-    sizeSpec = constraint.ConstraintsIntersection()
-
     # Disambiguation ASN.1 types identification
     typeId = SequenceOfAndSetOfBase.getTypeId()
 
@@ -2113,10 +2139,9 @@ class SequenceAndSetBase(base.ConstructedAsn1Type):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
-
-    sizeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing collection size constraint
+        Object representing non-default ASN.1 subtype constraint(s).  Constraints
+        verification for |ASN.1| type can only occur on explicit
+        `.isInconsistent` call.
 
     Examples
     --------
@@ -2562,24 +2587,18 @@ class SequenceAndSetBase(base.ConstructedAsn1Type):
             else:
                 raise error.PyAsn1Error('%s undefined component type' % componentType.__class__.__name__)
 
-        elif (matchTags or matchConstraints) and componentTypeLen:
+        elif ((verifyConstraints or matchTags or matchConstraints) and
+              componentTypeLen):
             subComponentType = componentType.getTypeByPosition(idx)
             if subComponentType is not noValue:
                 subtypeChecker = (self.strictConstraints and
                                   subComponentType.isSameTypeWith or
                                   subComponentType.isSuperTypeOf)
 
-                if not subtypeChecker(value, matchTags, matchConstraints):
+                if not subtypeChecker(value, verifyConstraints and matchTags,
+                                      verifyConstraints and matchConstraints):
                     if not componentType[idx].openType:
                         raise error.PyAsn1Error('Component value is tag-incompatible: %r vs %r' % (value, componentType))
-
-        if verifyConstraints and value.isValue:
-            try:
-                self.subtypeSpec(value, idx)
-
-            except error.PyAsn1Error:
-                exType, exValue, exTb = sys.exc_info()
-                raise exType('%s at %s' % (exValue, self.__class__.__name__))
 
         if componentTypeLen or idx in self._dynamicNames:
             componentValues[idx] = value
@@ -2653,6 +2672,44 @@ class SequenceAndSetBase(base.ConstructedAsn1Type):
 
         return True
 
+    @property
+    def isInconsistent(self):
+        """Run necessary checks to ensure |ASN.1| object consistency.
+
+        Default action is to verify |ASN.1| object against constraints imposed
+        by `subtypeSpec`.
+
+        Raises
+        ------
+        :py:class:`~pyasn1.error.PyAsn1tError` on any inconsistencies found
+        """
+        if self.componentType is noValue or not self.subtypeSpec:
+            return False
+
+        if self._componentValues is noValue:
+            return True
+
+        mapping = {}
+
+        for idx, value in enumerate(self._componentValues):
+            # Absent fields are not in the mapping
+            if value is noValue:
+                continue
+
+            name = self.componentType.getNameByPosition(idx)
+
+            mapping[name] = value
+
+        try:
+            # Represent Sequence/Set as a bare dict to constraints chain
+            self.subtypeSpec(mapping)
+
+        except error.PyAsn1Error:
+            exc = sys.exc_info()[1]
+            return exc
+
+        return False
+
     def prettyPrint(self, scope=0):
         """Return an object representation string.
 
@@ -2717,10 +2774,6 @@ class Sequence(SequenceAndSetBase):
     #: imposing constraints on |ASN.1| type initialization values.
     subtypeSpec = constraint.ConstraintsIntersection()
 
-    #: Default :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-    #: object imposing constraints on |ASN.1| objects
-    sizeSpec = constraint.ConstraintsIntersection()
-
     #: Default collection of ASN.1 types of component (e.g. :py:class:`~pyasn1.type.namedtype.NamedType`)
     #: object imposing size constraint on |ASN.1| objects
     componentType = namedtype.NamedTypes()
@@ -2759,10 +2812,6 @@ class Set(SequenceAndSetBase):
     #: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection` object
     #: imposing constraints on |ASN.1| type initialization values.
     subtypeSpec = constraint.ConstraintsIntersection()
-
-    #: Default :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-    #: object imposing constraints on |ASN.1| objects
-    sizeSpec = constraint.ConstraintsIntersection()
 
     # Disambiguation ASN.1 types identification
     typeId = SequenceAndSetBase.getTypeId()
@@ -2884,10 +2933,9 @@ class Choice(Set):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
-
-    sizeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing collection size constraint
+        Object representing non-default ASN.1 subtype constraint(s).  Constraints
+        verification for |ASN.1| type can only occur on explicit
+        `.isInconsistent` call.
 
     Examples
     --------
@@ -2927,11 +2975,7 @@ class Choice(Set):
     #: Set (on class, not on instance) or return a
     #: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection` object
     #: imposing constraints on |ASN.1| type initialization values.
-    subtypeSpec = constraint.ConstraintsIntersection()
-
-    #: Default :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-    #: object imposing size constraint on |ASN.1| objects
-    sizeSpec = constraint.ConstraintsIntersection(
+    subtypeSpec = constraint.ConstraintsIntersection(
         constraint.ValueSizeConstraint(1, 1)
     )
 
@@ -3004,7 +3048,7 @@ class Choice(Set):
         if self._currentIdx is not None:
             yield self.componentType[self._currentIdx].getName(), self[self._currentIdx]
 
-    def verifySizeSpec(self):
+    def checkConsistency(self):
         if self._currentIdx is None:
             raise error.PyAsn1Error('Component not chosen')
 
@@ -3197,7 +3241,9 @@ class Any(OctetString):
         Object representing non-default ASN.1 tag(s)
 
     subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s)
+        Object representing non-default ASN.1 subtype constraint(s). Constraints
+        verification for |ASN.1| type occurs automatically on object
+        instantiation.
 
     encoding: :py:class:`str`
         Unicode codec ID to encode/decode :class:`unicode` (Python 2) or

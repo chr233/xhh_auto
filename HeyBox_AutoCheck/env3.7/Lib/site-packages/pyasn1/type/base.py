@@ -498,16 +498,38 @@ class ConstructedAsn1Type(Asn1Type):
     strictConstraints = False
 
     componentType = None
-    sizeSpec = None
+
+    # backward compatibility, unused
+    sizeSpec = constraint.ConstraintsIntersection()
 
     def __init__(self, **kwargs):
         readOnly = {
             'componentType': self.componentType,
+            # backward compatibility, unused
             'sizeSpec': self.sizeSpec
         }
+
+        # backward compatibility: preserve legacy sizeSpec support
+        kwargs = self._moveSizeSpec(**kwargs)
+
         readOnly.update(kwargs)
 
         Asn1Type.__init__(self, **readOnly)
+
+    def _moveSizeSpec(self, **kwargs):
+        # backward compatibility, unused
+        sizeSpec = kwargs.pop('sizeSpec', self.sizeSpec)
+        if sizeSpec:
+            subtypeSpec = kwargs.pop('subtypeSpec', self.subtypeSpec)
+            if subtypeSpec:
+                subtypeSpec = sizeSpec
+
+            else:
+                subtypeSpec += sizeSpec
+
+            kwargs['subtypeSpec'] = subtypeSpec
+
+        return kwargs
 
     def __repr__(self):
         representation = '%s %s object' % (
@@ -655,9 +677,6 @@ class ConstructedAsn1Type(Asn1Type):
 
         return clone
 
-    def verifySizeSpec(self):
-        self.sizeSpec(self)
-
     def getComponentByPosition(self, idx):
         raise error.PyAsn1Error('Method not implemented')
 
@@ -679,5 +698,10 @@ class ConstructedAsn1Type(Asn1Type):
     def getComponentType(self):
         return self.componentType
 
-# Backward compatibility
+    # backward compatibility, unused
+    def verifySizeSpec(self):
+        self.subtypeSpec(self)
+
+
+        # Backward compatibility
 AbstractConstructedAsn1Item = ConstructedAsn1Type

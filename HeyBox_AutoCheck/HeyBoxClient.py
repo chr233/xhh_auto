@@ -1572,46 +1572,49 @@ class Heybox():
             return(False)
 
     #检查返回值
-    def __check_status(self,dict):
+    def __check_status(self,dict:dict):
         if dict:
-            if dict['status'] == 'ok':
-                return
-            elif dict['status'] == 'ignore':
-                raise IGNORE
-            elif dict['status'] == 'relogin':
-                raise TokenERROR
-            elif dict['status'] == 'failed':
-                if dict['msg'] == '操作已经完成':
-                    raise IGNORE
-                elif dict['msg'] == '不能进行重复的操作哦':
-                    raise IGNORE
-                elif dict['msg'] == '帖子已被删除':
-                    raise OBJnotExistERROR
-                elif dict['msg'] == '不能给自己的评价点赞哟':
-                    raise CantSupportMyselfERROR
-                elif dict['msg'] == '系统时间不正确':
-                    raise TimeERROR
-                elif dict['msg'] == '您今日的赞赏次数已用完':
-                    raise NoMorelikeERROR
-                elif dict['msg'] == 'invalid userid':
-                    raise UserIDERROR
-                elif dict['msg'] == '参数错误':
-                    raise ParamsERROR
-                elif dict['msg'] == '自己不能粉自己哦':
-                    raise CantFollowMyselfERROR
-                elif dict['msg'] == '您今日的关注次数已用完':
-                    raise NoMoreFollowERROR
-                self.logger.error('遇到未知错误')
-                self.logger.error(dict)
-                raise UnknownERROR
+            try:
+                if dict['status'] == 'ok':
+                    return
+                elif dict['status'] == 'ignore':
+                    raise Ignore
+                elif dict['status'] == 'relogin':
+                    raise TokenError
+                elif dict['status'] == 'failed':
+                    if dict['msg'] == '操作已经完成':
+                        raise Ignore
+                    elif dict['msg'] == '不能进行重复的操作哦':
+                        raise Ignore
+                    elif dict['msg'] == '帖子已被删除':
+                        raise ObjectError
+                    elif dict['msg'] == '不能给自己的评价点赞哟':
+                        raise SupportMyselfError
+                    elif dict['msg'] == '您今日的赞赏次数已用完':
+                        raise LikeLimitedError
+                    elif dict['msg'] == 'invalid userid':
+                        raise UseridError
+                    elif dict['msg'] == '参数错误':
+                        raise ParamsError
+                    elif dict['msg'] == '自己不能粉自己哦':
+                        raise FollowLimitedError
+                    elif dict['msg'] == '您今日的关注次数已用完':
+                        raise FollowLimitedError
+                    elif dict['msg'] == '系统时间不正确':
+                        raise LocalTimeError
+                    self.logger.error('遇到未知错误')
+                    self.logger.error(dict)
+                    raise UnknownError
+            except ValueError:
+                return()
         else:
             self.logger.error('未知返回值')
             self.logger.error(dict)
-            raise UnknownERROR
+            raise UnknownError
 
     #检查任务返回值
-    def __check_task_status(self,dict):
-        if dict:
+    def __check_task_status(self,dict:dict):
+        if 'state' in dict:
             if dict['state'] == 'finish':
                 return(True)
             if dict['state'] == 'waiting':
@@ -1643,12 +1646,14 @@ class ClientException(Exception):
         super().__init__()
         self.errorinfo = ErrorInfo
     def __str__(self): 
-        return (self.errorinfo)
-    def __repr__(self):
         return (self.errorinfo)   
 #====================================
 #账户相关
 class AccountException(ClientException):
+    def __init__(self,ErrorInfo):
+        super().__init__(ErrorInfo)
+#请求值相关
+class RequestExcrption(ClientException):
     def __init__(self,ErrorInfo):
         super().__init__(ErrorInfo)
 #返回值相关
@@ -1659,6 +1664,10 @@ class ResponseExcrption(ClientException):
 class OtherException(ClientException):
     def __init__(self,ErrorInfo):
         super().__init__(ErrorInfo)
+#任务已完成
+class Ignore(ClientException):
+    def __init__(self):
+        super().__init__('操作已经完成')
 #====================================
 #凭据错误
 class TokenError(AccountException):
@@ -1669,54 +1678,52 @@ class UseridError(AccountException):
     def __init__(self):
         super().__init__('UserID不正确，请检查配置文件')
 #====================================
-#对象不存在/已删除
-class OBJnotExistERROR(ResponseExcrption):
+#参数错误
+class ParamsError(RequestExcrption):
     def __init__(self):
-        super().__init__('对象不存在或者已被删除')
+        super().__init__('参数错误')
+#时间错误
+class LocalTimeError(RequestExcrption):
+    def __init__(self):
+        super().__init__('本地时间错误')
+#====================================
+#关注次数用尽
+class FollowLimitedError(ResponseExcrption):
+    def __init__(self):
+        super().__init__('关注次数用尽')
+#赞赏次数已用完
+class LikeLimitedError(ResponseExcrption):
+    def __init__(self):
+        super().__init__('点赞次数用尽')
 #无法给自己的评测点赞
-class CantSupportMyself(ResponseExcrption):
+class SupportMyselfError(ResponseExcrption):
     def __init__(self):
         super().__init__('无法给自己的评测点赞')
 #无法粉自己
-class CantFollowMyselfException(ResponseExcrption):
+class FollowMyselfError(ResponseExcrption):
     def __init__(self):
-        super().__init__('无法粉自己哦')
-#关注次数用完
-class NoMoreFollowERROR(ResponseExcrption):
+        super().__init__('无法关注自己')
+#对象不存在/已删除
+class ObjectError(ResponseExcrption):
     def __init__(self):
-        super().__init__('无法粉自己哦')
-#参数错误
-class ParamsERROR(ClientException):
-    def __init__(self,ErrorInfo='参数错误'):
-        super().__init__()
-
-#时间错误
-class TimeERROR(ClientException):
-    def __init__(self,ErrorInfo='时间错误'):
-        super().__init__()
-
-#赞赏次数已用完
-class NoMorelikeERROR(ClientException):
-    def __init__(self,ErrorInfo='赞赏次数已用完'):
-        super().__init__(self)
+        super().__init__('对象不存在或者已被删除')
 #====================================
-#任务已完成
-class IGNORE(ClientException):
-    def __init__(self):
-        super().__init__('操作已经完成')
 #函数未完成
-class DEFNotCompletedERROR(ClientException):
-    def __init__(self,ErrorInfo='函数未完成'):
-        super().__init__(self)
-
+class NotImplemented(OtherException):
+    def __init__(self):
+        super().__init__('函数未完成')
 #未知错误
-class UnknownError(ClientException):
-    def __init__(self,ErrorInfo='未知错误'):
-        super().__init__()
-
+class UnknownError(OtherException):
+    def __init__(self):
+        super().__init__('未知错误')
+#====================================
+#函数调用错误
+class FunctionUsageError(ClientException):
+    def __init__(self):
+        super().__init__('调用参数有误，请参考函数手册')
 
 if __name__ == '__main__':
     print("请勿直接运行本模块，使用方法参见【README.md】")
 else:
-    raise TokenERROR()
+    raise TokenError()
     Heybox('','','','版本检查').check_heybox_version()
