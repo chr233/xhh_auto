@@ -42,7 +42,7 @@ _AWARD_LINK_ = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点�
 _COMMENT_UP_ = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
 _TASK_SIGN_ = 'https://api.xiaoheihe.cn/task/sign/'#签到
 _SHARE_CLICK_ = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
-_SHARE_CHECK_ = 'https://api.xiaoheihe.cn/task/shared/'#检查分享
+_SHARE_QQ_ = 'https://api.xiaoheihe.cn/task/shared/'#QQ分享
 _VERSION_CHECK_ = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'#检查更新
 _USER_PROFILE_ = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人资料
 _FOLLOWER_LIST_ = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#粉丝列表
@@ -66,8 +66,10 @@ if env_dist.get('MODE') == 'DEBUG':
     LEVEL = logging.DEBUG
 else:
     LEVEL = logging.INFO
+
 #LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
+
 logging.basicConfig(level=LEVEL,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 class Heybox():
@@ -108,60 +110,6 @@ class Heybox():
             self.logger.debug('初始化完成')
 
         return super().__init__()
-    
-    #[自动]
-    def auto(self):#,viewcount,likecount,sharecount,followcount):
-        self.get_ads_info()
-        self.check_achieve_alert()
-        self.sign()
-        idlist = self.get_news_list(30)
-        self.simu_view_news(idlist[0][0],idlist[0][1],0)
-        self.share(idlist[0][1])
-
-        self.simu_view_like_newses(idlist,10)
-
-        self.auto_follow_followers(30)
-        self.auto_like_follows(30)
-
-
-    #[自动]批量模拟浏览文章
-    def auto_simu_view_newses(self,limit=10):
-        idlist = self.get_news_list(30)
-        self.simu_view_newses(idlist,limit)
-        return(True)
-    #[自动]批量模拟浏览并点赞文章
-    def auto_simu_view_like_newses(self,limit=10):
-        idlist = self.get_news_list(30)
-        self.simu_view_like_newses(idlist,limit)
-        return(True)
-    #[自动]批量点赞动态
-    def auto_like_follows(self,limit=10):
-        likelist = self.get_follow_post(limit)
-        self.simu_like_follows(likelist,limit)
-        return(True)
-    #[自动]关注新粉丝
-    def auto_follow_followers(self,limit=30):
-        followerlist = self.get_follower_list()
-        self.simu_follow_followers(followerlist,limit)
-
-    #[自动]取关单向关注(取关粉丝-关注>value的用户)
-    def auto_clean_follering_list(self,value=20):
-        followinglist = self.get_following_list()
-        self.followinglist_filter(followinglist,value)
-
-    #[自动]关注推荐关注(过滤后)
-    def auto_follow_filtered_recomment(self,limit=15):
-        reclist = self.get_recommend_follow_list()
-        reclist = self.followlist_filter(reclist,100)
-        self.simu_follow_followers(reclist,limit)
-    #[自动]关注推荐关注(未过滤)
-    def auto_follow_raw_recomment(self,limit=30):
-        reclist = self.get_recommend_follow_list()
-        self.simu_follow_followers(reclist,limit)
-
-
-
-
 
     #模拟浏览文章(linkid,newsid,[index]),返回(是视频?,已点赞?,已收藏?)
     def simu_view_news(self,linkid,newsid,index=1):
@@ -289,6 +237,60 @@ class Heybox():
         self.logger.info('执行完毕')
 
 
+    #[自动]
+    def auto(self):#,viewcount,likecount,sharecount,followcount):
+        self.get_ads_info()
+        self.check_achieve_alert()
+        self.sign()
+        idlist = self.get_news_list(30)
+        self.simu_view_news(idlist[0][0],idlist[0][1],0)
+        self.share(idlist[0][1])
+
+        self.simu_view_like_newses(idlist,10)
+
+        self.auto_follow_followers(30)
+        self.auto_like_follows(30)
+
+
+    #[自动]批量模拟浏览文章
+    def auto_simu_view_newses(self,limit=10):
+        idlist = self.get_news_list(30)
+        self.simu_view_newses(idlist,limit)
+        return(True)
+    #[自动]批量模拟浏览并点赞文章
+    def auto_simu_view_like_newses(self,limit=10):
+        idlist = self.get_news_list(30)
+        self.simu_view_like_newses(idlist,limit)
+        return(True)
+    #[自动]批量点赞动态
+    def auto_like_follows(self,limit=10):
+        likelist = self.get_follow_post(limit)
+        self.simu_like_follows(likelist,limit)
+        return(True)
+    #[自动]关注新粉丝
+    def auto_follow_followers(self,limit=30):
+        followerlist = self.get_follower_list()
+        self.simu_follow_followers(followerlist,limit)
+
+    #[自动]取关单向关注(取关粉丝-关注>value的用户)
+    def auto_clean_follering_list(self,value=20):
+        followinglist = self.get_following_list()
+        self.followinglist_filter(followinglist,value)
+
+    #[自动]关注推荐关注(过滤后)
+    def auto_follow_filtered_recomment(self,limit=15):
+        reclist = self.get_recommend_follow_list()
+        reclist = self.followlist_filter(reclist,100)
+        self.simu_follow_followers(reclist,limit)
+    #[自动]关注推荐关注(未过滤)
+    def auto_follow_raw_recomment(self,limit=30):
+        reclist = self.get_recommend_follow_list()
+        self.simu_follow_followers(reclist,limit)
+
+    #自动 完成社区答题(不加入auto方法)
+    def auto_do_communitu_surver(self):
+         self.get_community_survey()
+         self.get_bbs_qa_state()
 
     #拉取首页文章列表(value为要拉取的数量)，返回[(linkid,newsid),……]
     def get_news_list(self,value=30):
@@ -937,96 +939,89 @@ class Heybox():
             except ValueError:
                 self.logger.error('过滤出错')
                 self.logger.error(e)
-
             except ClientException as e:
                 self.logger.error('过滤出错')
                 self.logger.error(e)
         self.logger.info('取关了[%d]个用户' % unfollowcount)
         return(True)
 
-    #分享新闻，(新闻id,[序号])
+    #分享
     def share(self,newsid,index=1):
-        #模拟点击分享按钮
-        def simu_share(self,newsid,index=1):
-            url = _SHARE_CLICK_
-            self.__flush_params()
-            referer = {
-                'from_tag':-1,
-                'newsid':newsid,
-                'rec_mark':'timeline',
-                'pos':index + 1,
-                'index':index,
-                'page_tab':1,
-                'from_recommend_list':9,
-                'h_src':'LTE=',
-                **self._params
-            }
-
-            if index == 0:
-                referer['al'] = 'set_top'
-
-            headers = {
-                'Host': 'api.xiaoheihe.cn',
-                'Connection': 'keep-alive',
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36',
-                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
-                'Accept-Encoding': 'gzip, deflate',
-                'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-                'X-Requested-With': 'com.max.xiaoheihe',   
-                'Referer':_NEWS_DETAIL_ + str(newsid) + '?' + urllib.parse.urlencode(query=referer)
-            }
-
-            cookies = { 
-                'user_pkey' : self._cookies['pkey'],
-                'user_heybox_id' : self._params['heybox_id']
-            }
-
-            resp = self.Session.get(url=url,headers=headers,cookies=cookies)
-            try:
-                dict = resp.json()
-                self.__check_status(dict)
-                self.logger.debug('模拟点击分享按钮')
-                return(True)
-            except ValueError as e:
-                self.logger.error('分享出错')
-                self.logger.error(e)
-                return(False)
-            except ClientException as e:
-                self.logger.error('分享出错')
-                self.logger.error(e)
-                return(False)
-
-        #检查分享结果
-        def check_share_task(self):
-            url = _SHARE_CHECK_
-            self.__flush_params()
-            params = {
-                'shared_type':'normal',
-                'share_plat':'shareQQFriend',
-                **self._params
-            }
-
-            resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
-            try:
-                dict = resp.json()
-                self.__check_status(dict)
-                self.logger.info('检查分享结果')
-            except ValueError as e:
-                self.logger.error('分享出错')
-                self.logger.error(e)
-                return(False)
-            except ClientException as e:
-                self.logger.error('分享出错(貌似还是可以完成任务)')
-                self.logger.error(e)
-                return(False)
-
-
-
-
         self.simu_share(newsid,index)
         self.check_share_task()
 
+    #模拟点击分享按钮
+    def simu_share(self,newsid,index=1):
+        url = _SHARE_CLICK_
+        self.__flush_params()
+        referer = {
+            'from_tag':-1,
+            'newsid':newsid,
+            'rec_mark':'timeline',
+            'pos':index + 1,
+            'index':index,
+            'page_tab':1,
+            'from_recommend_list':9,
+            'h_src':'LTE=',
+            **self._params
+        }
 
+        if index == 0:
+            referer['al'] = 'set_top'
+
+        headers = {
+            'Host': 'api.xiaoheihe.cn',
+            'Connection': 'keep-alive',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36',
+            'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+            'Accept-Encoding': 'gzip, deflate',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+            'X-Requested-With': 'com.max.xiaoheihe',   
+            'Referer':_NEWS_DETAIL_ + str(newsid) + '?' + urllib.parse.urlencode(query=referer)
+        }
+
+        cookies = { 
+            'user_pkey' : self._cookies['pkey'],
+            'user_heybox_id' : self._params['heybox_id']
+        }
+
+        resp = self.Session.get(url=url,headers=headers,cookies=cookies)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+            self.logger.info('模拟点击分享按钮')
+        except ValueError as e:
+            self.logger.error('分享出错')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('分享出错')
+            self.logger.error(e)
+            return(False)
+
+    #检查分享结果
+    def check_share_task(self):
+        url = _SHARE_QQ_
+        self.__flush_params()
+        params = {
+            'shared_type':'normal',
+            'share_plat':'shareQQFriend',
+            **self._params
+        }
+
+        resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
+        try:
+            dict = resp.json()
+            self.__check_status(dict)
+            self.logger.info('检查分享结果')
+        except ValueError as e:
+            self.logger.error('分享出错')
+            self.logger.error(e)
+            return(False)
+        except ClientException as e:
+            self.logger.error('分享出错(貌似还是可以完成任务)')
+            self.logger.error(e)
+            return(False)
 
     #签到
     def sign(self):
@@ -1123,10 +1118,6 @@ class Heybox():
             self.logger.error(e)
             return(False)
 
-    #完成社区答题
-    def do_communitu_surver(self):
-         self.get_community_survey()
-         self.get_bbs_qa_state()
     #拉取社区答题题目,返回html
     def get_community_survey(self):
         url = _COMMUNITY_SURVEY_
