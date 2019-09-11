@@ -30,16 +30,15 @@
     <Compile Include="HeyBoxClient.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="HeyBoxClient_bak.py" />
     <Compile Include="start.py" />
     <Compile Include="test.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="changelog.md">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="config_sample.json" />
+    <Content Include="Methods.md" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
