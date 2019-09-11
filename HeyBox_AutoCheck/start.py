@@ -3,6 +3,7 @@ import HeyBoxClient
 import json
 import requests
 import os
+import logging
 
 '''
 小黑盒自动脚本，暂未实现登陆过程，凭据需要自行抓包获取
