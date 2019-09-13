@@ -71,6 +71,8 @@ if __name__ == '__main__':
 
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
+                a=heybox1.get_task_detail_ex()
+                print(a)
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
                 #heybox1.auto_follow_filtered_recomment(5)

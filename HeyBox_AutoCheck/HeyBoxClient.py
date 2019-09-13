@@ -30,8 +30,10 @@ env_dist = os.environ
 
 if env_dist.get('MODE') == 'DEBUG':
     LEVEL = logging.DEBUG
+    DEBUG = True
 else:
     LEVEL = logging.INFO
+    Debug = False
 
 #LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
@@ -316,7 +318,7 @@ class Heybox():
     #拉取首页文章列表(offset为偏移，30一个单位)，返回[(linkid,newsid),……]
     def _get_news_list(self,offset=0):
         url = _NEWS_LIST_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'tag': -1,
             'offset': offset,
@@ -333,7 +335,7 @@ class Heybox():
             return(False)
 
         try:
-            self.__check_status(dict)
+            self._check_status(dict)
         except ClientException as e:
             self.logger.error('拉取文章列表出错')
             self.logger.error(e)
@@ -373,7 +375,7 @@ class Heybox():
     #拉取动态列表(offset为偏移，30一个单位,ignoreliked是否忽略已点赞动态)，返回[(linkid,type,已点赞?),……]
     def _get_follow_post(self,offset=0,ignoreliked=True):
         url = _FOLLOW_POST_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'offset': offset,
             'limit': 30,
@@ -383,7 +385,7 @@ class Heybox():
         resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
             self.logger.info('开始拉取关注列表')
             likelist = []
             for item in dict['result']['moments']:
@@ -429,7 +431,7 @@ class Heybox():
     #拉取文章附加信息(linkid,newsid,[index]),返回(是视频?,已点赞?,已收藏?)
     def get_news_link(self,linkid,newsid,index=1):
         url = _LINK_TREE_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'h_src':'LTE=',
             'link_id':linkid,
@@ -452,7 +454,7 @@ class Heybox():
         try:
             dict = resp.json()
             try:
-                self.__check_status(dict)
+                self._check_status(dict)
             except ClientException as e:
                 self.logger.error('拉取文章附加信息出错')
                 self.logger.error(e)
@@ -513,7 +515,7 @@ class Heybox():
     #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
     def _get_active_roll_room(self,offset=0):
         url = _GET_ACTIVE_ROLL_ROOM_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'filter_passwd':'1',
             'sort_types':'price',
@@ -526,7 +528,7 @@ class Heybox():
         try:
             dict = resp.json()
             try:
-                self.__check_status(dict)
+                self._check_status(dict)
             except ClientException as e:
                 self.logger.error('拉取ROLL房列表出错')
                 self.logger.error(e)
@@ -578,7 +580,7 @@ class Heybox():
     #拉取推荐关注列表(offset),返回[(id,关系)……] 关系:0:没关系,1我->对方,2我<-对方,3我<->对方
     def _get_recommend_follow_list(self,offset=0):
         url = _RECOMMEND_FOLLOWING_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'offset':offset,
             'limit':'30',
@@ -588,7 +590,7 @@ class Heybox():
         resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
             self.logger.info('开始拉取推荐关注列表')
             result = []
             try:
@@ -632,7 +634,7 @@ class Heybox():
     #关系:1我->对方,2我<-对方,3我<->对方
     def _get_follower_list(self,offset=0):
         url = _FOLLOWER_LIST_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'userid':self._params['heybox_id'],
             'offset':offset,
@@ -644,7 +646,7 @@ class Heybox():
         try:
             dict = resp.json()
             try:
-                self.__check_status(dict)
+                self._check_status(dict)
             except ClientException as e:
                 self.logger.error('拉取粉丝列表出错')
                 self.logger.error(e)
@@ -692,7 +694,7 @@ class Heybox():
     #拉取关注列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
     def _get_following_list(self,offset=0):
         url = _FOLLOWING_LIST_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'userid':self._params['heybox_id'],
             'offset':offset,
@@ -704,7 +706,7 @@ class Heybox():
         try:
             dict = resp.json()
             try:
-                self.__check_status(dict)
+                self._check_status(dict)
             except ClientException as e:
                 self.logger.error('拉取关注列表出错')
                 self.logger.error(e)
@@ -732,11 +734,11 @@ class Heybox():
     #拉取广告信息
     def get_ads_info(self):
         url = _GET_ADS_INFO_
-        self.__flush_params()
+        self._flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
             self.logger.info('拉取广告信息')
             title = dict['result']['title']
             self.logger.info('标题:[%s]' % title)
@@ -763,7 +765,7 @@ class Heybox():
             'award_type': 1
         }
 
-        self.__flush_params()
+        self._flush_params()
         params = {
             'h_src': 'LTE=',
             'newsid': newsid,
@@ -786,7 +788,7 @@ class Heybox():
             self.logger.error(e)
             return(False)
         try:
-            self.__check_status(dict)
+            self._check_status(dict)
         except IGNORE:
             self.logger.info('已经点过赞了')
             return(True)
@@ -812,7 +814,7 @@ class Heybox():
         else:
             url = _AWARD_LINK_
             data['award_type'] = 1
-        self.__flush_params()
+        self._flush_params()
 
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
         try:
@@ -822,7 +824,7 @@ class Heybox():
             self.logger.error(e)
             return(False)
         try:
-            self.__check_status(dict)
+            self._check_status(dict)
         except IGNORE:
             self.logger.info('已经点过赞了')
             return(False)
@@ -854,12 +856,12 @@ class Heybox():
             'following_id': userid,
         }
 
-        self.__flush_params()
+        self._flush_params()
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
 
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
         except ValueError as e:
             self.logger.error('关注用户出错')
             self.logger.error(e)
@@ -886,12 +888,12 @@ class Heybox():
             'following_id': userid,
         }
 
-        self.__flush_params()
+        self._flush_params()
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
 
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
         except ValueError as e:
             self.logger.error('取关用户出错')
             self.logger.error(e)
@@ -1032,12 +1034,12 @@ class Heybox():
     #签到
     def sign(self):
         url = _TASK_SIGN_
-        self.__flush_params()
+        self._flush_params()
 
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
             exp = dict['result']['level_info']['exp']
             coin = dict['result']['level_info']['coin']
             max_exp = dict['result']['level_info']['max_exp']
@@ -1063,7 +1065,7 @@ class Heybox():
     #发送消息,(userid,text)
     def send_message(self,userid,text):
         url = _SEND_MESSAGE_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'userid':userid,
             **self._params
@@ -1081,7 +1083,7 @@ class Heybox():
         resp = self.Session.post(url=url,headers=headers,cookies=self._cookies,params=params,data=data)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
             self.logger.info('发送私信成功')
         except ValueError as e:
             self.logger.error('发送私信出错')
@@ -1095,7 +1097,7 @@ class Heybox():
     #读取游戏信息([appid,……])
     def get_game_info(self,appids):
         url = _GET_GAME_INFO_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'userid':userid,
             **self._params
@@ -1113,7 +1115,7 @@ class Heybox():
         resp = self.Session.get(url=url,headers=headers,cookies=self._cookies,params=params,data=data)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
             self.logger.info('发送私信成功')
         except ValueError as e:
             self.logger.error('发送私信出错')
@@ -1158,7 +1160,7 @@ class Heybox():
                 'user_pkey' : self._cookies['pkey'],
                 'user_heybox_id' : self._params['heybox_id']
             }
-            self.__flush_params()
+            self._flush_params()
             resp = self.Session.get(url=url,headers=headers,params=self._params,cookies=cookies)
             try:
                 html = resp.text
@@ -1174,7 +1176,7 @@ class Heybox():
         #获取答题情况，调用可以完成答题任务，成功返回state(1:第一次完成答题,2:已经作答)|False
         def get_bbs_qa_state():
             url = URLS.BBS_QA_STATE
-            self.__flush_params()
+            self._flush_params()
             headers = {
                 'Host': 'api.xiaoheihe.cn',
                 'Connection': 'keep-alive',
@@ -1192,7 +1194,7 @@ class Heybox():
             resp = self.Session.get(url=url,headers=self._headers,cookies=cookies)
             try:
                 jsondict = resp.json()
-                self.__check_status(jsondict)
+                self._check_status(jsondict)
                 state = int(jsondict['result']['state'])
                 return(state)
             except (RequestExcrption,ResponseException,ValueError) as e:
@@ -1220,7 +1222,7 @@ class Heybox():
             'user_heybox_id' : self._params['heybox_id']
         }
 
-        self.__flush_params()
+        self._flush_params()
         params = {
             'from_recommend_list':9,
             'from_tag':-1,
@@ -1272,7 +1274,7 @@ class Heybox():
             'user_heybox_id' : self._params['heybox_id']
         }
 
-        self.__flush_params()
+        self._flush_params()
         params = {
             'from_recommend_list':9,
             'from_tag':-1,
@@ -1312,7 +1314,7 @@ class Heybox():
     #查询有无新成就,返回True,False
     def check_achieve_alert(self):
         url = _ACHIEVE_LIST_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'userid':self._params['heybox_id'],
             'only_event':1,
@@ -1323,7 +1325,7 @@ class Heybox():
         try:
             dict = resp.json()
             try:
-                self.__check_status(dict)
+                self._check_status(dict)
             except ClientException as e:
                 self.logger.error('查询新成就出错')
                 self.logger.error(e)
@@ -1347,7 +1349,7 @@ class Heybox():
     def check_notice(self):
         return 
         url = _ACHIEVE_LIST_
-        self.__flush_params()
+        self._flush_params()
         params = {
             'userid':self._params['heybox_id'],
             'only_event':1,
@@ -1358,7 +1360,7 @@ class Heybox():
         try:
             dict = resp.json()
             try:
-                self.__check_status(dict)
+                self._check_status(dict)
             except ClientException as e:
                 self.logger.error('查询新成就出错')
                 self.logger.error(e)
@@ -1382,11 +1384,11 @@ class Heybox():
     #获取任务状态，返回False代表有任务未完成
     def get_task_stats(self):
         url = _TASK_STATS_
-        self.__flush_params()
+        self._flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
             wait = dict['result']['wait']
             task = dict['result']['task']
             if wait != 0:
@@ -1400,34 +1402,65 @@ class Heybox():
             self.logger.error(e)
             return(False)
 
-    #获取任务详情，返回(bool,bool,bool)若为False代表该任务未完成
+    #获取每日任务详情，成功返回(签到,分享,点赞)True代表该任务完成,False未完成|False
     def get_task_detail(self):
-        url = _TASK_LIST_
-        self.__flush_params()
+        url = URLS.TASK_LIST
+        self._flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
-            dict = resp.json()
-            self.__check_status(dict)
+            jsondict = resp.json()
+            self._check_status(jsondict)
          
-            task1 = self.__check_task_status(dict['result']['task_list'][0]['tasks'][0])
-            task2 = self.__check_task_status(dict['result']['task_list'][0]['tasks'][1])
-            task3 = self.__check_task_status(dict['result']['task_list'][0]['tasks'][2])
+            sign = jsondict['result']['task_list'][0]['tasks'][0]['state']=='finish'
+            share =jsondict['result']['task_list'][0]['tasks'][1]['state']=='finish'
+            like =jsondict['result']['task_list'][0]['tasks'][2]['state']=='finish'
 
-            self.logger.info('签到%s|分享%s|点赞%s' % ('√'if task1 else '×','√'if task2 else '×','√'if task3 else '×'))
+            self.logger.debug(f"签到{'√'if sign else '×'}|分享{'√'if share else '×'}|点赞{'√'if sign else '×'}")
 
-            return((task1,task2,task3))
-        except (RequestExcrption,ResponseException,ValueError) as e:
-            self.logger.error('获取任务详情出错 - %s',e)
+            return((sign,share,like))
+        except ClientException as e:
+            self.logger.error(f'获取任务详情出错[{e}]')
+            return(False)
+
+    #获取更多任务详情，返回(签到？,,bool)若为False代表该任务未完成
+    def get_task_detail_ex(self):
+        #任务完成返回True|False
+        def state2bool(i:int):
+            state = jsondict[i]['state']
+            if state == 'finish':
+                return(True)
+            elif state == 'waiting':
+                return(False)
+            else:
+                raise UnknownError
+        url = URLS.TASK_LIST
+        self._flush_params()
+        resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
+        try:
+            jsondict = resp.json()
+            self._check_status(jsondict)
+            
+            jsondict=jsondict['result']['task_list'][1]
+
+            print(jsondict)
+
+          
+
+            #self.logger.debug(f"签到{'√'if sign else '×'}|分享{'√'if share else '×'}|点赞{'√'if sign else '×'}")
+
+            return(3)
+        except ClientException as e:
+            self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
     #获取个人数据，成功返回(昵称,H币,等级,经验/下级经验,连续签到天数)|False
     def get_my_data(self):
         url = _TASK_LIST_
-        self.__flush_params()
+        self._flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             dict = resp.json()
-            self.__check_status(dict)
+            self._check_status(dict)
 
             username = dict['result']['user']['username']
             userid = dict['result']['user']['userid']
@@ -1438,59 +1471,54 @@ class Heybox():
 
             sign_in_streak = dict['result']['task_list'][0]['tasks'][0]['sign_in_streak']
 
-            self.logger.info('昵称:%s @%s [%s级]' % (username,userid,level))
-            self.logger.info('盒币[%s],经验[%d/%d],连续签到[%s]天' % (coin,exp,max_exp,sign_in_streak))
+            self.logger.debug(f'昵称:{username} @{userid} [{level}级]')
+            self.logger.debug(f'盒币[{coin}],经验[{exp}/{max_exp}],连续签到[{sign_in_streak}]天')
             return((username,coin,level,exp,max_exp,sign_in_streak))
         
-        except (RequestExcrption,ResponseException,ValueError) as e:
-            self.logger.error('获取任务详情出错 - %s',e)
+        except ClientException as e:
+            self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-    #获取自己的个人资料，成功返回(关注数,粉丝数,获赞数)
-    def get_user_profile(self):
-        userid = self._params['heybox_id']
-        info = self.get_user_profile(userid)
-        return(info)
-
-    #获取个人资料(userid)，返回(关注数,粉丝数,获赞数)
-    def get_user_profile(self,userid:int):
+    #获取个人资料([userid]不填代入自己的heybox_id)，返回(关注数,粉丝数,获赞数|False
+    def get_user_profile(self,userid:int=-1):
         url = URLS.USER_PROFILE
+        if userid < 0:
+            userid = self.heybox_id
 
-        self.__flush_params()
+        self._flush_params()
         params = {
             'userid':userid,
             **self._params
         }
-
         resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
         try:
-            dict = resp.json()
-            self.__check_status(dict)
+            jsondict = resp.json()
+            self._check_status(jsondict)
 
-            follow_num = dict['result']['account_detail']['bbs_info']['follow_num']
-            fan_num = dict['result']['account_detail']['bbs_info']['fan_num']
-            awd_num = dict['result']['account_detail']['bbs_info']['awd_num']
-            level = dict['result']['account_detail']['level_info']['level']
-            userid = dict['result']['account_detail']['userid']
-            username = dict['result']['account_detail']['username']
+            follow_num = jsondict['result']['account_detail']['bbs_info']['follow_num']
+            fan_num = jsondict['result']['account_detail']['bbs_info']['fan_num']
+            awd_num = jsondict['result']['account_detail']['bbs_info']['awd_num']
+            level = jsondict['result']['account_detail']['level_info']['level']
+            userid = jsondict['result']['account_detail']['userid']
+            username = jsondict['result']['account_detail']['username']
 
             self.logger.debug(f'昵称:{username} @{userid} [{level}级]')
             self.logger.debug(f'关注[{follow_num}],粉丝[{fan_num}],获赞[{awd_num}]')
             return((follow_num,fan_num,awd_num))
         
-        except (RequestExcrption,ResponseException,ValueError) as e:
-            self.logger.error('获取任务详情出错 - %s',e)
+        except ClientException as e:
+            self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
 
     #获取自己的认证信息，成功返回(有密码?,手机号)|False
     def get_auth_info(self):
-        url = _GET_AUTH_INFO_
-        self.__flush_params()
+        url = URLS.GET_AUTH_INFO
+        self._flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             jsondict = resp.json()
-            self.__check_status(jsondict)
+            self._check_status(jsondict)
             has_password = True if jsondict['result'][0]['has_password'] == '1' else False
             src_id = jsondict['result'][0]['src_id']
             if has_password:
@@ -1498,8 +1526,8 @@ class Heybox():
             else:
                 self.logger.debug(f'手机号[{src_id}],**未设置密码**')
             return((has_password,src_id))
-        except (RequestExcrption,ResponseException,ValueError) as e:
-            self.logger.error('获取安全信息出错 - %s',e)
+        except ClientException as e:
+            self.logger.error(f'获取安全信息出错[{e}]')
             return(False)
 
     #检查小黑盒最新版本，检查更新成功返回True|False
@@ -1509,13 +1537,13 @@ class Heybox():
         global HEYBOX_VERSION
         try:
             jsondict = resp.json()
-            self.__check_status(jsondict)
+            self._check_status(jsondict)
             version = jsondict['result']['version']
-            self.logger.info('检测更新成功，当前版本为 %s' % (version))
+            self.logger.info(f'检查更新成功，当前版本为[{version}]')
             HEYBOX_VERSION = version
             return(True)
-        except (RequestExcrption,ResponseException,) as e:
-            self.logger.error('检测更新出错%s',e)
+        except ClientException as e:
+            self.logger.error(f'获取小黑盒最新版本出错[{e}]')
             return(False)
 
     #检查脚本有无更新，有更新返回(最新版本,更新内容,下载地址)|False
@@ -1533,12 +1561,12 @@ class Heybox():
                     self.logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION} | 最新版{tag_name}')
                     return((tag_name,body,download_url))
             return(False)
-        except (ValueError,NameError) as e:
-            self.logger.error('检测脚本更新出错 - %s',e)
+        except ClientException as e:
+            self.logger.error(f'检测脚本更新出错[{e}]')
             return(False)
 
     #检查返回值，参数(json字典)，通过返回True|抛出异常，**未处理可能的异常
-    def __check_status(self,jsondict:dict):
+    def _check_status(self,jsondict:dict):
         try:
             status = jsondict['status']
             if status == 'ok':
@@ -1567,23 +1595,19 @@ class Heybox():
                     raise ParamsError
                 elif msg == '系统时间不正确':
                     raise LocalTimeError
-                self.logger.error('遇到未知错误 - %s',jsondict)
+                self.logger.error(f'未知的返回值[{msg}]')
+                self.logger.error('请将以下内容发送到chr@chrxw.com')
+                self.logger.error(f'{jsondict}')
                 raise UnknownError
             elif status == 'relogin':
                 raise TokenError
-        except (ValueError,TypeError):
-            self.logger.error('遇到未知错误 - %s',jsondict)
+        except (ValueError,NameError):
+            self.logger.debug('JSON格式错误')
+            self.logger.debug(f'{jsondict}')
             raise UnknownError
 
-    #检查任务返回值(传入json字典)，任务完成返回True|False，**未处理可能的异常
-    def __check_task_status(self,jsondict:dict):
-        if jsondict['state'] == 'finish':
-            return(True)
-        if jsondict['state'] == 'waiting':
-            return(False)
-
     #刷新web表单
-    def __flush_params(self):
+    def _flush_params(self):
         def gen_hkey(time:int):
             strhash = 'xiaoheihe/_time=' + str(time)
             md5 = hashlib.md5()
@@ -1601,33 +1625,30 @@ class Heybox():
 
 #异常基类
 #====================================
-class ClientException(Exception):
+class HeyboxException(Exception):
     def __init__(self,ErrorInfo):
         super().__init__()
         self.errorinfo = ErrorInfo
     def __str__(self): 
         return (self.errorinfo)
 #====================================
-#账户相关
-class AccountException(ClientException):
-    def __init__(self,ErrorInfo):
-        super().__init__(ErrorInfo)
-#请求值相关
-class RequestExcrption(ClientException):
-    def __init__(self,ErrorInfo):
-        super().__init__(ErrorInfo)
-#返回值相关
-class ResponseException(ClientException):
-    def __init__(self,ErrorInfo):
-        super().__init__(ErrorInfo)
-#其他错误
-class OtherException(ClientException):
-    def __init__(self,ErrorInfo):
-        super().__init__(ErrorInfo)
-#任务已完成
-class Ignore(ClientException):
+#函数未完成
+class NotImplemented(HeyboxException):
     def __init__(self):
-        super().__init__('操作已经完成')
+        super().__init__('函数未完成')
+#未知错误
+class UnknownError(HeyboxException):
+    def __init__(self):
+        super().__init__('未知错误')
+#====================================
+#账户相关错误
+class AccountException(HeyboxException):
+    def __init__(self,ErrorInfo):
+        super().__init__(ErrorInfo)
+#客户端错误
+class ClientException(HeyboxException):
+    def __init__(self,ErrorInfo):
+        super().__init__(ErrorInfo)
 #====================================
 #凭据错误
 class TokenError(AccountException):
@@ -1637,46 +1658,42 @@ class TokenError(AccountException):
 class UseridError(AccountException):
     def __init__(self):
         super().__init__('UserID不正确，请检查配置文件')
-#====================================
+#------------------------------------
+#任务已完成
+class Ignore(ClientException):
+    def __init__(self):
+        super().__init__('操作已经完成')
 #参数错误
-class ParamsError(RequestExcrption):
+class ParamsError(ClientException):
     def __init__(self):
         super().__init__('参数错误')
 #时间错误
-class LocalTimeError(RequestExcrption):
+class LocalTimeError(ClientException):
     def __init__(self):
         super().__init__('本地时间错误')
-#====================================
+#------------------------------------
 #关注次数用尽
-class FollowLimitedError(ResponseException):
+class FollowLimitedError(ClientException):
     def __init__(self):
         super().__init__('关注次数用尽')
 #赞赏次数已用完
-class LikeLimitedError(ResponseException):
+class LikeLimitedError(ClientException):
     def __init__(self):
         super().__init__('点赞次数用尽')
 #无法给自己的评测点赞
-class SupportMyselfError(ResponseException):
+class SupportMyselfError(ClientException):
     def __init__(self):
         super().__init__('无法给自己的评测点赞')
 #无法关注自己
-class FollowMyselfError(ResponseException):
+class FollowMyselfError(ClientException):
     def __init__(self):
         super().__init__('无法关注自己')
 #对象不存在/已删除
-class ObjectError(ResponseException):
+class ObjectError(ClientException):
     def __init__(self):
         super().__init__('对象不存在或者已被删除')
-#====================================
-#函数未完成
-class NotImplemented(OtherException):
-    def __init__(self):
-        super().__init__('函数未完成')
-#未知错误
-class UnknownError(OtherException):
-    def __init__(self):
-        super().__init__('未知错误')
-#====================================
+#------------------------------------
+
 if __name__ == '__main__':
     print("请勿直接运行本模块，使用方法参见【README.md】")
 else:
