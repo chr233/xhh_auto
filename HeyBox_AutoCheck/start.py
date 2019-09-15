@@ -67,11 +67,11 @@ if __name__ == '__main__':
                 print('第%d个账户实例配置出错，跳过该账户' % i,e)
                 continue
             
-            heybox1 = HeyBoxClient.Heybox(heybox_id,imei,pkey,i)
+            heybox1 = HeyBoxClient.HeyboxClient(heybox_id,imei,pkey,i)
 
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
-                a=heybox1.get_task_detail_ex()
+                a=heybox1.get_video_detail(31995542,31995542)
                 print(a)
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
