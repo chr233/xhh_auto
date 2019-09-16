@@ -521,124 +521,128 @@ class HeyboxClient():
             self.logger.error(e)
             return(False)    
     
-    #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
+    #拉取可参与的ROLL房列表(value=30),返回[(link_id,room_id,人数,价格),……]
     def get_active_roll_room(self,value=30):
-        roomlist = []
-        max = (value // 30) + 1 #多拉取1次，防止拉取的数量不够
-        i = 0
-        while True:
-            templist = self._get_active_roll_room(i * 30)
-            if(templist):
-                self.logger.info('拉取第[%s]批ROLL房列表' % str(i + 1))
-                roomlist.extend(templist)
-                i+=1
-            else:
-                self.logger.error('拉取ROLL房列表出错')
-                break
-            if len(roomlist) >= value or i > 30:
-                break
-        roomlist = roomlist[:value]
-        return(roomlist)
-
-    #旧api，固定返回30个结果
-    #拉取可参与的ROLL房列表(offset),返回[(link_id,room_id,人数,价格),……]
-    def _get_active_roll_room(self,offset=0):
-        url = _GET_ACTIVE_ROLL_ROOM_
-        self.__flush_params()
-        params = {
-            'filter_passwd':'1',
-            'sort_types':'price',
-            'page_type':'home',
-            'offset':offset,
-            'limit':'30',
-            **self._params
-        }
-        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
-        try:
-            dict = resp.json()
-            try:
-                self.__check_status(dict)
-            except ClientException as e:
-                self.logger.error('拉取ROLL房列表出错')
-                self.logger.error(e)
-                return(False)
-            try:
-                #TODO HREE
-                roomlist = []
-                for room in dict['result']['rooms']:
-                    try:
-                        link_id = room['link_id']
-                        room_id = room['room_id']
-                        people = room['people']
-                        price = room['price']
-                        self.logger.info('价格%s 人数%s' % (price,people))
-                        roomlist.append((link_id,room_id,people,price))
-                    except KeyError as e:
-                        continue
-                self.logger.debug('拉取%d个房间' % len(roomlist))
-                return(roomlist)
+        #拉取可参与的ROLL房列表(offset=0),返回[(link_id,room_id,人数,价格),……]
+        def _get_active_roll_room(offset=0):
+            url = URLS.GET_ACTIVE_ROLL_ROOM
+            self.__flush_params()
+            params = {
+                'filter_passwd':'1',
+                'sort_types':'price',
+                'page_type':'home',
+                'offset':offset,
+                'limit':'30',
+                **self._params
+            }
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
             
-            except KeyError as e:
-                self.logger.error('拉取ROLL房列表出错')
-                self.logger.error(e)
-                return(False)
-        except ValueError as e:
-            self.logger.error('拉取ROLL房列表出错')
-            self.logger.error(e)
-            return(False)    
-
-    #拉取推荐关注列表(value,要拉取的数量),返回[(id,关系)……] 关系:0:没关系,1我->对方,2我<-对方,3我<->对方
-    def get_recommend_follow_list(self,value=30):
-        recfollowlist = []
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            roomlist = []
+            for room in jsondict['result']['rooms']:
+                try:
+                    link_id = room['link_id']
+                    room_id = room['room_id']
+                    people = room['people']
+                    price = room['price']
+                    #self.logger.debug(f'房号{room_id}|价格{price}|人数{people}')
+                    roomlist.append((link_id,room_id,people,price))
+                except KeyError as e:
+                    self.logger.debug(f'提取ROLL房出错[{room}]')
+            self.logger.debug(f'拉取{len(roomlist)}个ROLL房')
+            return(roomlist)
+        #==========================================
+        rollroomlist = []
+        max = (value // 30) + 3 #最大拉取次数
         i = 0
         while True:
-            templist = self._get_recommend_follow_list(i * 30)
-            if(templist):
-                self.logger.info('拉取第[%s]批推荐关注列表' % str(i + 1))
-                recfollowlist.extend(templist)
-                i+=1
-            else:
-                self.logger.error('拉取推荐关注列表出错')
-                break
-            if len(recfollowlist) >= value or i > 2:
-                break
-        recfollowlist = recfollowlist[:value]
-        return(recfollowlist)
-
-    #旧api，固定返回30个结果
-    #拉取推荐关注列表(offset),返回[(id,关系)……] 关系:0:没关系,1我->对方,2我<-对方,3我<->对方
-    def _get_recommend_follow_list(self,offset=0):
-        url = _RECOMMEND_FOLLOWING_
-        self.__flush_params()
-        params = {
-            'offset':offset,
-            'limit':'30',
-            **self._params
-        }
-
-        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
-        try:
-            dict = resp.json()
-            self.__check_status(dict)
-            self.logger.info('开始拉取推荐关注列表')
-            result = []
+            i+=1
             try:
-                for item in dict['result']['rec_users']:
-                    result.append((item['userid'],item['is_follow']))
-                return(result)
-            except KeyError as e:
-                self.logger.error('拉取推荐关注列表出错')
-                self.logger.error(e)
-                return(False)
-        except ValueError as e:
-            self.logger.error('拉取推荐关注列表出错')
-            self.logger.error(e)
-            return(False)    
-        except ClientException as e:
-            self.logger.error('拉取推荐关注列表出错')
-            self.logger.error(e)
-            return(False)  
+                templist = _get_active_roll_room(i * 30)
+            except ClientException as e:
+                continue
 
+            if(templist):
+                self.logger.debug(f'拉取第[{i+1}]批ROLL房列表')
+                rollroomlist.extend(templist)
+            else:
+                self.logger.debug('ROLL房列表为空，可能没有可参与的ROLL房，也可能遇到错误')
+                break
+            
+            if len(rollroomlist) >= value or i >= max:
+                break
+
+        if len(rollroomlist) > value:
+            rollroomlist = rollroomlist[:value]
+        elif len(rollroomlist) == 0:
+            self.logger.debug('拉取完毕，ROLL房列表为空，可能没有可参与的ROLL房')
+        return(rollroomlist)
+
+
+    #拉取推荐关注列表(value=30),返回[(id,类型,关系)……] 类型释义参见:RecTagTyoe 关系释义参见:FollowType
+    def get_recommend_follow_list(self,value=30):
+        #拉取推荐关注列表(offset=0),返回[(id,类型,关系)……]
+        def _get_recommend_follow_list(offset=0):
+            url = URLS.RECOMMEND_FOLLOWING
+            self.__flush_params()
+            params = {
+                'offset':offset,
+                'limit':'30',
+                **self._params
+            }
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            userlist = []
+            for user in jsondict['result']['rec_users']:
+                try:
+                    userid = user['userid']
+                    is_follow = user['is_follow']
+                    rec_tag = user['rec_tag']
+                    if(rec_tag == '您的Steam好友'):
+                        rec_type = RecTagType.SteamFriend
+                    elif(rec_tag[-5:] == '位共同好友'):
+                        rec_type = RecTagType.HasFriend
+                    elif(rec_tag[-2:] == '作者'):
+                        rec_type = RecTagType.Author
+                    else:
+                        rec_type = RecTagType.UnknownTag
+
+                    #self.logger.debug(f'ID{userid}|类型{rec_type}|关系{is_follow}')
+                except KeyError as e:
+                    self.logger.error(f'提取推荐关注列表出错[{user}]')
+            
+            self.logger.debug(f'拉取{len(userlist)}个用户')
+            return(userlist)            
+        #==========================================
+        recfollowlist = []
+        max = (value // 30) + 3 #最大拉取次数
+        i = 0
+        while True:
+            i+=1
+            try:
+                templist = self._get_recommend_follow_list(i * 30)
+            except ClientException as e:
+                continue
+
+            if(templist):
+                self.logger.debug(f'拉取第[{i+1}]批推荐关注列表')
+                recfollowlist.extend(templist)
+            else:
+                self.logger.debug('推荐关注列表为空，可能遇到错误')
+                break
+
+            if len(recfollowlist) >= value or i >= max:
+                break
+
+        if len(rollroomlist) > value:
+            recfollowlist = recfollowlist[:value]
+        elif len(rollroomlist) == 0:
+            self.logger.debug('拉取完毕，推荐关注列表为空，可能遇到错误')
+        return(recfollowlist)
+ 
     #拉取粉丝列表(value要拉取的数量),(linkid,newsid,[index]),返回[(id,关系)……]
     #关系:1我->对方,2我<-对方,3我<->对方
     def get_follower_list(self,value=30):
@@ -1282,18 +1286,16 @@ class HeyboxClient():
             wz = soup.title
             self.logger.info('*暂不支持视频文章的处理*')
             return(wz)
-        except  (ClientException,KeyError,NameError)  as e:
+        except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'拉取视频信息出错[{e}]')
             return(False)    
 
-    
     #修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
     def update_profile(self,birthday=0,career='在校学生',education='本科',gender=1,nickname='',email=''):
         url = URLS.UPDATE_PROFILE
         self.logger.error('该函数尚未实现')
         raise NotImplemented
         return(False)
-
 
     #查询有无新成就,成功返回(成就名,描述)|False
     def check_achieve_alert(self):
@@ -1432,7 +1434,7 @@ class HeyboxClient():
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-    #获取个人资料([userid]不填代入自己的heybox_id)，返回(关注数,粉丝数,获赞数)|False
+    #获取个人资料([userid]默认代入自己的heybox_id)，返回(关注数,粉丝数,获赞数)|False
     def get_user_profile(self,userid:int=-1):
         url = URLS.USER_PROFILE
         if userid < 0:
@@ -1586,6 +1588,22 @@ class HeyboxClient():
         asctime = int(time.time())
         self._params['hkey'] = gen_hkey(asctime)    
         self._params['_time'] = asctime
+
+
+#推荐关注列表用户类型分类
+class RecTagType():
+    UnknownTag = 0#未知
+    SteamFriend = 1#Steam好友
+    HasFriend = 2#多位共同好友
+    Author = 9#作者
+
+#好友关系分类
+class FollowType():
+    NotFollowed = 0#没有关系
+    IFollowedHe = 1#我关注他
+    HeFollowedMe = 2#他关注我
+    BOthFollowed = 3#双向关注
+
 
 #异常基类
 #====================================
