@@ -40,9 +40,10 @@ LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
 logging.basicConfig(level=LEVEL,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 
+
 #URL常量
 class URLS():
-    SCRIPT_UPDATE_CHECK = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest' #脚本更新检查
+    SCRIPT_UPDATE_CHECK = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'#脚本更新检查
     TASK_STATS = 'https://api.xiaoheihe.cn/task/stats/'#任务状态
     TASK_LIST = 'https://api.xiaoheihe.cn/task/list/'#任务列表
     FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注更新提醒
@@ -51,7 +52,9 @@ class URLS():
     LINK_TREE = 'https://api.xiaoheihe.cn/bbs/app/link/tree'#文章附加信息
     NEWS_DETAIL = 'https://api.xiaoheihe.cn/maxnews/app/detail/'#文章页
     VIDEO_VIEW = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'#视频页框架
-    GET_GAME_INFO = 'https://api.xiaoheihe.cn/game/get_game_infos/'#游戏详情
+    GET_GAME_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/game/comments/'#游戏评价
+    GET_GAME_DETAIL = 'https://api.xiaoheihe.cn/game/get_game_detail/'#游戏详情
+    GET_GAME_REVIEWS = 'https://api.xiaoheihe.cn/bbs/app/link/game/reviews'#游戏文章
     AWARD_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
     COMMENT_UP = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
     TASK_SIGN = 'https://api.xiaoheihe.cn/task/sign/'#签到
@@ -101,7 +104,7 @@ class BoolenString():
     def __str__(self):
         return(self.__string)
     def __repr__(self):
-        return(self.__boolen)
+        return(self.__string)
     pass
 
 #Python版小黑盒客户端
@@ -521,6 +524,7 @@ class HeyboxClient():
             self.logger.error(e)
             return(False)    
     
+    #N
     #拉取可参与的ROLL房列表(value=30),返回[(link_id,room_id,人数,价格),……]
     def get_active_roll_room(self,value=30):
         #拉取可参与的ROLL房列表(offset=0),返回[(link_id,room_id,人数,价格),……]
@@ -557,11 +561,11 @@ class HeyboxClient():
         max = (value // 30) + 3 #最大拉取次数
         i = 0
         while True:
-            i+=1
             try:
                 templist = _get_active_roll_room(i * 30)
             except ClientException as e:
                 continue
+            i+=1
 
             if(templist):
                 self.logger.debug(f'拉取第[{i+1}]批ROLL房列表')
@@ -575,11 +579,13 @@ class HeyboxClient():
 
         if len(rollroomlist) > value:
             rollroomlist = rollroomlist[:value]
-        elif len(rollroomlist) == 0:
+        if len(rollroomlist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(rollroomlist)}]个ROLL房')
+        else:
             self.logger.debug('拉取完毕，ROLL房列表为空，可能没有可参与的ROLL房')
         return(rollroomlist)
 
-
+    #N
     #拉取推荐关注列表(value=30),返回[(id,类型,关系)……] 类型释义参见:RecTagTyoe 关系释义参见:FollowType
     def get_recommend_follow_list(self,value=30):
         #拉取推荐关注列表(offset=0),返回[(id,类型,关系)……]
@@ -608,12 +614,11 @@ class HeyboxClient():
                     elif(rec_tag[-2:] == '作者'):
                         rec_type = RecTagType.Author
                     else:
-                        rec_type = RecTagType.UnknownTag
-
+                        rec_type = RecTagType.UnknownType
                     #self.logger.debug(f'ID{userid}|类型{rec_type}|关系{is_follow}')
+                    userlist.append((userid,rec_type,is_follow))
                 except KeyError as e:
-                    self.logger.error(f'提取推荐关注列表出错[{user}]')
-            
+                    self.logger.debug(f'提取推荐关注列表出错[{user}]')
             self.logger.debug(f'拉取{len(userlist)}个用户')
             return(userlist)            
         #==========================================
@@ -621,11 +626,11 @@ class HeyboxClient():
         max = (value // 30) + 3 #最大拉取次数
         i = 0
         while True:
-            i+=1
             try:
                 templist = self._get_recommend_follow_list(i * 30)
             except ClientException as e:
                 continue
+            i+=1
 
             if(templist):
                 self.logger.debug(f'拉取第[{i+1}]批推荐关注列表')
@@ -639,156 +644,147 @@ class HeyboxClient():
 
         if len(rollroomlist) > value:
             recfollowlist = recfollowlist[:value]
-        elif len(rollroomlist) == 0:
+        if len(rollroomlist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(recfollowlist)}]个用户')
+        else:
             self.logger.debug('拉取完毕，推荐关注列表为空，可能遇到错误')
         return(recfollowlist)
- 
-    #拉取粉丝列表(value要拉取的数量),(linkid,newsid,[index]),返回[(id,关系)……]
-    #关系:1我->对方,2我<-对方,3我<->对方
+
+    #N
+    #拉取粉丝列表(value=30),返回[(id,关系)……] 关系释义参见:FollowType
     def get_follower_list(self,value=30):
+        def _get_follower_list(offset=0):
+            url = URLS.FOLLOWER_LIST
+            self.__flush_params()
+            params = {
+                'userid':self.heybox_id,
+                'offset':offset,
+                'limit':30,
+                **self._params
+            }
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+            
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            userlist = []
+            for user in jsondict['follow_list']:
+                try:
+                    userid = user['userid']
+                    is_follow = user['is_follow']
+                    #self.logger.debug(f'ID{userid}|关系{is_follow}')
+                    userlist.append((userid,is_follow))
+                except KeyError as e:
+                    self.logger.debug(f'提取粉丝列表出错[{item}]')
+            self.logger.debug(f'拉取[{len(userlist)}]个用户')
+            return(userlist)
+        #==========================================
         followerlist = []
+        max = (value // 30) + 3 #最大拉取次数
         i = 0
         while True:
-            templist = self._get_follower_list(i * 30)
+            try:
+                templist = self._get_follower_list(i * 30)
+            except ClientException as e:
+                continue
+            i+=1
+
             if(templist):
-                self.logger.info('拉取第[%s]批粉丝列表' % str(i + 1))
+                self.logger.debug(f'拉取第[{i+1}]批粉丝列表')
                 followerlist.extend(templist)
-                i+=1
             else:
-                self.logger.error('拉取粉丝列表出错')
+                self.logger.debug('粉丝列表为空，可能遇到错误')
                 break
-            if len(followerlist) >= value or i > 2:
+
+            if len(followerlist) >= value or i >= max:
                 break
-        followerlist = followerlist[:value]
+
+        if len(followerlist) > value:
+            followerlist = followerlist[:value]
+        if len(followerlist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(followerlist)}]个用户')
+        else:
+            self.logger.debug('拉取完毕，粉丝列表为空，可能遇到错误')
         return(followerlist)
 
-    #旧api，固定返回30个结果
-    #拉取粉丝列表(offset)(linkid,newsid,[index]),返回[(id,关系)……]
-    #关系:1我->对方,2我<-对方,3我<->对方
-    def _get_follower_list(self,offset=0):
-        url = _FOLLOWER_LIST_
-        self.__flush_params()
-        params = {
-            'userid':self.heybox_id,
-            'offset':offset,
-            'limit':30,
-            **self._params
-        }
-
-        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
-        try:
-            dict = resp.json()
-            try:
-                self.__check_status(dict)
-            except ClientException as e:
-                self.logger.error('拉取粉丝列表出错')
-                self.logger.error(e)
-                return(False)
-            try:
-                fan_num = dict['follow_cnt']['fan_num']
-                follow_num = dict['follow_cnt']['follow_num']
-                follow_list = dict['follow_list']
-
-                result = []
-                for item in follow_list:
-                    result.append((item['userid'],item['is_follow']))
-                self.logger.info('关注[%s] 粉丝[%s]' % (follow_num,fan_num))
-                return(result)
-            
-            except KeyError as e:
-                self.logger.error('拉取粉丝列表出错')
-                self.logger.error(e)
-                return(False)
-        except ValueError as e:
-            self.logger.error('拉取粉丝列表出错')
-            self.logger.error(e)
-            return(False)    
-
-    #拉取粉丝列表(value要拉取的数量),(linkid,newsid,[index]),返回[(id,关系)……]
-    #关系:1我->对方,2我<-对方,3我<->对方
+    #N
+    #拉取粉丝列表(value=30),返回[(id,关系)……] 关系释义参见:FollowType
     def get_following_list(self,value=30):
+        #拉取关注列表(linkid,newsid,[index]),返回[(id,关系)……]
+        def _get_following_list(self,offset=0):
+            url = URLS.FOLLOWING_LIST
+            self.__flush_params()
+            params = {
+                'userid':self.heybox_id,
+                'offset':offset,
+                'limit':30,
+                **self._params
+            }
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            userlist = []
+            for user in jsondict['follow_list']:
+                try:
+                    userid = user['userid']
+                    is_follow = user['is_follow']
+                    #self.logger.debug(f'ID{userid}|关系{is_follow}')
+                    userlist.append((userid,is_follow))
+                except KeyError as e:
+                    self.logger.debug(f'提取关注列表出错[{item}]')
+
+            self.logger.info('关注[%s] 粉丝[%s]' % (follow_num,fan_num))
+            return(userlist)
+        #==========================================
         followinglist = []
+        max = (value // 30) + 3 #最大拉取次数
         i = 0
         while True:
-            templist = self._get_following_list(i * 30)
+            try:
+                templist = self._get_following_list(i * 30)
+            except ClientException:
+                continue
+            i+=1
+
             if(templist):
-                self.logger.info('拉取第[%s]批粉丝列表' % str(i + 1))
+                self.logger.info(f'拉取第[{i+1}]批关注列表')
                 followinglist.extend(templist)
-                i+=1
             else:
-                self.logger.error('拉取粉丝列表出错')
+                self.logger.error('拉取完毕，关注列表为空，可能遇到错误')
                 break
-            if len(followinglist) >= value or i > 2:
+
+            if len(followinglist) >= value or i >= max:
                 break
-        followinglist = followinglist[:value]
+
+        if len(followinglist) > value:
+            followinglist = followinglist[:value]
+        if len(followinglist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(followerlist)}]个用户')
+        else:
+            self.logger.debug('拉取完毕，关注列表为空，可能遇到错误')
         return(followinglist)
 
-    #旧api，固定返回30个结果
-    #拉取关注列表(linkid,newsid,[index]),返回[(id,关系)……] 关系:1我->对方,2我<-对方,3我<->对方
-    def _get_following_list(self,offset=0):
-        url = _FOLLOWING_LIST_
-        self.__flush_params()
-        params = {
-            'userid':self.heybox_id,
-            'offset':offset,
-            'limit':30,
-            **self._params
-        }
-
-        resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
-        try:
-            dict = resp.json()
-            try:
-                self.__check_status(dict)
-            except ClientException as e:
-                self.logger.error('拉取关注列表出错')
-                self.logger.error(e)
-                return(False)
-            try:
-                fan_num = dict['follow_cnt']['fan_num']
-                follow_num = dict['follow_cnt']['follow_num']
-                follow_list = dict['follow_list']
-
-                result = []
-                for item in follow_list:
-                    result.append((item['userid'],item['is_follow']))
-                self.logger.info('关注[%s] 粉丝[%s]' % (follow_num,fan_num))
-                return(result)
-            
-            except KeyError as e:
-                self.logger.error('拉取关注列表出错')
-                self.logger.error(e)
-                return(False)
-        except ValueError as e:
-            self.logger.error('拉取关注列表出错')
-            self.logger.error(e)
-            return(False)    
-
-    #拉取广告信息
+    #N
+    #拉取广告信息，成功返回(title)|False
     def get_ads_info(self):
-        url = _GET_ADS_INFO_
+        url = URLS.GET_ADS_INFO
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
+
         try:
-            dict = resp.json()
-            self.__check_status(dict)
-            self.logger.info('拉取广告信息')
-            title = dict['result']['title']
-            self.logger.info('标题:[%s]' % title)
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            title = jsondict['result']['title']
+            self.logger.debug(f'广告标题:[{title}]')
             return(title)
-        except ValueError as e:
-            self.logger.error('拉取广告信息')
-            self.logger.error(e)
-            return(False)
-        except ClientException as e:
-            self.logger.error('拉取广告信息')
-            self.logger.error(e)
+        except (ClientException,KeyError,NameError) as e:
+            self.logger.error(f'拉取广告信息出错[{e}]')
             return(False)
 
-    #给新闻点赞(linkid,newsid,[index])
+    #N
+    #给新闻点赞(linkid,newsid,index=1)，成功返回True|False
     def like_news(self,linkid,newsid,index=1):
-        url = _AWARD_LINK_
-
+        url = URLS.AWARD_LINK
         headers = {
             **self._headers,
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -797,7 +793,6 @@ class HeyboxClient():
             'link_id': linkid,
             'award_type': 1
         }
-
         self.__flush_params()
         params = {
             'h_src': 'LTE=',
@@ -812,27 +807,21 @@ class HeyboxClient():
         }
         if index == 0:
             params['al'] = 'set_top'
-
         resp = self.Session.post(url=url,data=data,params=params,headers=headers,cookies=self._cookies)
         try:
-            dict = resp.json()
-        except ValueError as e:
-            self.logger.error('点赞出错')
-            self.logger.error(e)
-            return(False)
-        try:
-            self.__check_status(dict)
-        except IGNORE:
-            self.logger.info('已经点过赞了')
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug('文章点赞成功')
             return(True)
-        except ClientException as e:
-            self.logger.error('点赞出错')
-            self.logger.error(e)
+        except Ignore:
+            self.logger.debug('已经点过赞了')
+            return(True)
+        except (ClientException,KeyError,NameError) as e:
+            self.logger.error(f'点赞出错[{e}]')
             return(False)
-        self.logger.info('文章点赞成功')
-        return(True)
-
-    #给关注动态点赞(linkid,[isaward])
+    
+    #N
+    #给关注的动态点赞(linkid,type=0)，成功返回True|False
     def like_follow(self,linkid,type=0):
         headers = {
             **self._headers,
@@ -841,46 +830,34 @@ class HeyboxClient():
         data = {
             'link_id': linkid,
         }
-        if type == 5:
-            url = _COMMENT_UP_
+        if type == FollowPostType.CommentGame:
+            url = URLS.COMMENT_UP
             data['support_type'] = 1
         else:
-            url = _AWARD_LINK_
+            url = URLS.AWARD_LINK
             data['award_type'] = 1
         self.__flush_params()
 
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
         try:
-            dict = resp.json()
-        except ValueError as e:
-            self.logger.error('点赞出错')
-            self.logger.error(e)
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug('动态点赞成功')
+            return(True)
+        except Ignore:
+            self.logger.debug('已经点过赞了')
+            return(True)
+        except (ClientException,KeyError,NameError) as e:
+            self.logger.error(f'动态点赞出错[{e}]')
             return(False)
-        try:
-            self.__check_status(dict)
-        except IGNORE:
-            self.logger.info('已经点过赞了')
-            return(False)
-        except CantSupportMyselfERROR:
-            self.logger.error('无法给自己的评测点赞')
-            return(False)
-        except NoMorelikeERROR as e:
-            self.logger.error('点赞次数用尽')
-            return(False)
-        except ClientException as e:
-            self.logger.error('点赞出错')
-            self.logger.error(e)
-            return(False)
-        self.logger.info('动态点赞成功')
-        return(True)
-
-    #关注用户(userid)
+        
+    #N
+    #关注用户(userid)，成功返回True|False
     def follow_user(self,userid):
         if userid == self.heybox_id:
-            self.logger.error('不能粉自己哦')
+            self.logger.debug('不能粉自己哦')
             return(False)
-
-        url = _FOLLOW_USER_
+        url = URLS.FOLLOW_USER
         headers = {
             **self._headers,
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -888,31 +865,24 @@ class HeyboxClient():
         data = {
             'following_id': userid,
         }
-
         self.__flush_params()
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
-
         try:
-            dict = resp.json()
-            self.__check_status(dict)
-        except ValueError as e:
-            self.logger.error('关注用户出错')
-            self.logger.error(e)
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug(f'关注用户[{userid}]成功')
+            return(True)
+        except (ClientException,KeyError,NameError) as e:
+            self.logger.error(f'关注用户出错[{e}]')
             return(False)
-        except ClientException as e:
-            self.logger.error('关注用户出错')
-            self.logger.error(e)
-            return(False)
-        self.logger.info('关注用户[%s]成功' % userid)
-        return(True)
 
-    #取关用户(userid)
+    #N
+    #取关用户(userid)，成功返回True|False
     def unfollow_user(self,userid):
         if userid == self.heybox_id:
-            self.logger.error('不能取关自己哦')
+            self.logger.debug('不能取关自己哦')
             return(False)
-
-        url = _FOLLOW_USER_CANCEL_
+        url = URLS.FOLLOW_USER_CANCEL
         headers = {
             **self._headers,
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -920,23 +890,17 @@ class HeyboxClient():
         data = {
             'following_id': userid,
         }
-
         self.__flush_params()
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
-
         try:
-            dict = resp.json()
-            self.__check_status(dict)
-        except ValueError as e:
-            self.logger.error('取关用户出错')
-            self.logger.error(e)
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.info(f'取关用户[{userid}]成功')
+            return(True)
+        except (ClientException,KeyError,NameError) as e:
+            self.logger.error(f'取关用户出错[{e}]')
             return(False)
-        except ClientException as e:
-            self.logger.error('取关用户出错')
-            self.logger.error(e)
-            return(False)
-        self.logger.info('取关用户[%s]成功' % userid)
-        return(True)
+        
 
     #关注前对用户列表进行过滤,过滤掉粉丝数跟关注数差距太大的用户([(userid,[is_follow]),……],粉丝-关注的阈值，超过的被过滤)
     def followlist_filter(self,idlist,value=50):
@@ -978,6 +942,7 @@ class HeyboxClient():
         self.logger.debug(f'过滤关注列表完成，取关了[{unfollowcount}]个用户')
         return(True)
 
+    #N
     #分享新闻,(newsid,[index=1])
     def share(self,newsid,index=1):
         #模拟点击分享按钮
@@ -1013,11 +978,11 @@ class HeyboxClient():
             }
             resp = self.Session.get(url=url,headers=headers,cookies=cookies)
             try:
-                dict = resp.json()
-                self.__check_status(dict)
+                jsondict = resp.json()
+                self.__check_status(jsondict)
                 self.logger.debug('模拟点击分享按钮')
                 return(True)
-            except (ClientException,KeyError,NameError) as e:
+            except ClientException as e:
                 self.logger.error(f'分享出错[{e}]')
                 return(False)
         #检查分享结果
@@ -1031,17 +996,18 @@ class HeyboxClient():
             }
             resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
             try:
-                dict = resp.json()
-                self.__check_status(dict)
-                self.logger.debug('检查分享结果')
+                jsondict = resp.json()
+                self.__check_status(jsondict)
+                self.logger.debug('分享成功')
                 return(True)
-            except (ClientException,KeyError,NameError) as e:
-                self.logger.error(f'分享出错(貌似还是可以完成任务) [{e}]')
+            except ClientException as e:
+                self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
                 return(False)
 
         self.simu_share(newsid,index)
         self.check_share_task()
-
+    
+    #N
     #签到
     def sign(self):
         url = URLS.TASK_SIGN
@@ -1072,6 +1038,7 @@ class HeyboxClient():
             self.logger.error(f'签到出错[{e}]')
             return(False)
 
+    #N
     #发送消息(userid,text),成功返回True|False
     def send_message(self,userid,text):
         url = URLS.SEND_MESSAGE
@@ -1094,34 +1061,144 @@ class HeyboxClient():
             self.__check_status(jsondict)
             self.logger.debug('发送私信成功')
             return(True)
-        except (ClientException,KeyError,NameError)  as e:
+        except ClientException  as e:
             self.logger.error(f'发送私信出错[{e}]')
             return(False)
 
-    #读取游戏信息([appid,……])
-    def get_game_info(self,appids):
-        url = URLS.GET_GAME_INFO
+    #N
+    #读取游戏信息(appid)，成功返回(中文名,英文名,关注?,(免费?,原价,现价,折扣),评分,评价,平台)
+    #评价释义参见GameReviewSummaryType 平台释义参见GamePlatformType
+    def get_game_detail(self,appid:int):
+        url = URLS.GET_GAME_DETAIL
         self.__flush_params()
         params = {
-            'userid':userid,
+            'appid':appid,
             **self._params
         }
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            **self._headers
-        }
-        data = {
-            'text':text,
-            'img':''
-        }
-        resp = self.Session.get(url=url,headers=headers,cookies=self._cookies,params=params,data=data)
+        resp = self.Session.get(url=url,headers=self._headers,cookies=self._cookies,params=params)
         try:
-            dict = resp.json()
-            self.__check_status(dict)
-            self.logger.debug('发送私信成功')
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            
+            result = jsondict['result']
+            name = result['name']
+            name_en = result['name_en']
+            name_en = name_en if name_en else name
+
+            release_date = result['release_date']
+
+            topic_detail = result['topic_detail']
+            is_follow = BoolenString(topic_detail['is_follow'] == 1)
+            is_free = BoolenString(result['is_free'])
+
+            score = result.get('score',-1) #小黑盒评分
+            game_platform_type = result['game_type']
+            if game_platform_type == 'pc':
+                game_platform_type_num = GamePlatformType.PCGame
+                game_review_summary = result['game_review_summary']
+                if not is_free:
+                    price = result['price']
+                    initial_price = price['initial']
+                    current_price = price['current']
+                    discount = price['discount']
+                    lowest_price = price.get('lowest_price',price)
+                    lowest_discount = price.get('lowest_discount',discount)
+            elif game_platform_type == 'console':
+                game_platform_type_num = GamePlatformType.ConsoleGame
+                game_review_summary = '不支持'
+            else:
+                self.logger.warn(f'未知的游戏类型[{game_type}]')
+                game_platform_type_num = GamePlatformType.UnknownType
+                game_review_summary = '不支持'
+
+            if game_review_summary == '好评如潮':
+                game_review_summary_num = GameReviewSummaryType.PPPP
+            elif game_review_summary == '特别好评':
+                game_review_summary_num = GameReviewSummaryType.PPP
+            elif game_review_summary == '多半好评':
+                game_review_summary_num = GameReviewSummaryType.PP
+            elif game_review_summary == '褒贬不一':
+                game_review_summary_num = GameReviewSummaryType.PN
+            elif game_review_summary == '多半差评':
+                game_review_summary_num = GameReviewSummaryType.NN
+            elif game_review_summary == '特别差评':
+                game_review_summary_num = GameReviewSummaryType.NNN
+            elif game_review_summary == '差评如潮':
+                game_review_summary_num = GameReviewSummaryType.NNNN
+            elif game_review_summary[-5:] == '篇用户评测':
+                game_review_summary_num = GameReviewSummaryType.No
+            else:
+                game_review_summary_num = GameReviewSummaryType.UnknownType
+                
+            self.logger.debug(f'名称[{name} {name_en}] @ {appid}')
+            if is_free:
+                self.logger.debug('价格[免费游戏]')
+            elif game_platform_type == GamePlatformType.PCGame:
+                self.logger.debug(f'价格[{initial_price}￥ - {discount}% = {current_price}￥{" 史低" if current_price==lowest_price else ""}]')
+            else:
+                self.logger.debug('价格[不支持主机游戏]')
+            self.logger.debug(f'评分[{score if score != -1 else "评分较少"}|{game_review_summary}] 发布日期[{release_date}]')
+            return((name,name_en,is_follow,(is_free,initial_price,current_price,discount),score,game_review_summary_num,game_platform_type_num))
         except  (ClientException,KeyError,NameError)  as e:
-            self.logger.error(f'发送私信出错[{e}]')
+            self.logger.error(f'拉取游戏详情出错[{e}]')
             return(False)
+
+    #N
+    #读取游戏更多信息(appid)，成功返回(开发商,发行商,发布日期,平台,关注数,帖子数,[黑盒标签],[Steam标签])
+    def get_game_detail_ex(self,appid:int):
+        url = URLS.GET_GAME_DETAIL
+        self.__flush_params()
+        params = {
+            'appid':appid,
+            **self._params
+        }
+        resp = self.Session.get(url=url,headers=self._headers,cookies=self._cookies,params=params)
+        try:
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            
+            result = jsondict['result']
+            name = result['name']
+            name_en = result['name_en']
+            name_en = name_en if name_en else name
+ 
+            release_date = result['release_date']
+            publishers = result['publishers'][0]['value']
+
+            topic_detail = result['topic_detail']
+            follow_num = topic_detail['follow_num'] #关注数
+            link_num = topic_detail['link_num'] #帖子数
+    
+            game_platform_type = result['game_type']
+            if game_platform_type == 'pc':
+                developer = result['menu_v2'][1]['value']
+            elif game_platform_type == 'console':
+                developer = publishers
+            else:
+                self.logger.warn(f'未知的游戏类型[{game_type}]')
+                developer = publishers
+
+            tags = [] #小黑盒标签
+            for tag in result['hot_tags']:
+                desc = tag['desc']
+                #key = tag['key']
+                tags.append(desc)
+
+            genres = [] #steam标签
+            for genre in result['genres']:
+                genres.append(genre)
+                
+            self.logger.debug(f'名称[{name} {name_en}] @ {appid}')
+            self.logger.debug(f'开发商[{developer}] 发行商[{publishers}] 发布日期[{release_date}]')
+            self.logger.debug(f'关注[{follow_num}] 帖子[{link_num}]')
+            self.logger.debug(f'黑盒标签[{tags}]')
+            self.logger.debug(f'Steam标签[{genres}]')
+            return((developer,publishers,release_date,follow_num,link_num,tags,genres))
+        except  (ClientException,KeyError,NameError)  as e:
+            self.logger.error(f'拉取游戏详情出错[{e}]')
+            return(False)
+
+
 
     #完成社区答题，成功返回True|False
     def do_communitu_surver(self):
@@ -1290,6 +1367,7 @@ class HeyboxClient():
             self.logger.error(f'拉取视频信息出错[{e}]')
             return(False)    
 
+
     #修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
     def update_profile(self,birthday=0,career='在校学生',education='本科',gender=1,nickname='',email=''):
         url = URLS.UPDATE_PROFILE
@@ -1297,6 +1375,14 @@ class HeyboxClient():
         raise NotImplemented
         return(False)
 
+
+    #查询有无新消息,返回True,False
+    def check_notice(self):
+        self.logger.error('该函数尚未实现')
+        raise NotImplementedError
+        return(False)
+
+    #N
     #查询有无新成就,成功返回(成就名,描述)|False
     def check_achieve_alert(self):
         url = URLS.ACHIEVE_LIST
@@ -1316,18 +1402,13 @@ class HeyboxClient():
             desc = achieve_event['desc']
             self.logger.debug(f'解锁新成就[{text}]|[{desc}]')
             return((text,desc))
-        except  (ClientException,KeyError,NameError)  as e:
+        except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'查询新成就出错[{e}]')
             return(False)    
 
-    #查询有无新消息,返回True,False
-    def check_notice(self):
-        self.logger.error('该函数尚未实现')
-        raise NotImplementedError
-        return(False)
 
-
-    #获取每日任务状态，返回(已任务,任务总数)|False
+    #N
+    #获取每日任务状态，返回(完成数,任务总数)|False
     def get_daily_task_stats(self):
         url = URLS.TASK_STATS
         self.__flush_params()
@@ -1346,7 +1427,8 @@ class HeyboxClient():
             self.logger.error(f'获取任务状态出错[{e}]')
             return(False)
 
-    #获取每日任务详情，成功返回(签到,分享,点赞)True:该任务完成,False:该任务未完成|False
+    #N
+    #获取每日任务详情，成功返回(签到,分享,点赞),True:该任务完成,False:该任务未完成|False
     def get_daily_task_detail(self):
         url = URLS.TASK_LIST
         self.__flush_params()
@@ -1367,6 +1449,7 @@ class HeyboxClient():
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
+    #N
     #获取更多任务详情，成功返回(绑定,微信,公开,评价,答题,推送,资料)True:该任务*可能*完成,False:该任务*一定*未完成|False
     def get_ex_task_detail(self):
         url = URLS.TASK_LIST
@@ -1374,13 +1457,10 @@ class HeyboxClient():
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             jsondict = resp.json()
-            self.__check_status(jsondict)
-            
-            task_list = jsondict['result']['task_list'][1]['tasks']
-            
+            self.__check_status(jsondict)          
             band = public = bandwx = exam = push = profile = evaluate = BoolenString(True)
 
-            for task in task_list:
+            for task in jsondict['result']['task_list'][1]['tasks']:
                 title = task['title']
                 if title == '绑定Steam账号':
                     band = BoolenString(task['state'] == 'finish')
@@ -1397,15 +1477,14 @@ class HeyboxClient():
                 elif title[-4:] == '游戏评价':
                     evaluate = BoolenString(task['state'] == 'finish')
 
-            self.logger.debug(f'绑定{band}|微信{bandwx}|公开{public}|评价{evaluate}|'
-                                f'答题{exam}|推送{push}|资料{profile}')
-
+            self.logger.debug(f'绑定{band}|微信{bandwx}|公开{public}|评价{evaluate}|答题{exam}|推送{push}|资料{profile}')
             return((band,bandwx,public,evaluate,exam,push,profile))
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-    #获取个人数据，成功返回(昵称,H币,等级,经验/下级经验,连续签到天数)|False
+    #N
+    #获取我的任务数据，成功返回(昵称,H币,等级,经验/下级经验,连续签到天数)|False
     def get_my_data(self):
         url = URLS.TASK_LIST
         self.__flush_params()
@@ -1427,14 +1506,14 @@ class HeyboxClient():
             sign_in_streak = jsondict['result']['task_list'][0]['tasks'][0]['sign_in_streak']
 
             self.logger.debug(f'昵称:{username} @{userid} [{level}级]')
-            self.logger.debug(f'盒币[{coin}],经验[{exp}/{max_exp}],'
-                              f'连续签到[{sign_in_streak}]天')
+            self.logger.debug(f'盒币[{coin}]|经验[{exp}/{max_exp}]|连续签到[{sign_in_streak}]天')
             return((username,coin,level,exp,max_exp,sign_in_streak))
         except (ClientException,KeyError,NameError) as e:
-            self.logger.error(f'获取任务详情出错[{e}]')
+            self.logger.error(f'获取我的任务数据详情出错[{e}]')
             return(False)
 
-    #获取个人资料([userid]默认代入自己的heybox_id)，返回(关注数,粉丝数,获赞数)|False
+    #N
+    #获取个人资料，默认代入自己的heybox_id([userid])，返回(关注数,粉丝数,获赞数)|False
     def get_user_profile(self,userid:int=-1):
         url = URLS.USER_PROFILE
         if userid < 0:
@@ -1469,7 +1548,7 @@ class HeyboxClient():
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-
+    #N
     #获取自己的认证信息，成功返回(有密码?,手机号)|False
     def get_auth_info(self):
         url = URLS.GET_AUTH_INFO
@@ -1494,6 +1573,7 @@ class HeyboxClient():
             self.logger.error(f'获取安全信息出错[{e}]')
             return(False)
 
+    #N
     #检查小黑盒最新版本，检查更新成功返回True|False
     def check_heybox_version(self):
         url = URLS.VERSION_CHECK
@@ -1510,6 +1590,7 @@ class HeyboxClient():
             self.logger.error(f'获取小黑盒最新版本出错[{e}]')
             return(False)
 
+    #N
     #检查脚本有无更新，有更新返回(最新版本,更新内容,下载地址)|False
     def check_script_version(self):
         url = URLS.SCRIPT_UPDATE_CHECK
@@ -1529,6 +1610,7 @@ class HeyboxClient():
             self.logger.error(f'检测脚本更新出错[{e}]')
             return(False)
 
+    #N
     #检查返回值，参数(json字典)，通过返回True|抛出异常，**未处理可能的异常
     def __check_status(self,jsondict:dict):
         try:
@@ -1568,10 +1650,11 @@ class HeyboxClient():
             elif status == 'relogin':
                 raise TokenError
         except (ValueError,NameError):
-            self.logger.debug('JSON格式错误')
+            self.logger.debug('JSON格式错误，请提交到chr@chrxw.com')
             self.logger.debug(f'{jsondict}')
-            raise UnknownError
+            raise JsonAnalyzeError
 
+    #N
     #刷新web表单
     def __flush_params(self):
         def gen_hkey(time:int):
@@ -1589,21 +1672,50 @@ class HeyboxClient():
         self._params['hkey'] = gen_hkey(asctime)    
         self._params['_time'] = asctime
 
-
+#====================================
+#常量类
 #推荐关注列表用户类型分类
 class RecTagType():
-    UnknownTag = 0#未知
-    SteamFriend = 1#Steam好友
-    HasFriend = 2#多位共同好友
-    Author = 9#作者
+    UnknownType = 0 #未知
+    SteamFriend = 1 #Steam好友
+    HasFriend = 2 #多位共同好友
+    Author = 3 #作者
 
 #好友关系分类
 class FollowType():
-    NotFollowed = 0#没有关系
-    IFollowedHe = 1#我关注他
-    HeFollowedMe = 2#他关注我
-    BOthFollowed = 3#双向关注
+    NotFollowed = 0 #没有关系
+    IFollowedHe = 1 #我关注他
+    HeFollowedMe = 2 #他关注我
+    BOthFollowed = 3 #双向关注
 
+#动态类型
+class FollowPostType():
+    UnknownType = 0 #未知
+    PostLink = 1 #发帖
+    FollowGame = 2 #关注游戏
+    PurchaseGame = 3 #购买游戏
+    AchieveGame = 4 #获得成就
+    CommentGame = 5 #评价游戏
+    CreateRollRoom = 6 #赠送游戏
+
+#游戏平台类型
+class GamePlatformType():
+    UnknownType = 0 #未知
+    PCGame = 1 #PC游戏
+    ConsoleGame = 2 #主机游戏
+
+#游戏评价类型
+class GameReviewSummaryType():
+    UnknownType = 0 #未知
+    No = 1 #无总体评价
+    PPPP = 2 #好评如潮
+    PPP = 3 #特别好评
+    PP = 4 #多半好评
+    PN = 5 #褒贬不一
+    NP = 5 #褒贬不一
+    NN = 6 #多半差评
+    NNN = 7 #特别差评
+    NNNN = 8 #差评如潮
 
 #异常基类
 #====================================
@@ -1653,6 +1765,9 @@ class ParamsError(ClientException):
 class LocalTimeError(ClientException):
     def __init__(self):
         super().__init__('本地时间错误')
+class JsonAnalyzeError(ClientException):
+    def __init__(self):
+        super().__init__('Json解析失败')
 #------------------------------------
 #关注次数用尽
 class FollowLimitedError(ClientException):
