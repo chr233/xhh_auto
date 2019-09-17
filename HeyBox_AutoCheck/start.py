@@ -69,17 +69,23 @@ if __name__ == '__main__':
             
             heybox1 = HeyBoxClient.HeyboxClient(heybox_id,imei,pkey,i)
 
+
             if env_dist.get('MODE') == 'DEBUG':
+                
+                result=heybox1.get_follow_post(60)
+                print(result)
+                heybox1.simu_like_follows(result)
+                print(0)
+                
                 #调试模式
-                a=heybox1.get_game_detail_ex(271590)
-                print(a)
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
                 #heybox1.auto_follow_filtered_recomment(5)
                 if i == len(accountlist):
-                    heybox1.auto_follow_followers(30)
-                    heybox1.follow_user(13081382)
-                    heybox1.auto_do_communitu_surver()
+                    result=heybox1.share(newsid=1248741)
+                    print(result)
+
+                    print(1)
                     pass
                 
                 continue
