@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
             if env_dist.get('MODE') == 'DEBUG':
                 #调试模式
-                a=heybox1.get_video_detail(31995542,31995542)
+                a=heybox1.get_game_detail_ex(271590)
                 print(a)
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
