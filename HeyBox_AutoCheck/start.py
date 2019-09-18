@@ -71,18 +71,18 @@ if __name__ == '__main__':
 
 
             if env_dist.get('MODE') == 'DEBUG':
-                
-                result=heybox1.get_news_link_tree(32188372, '1248547')
-                print(result)
-                print(0)
-                
+                               
                 #调试模式
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
                 #heybox1.auto_follow_filtered_recomment(5)
                 if i == len(accountlist):
-                    result=heybox1.share(newsid=1248741)
+                    result=heybox1.get_follow_post(10)
                     print(result)
+                    result=heybox1.batch_news_operate(result)
+                    print(result)
+
+                    print(0)
 
                     print(1)
                     pass
