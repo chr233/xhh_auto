@@ -72,9 +72,8 @@ if __name__ == '__main__':
 
             if env_dist.get('MODE') == 'DEBUG':
                 
-                result=heybox1.get_follow_post(60)
+                result=heybox1.get_news_link_tree(32188372, '1248547')
                 print(result)
-                heybox1.simu_like_follows(result)
                 print(0)
                 
                 #调试模式
