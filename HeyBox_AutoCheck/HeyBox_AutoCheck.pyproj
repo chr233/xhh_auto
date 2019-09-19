@@ -28,7 +28,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Account_Manager.py" />
-    <Compile Include="heybox_logs.py">
+    <Compile Include="heybox_basic.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="heybox_static.py">
