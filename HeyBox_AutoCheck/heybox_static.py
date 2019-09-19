@@ -272,3 +272,6 @@ class ObjectError(ClientException):
     def __init__(self):
         super().__init__('对象不存在或者已被删除')
 #------------------------------------
+
+if __name__=='__main__':
+    print('')
