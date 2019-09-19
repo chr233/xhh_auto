@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import HeyBoxClient
+import heybox_client
 from heybox_static import *
 
 import json
