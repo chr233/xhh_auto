@@ -60,7 +60,7 @@ class RelationType():
     '''
     好友关系分类
     '''
-    NotFollowed = 0 #没有关系
+    NoRelation = 0 #没有关系
     IFollowedHim = 1 #我关注他
     HeFollowedMe = 2 #他关注我
     BOthFollowed = 3 #双向关注
@@ -104,11 +104,10 @@ class GameReviewSummaryType():
     NN = 6 #多半差评
     NNN = 7 #特别差评
     NNNN = 8 #差评如潮
-class OperateType:
+class OperateType():
     '''
     操作码类型
     '''
-    UnknownType = 0 #未知
     #批量操作用户列表的操作码
     FollowUser = 1 #关注用户
     UnFollowUser = 2 #取关用户
@@ -117,6 +116,12 @@ class OperateType:
     ViewShare = 2 #浏览分享
     ViewLike = 3 #浏览点赞
     ViewLikeShare = 4 #浏览点赞分享
+class StateType():
+    '''
+    答题结果
+    '''
+    Complete = 1 #答题完成
+    AlreadyDone = 2 #已经答过了,无法重复作答
 class BoolenString():
     '''
     逻辑型字符串,可以打印出×和√,不影响逻辑判断。
