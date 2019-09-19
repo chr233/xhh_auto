@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 if i == len(accountlist):
                     result=heybox1.get_follow_post(10)
                     print(result)
-                    result=heybox1.batch_news_operate(result)
+                    result=heybox1.batch_followposts_operate(result)
                     print(result)
 
                     print(0)

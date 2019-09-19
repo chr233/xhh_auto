@@ -116,6 +116,11 @@ class OperateType():
     ViewShare = 2 #浏览分享
     ViewLike = 3 #浏览点赞
     ViewLikeShare = 4 #浏览点赞分享
+    #批量执行用户列表的操作码
+     = 1 #浏览
+    ViewShare = 2 #浏览分享
+    ViewLike = 3 #浏览点赞
+    ViewLikeShare = 4 #浏览点赞分享
 class StateType():
     '''
     答题结果

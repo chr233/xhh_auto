@@ -31,14 +31,11 @@
     <Compile Include="heybox_static.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HeyBoxClient.py">
+    <Compile Include="heybox_client.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HeyBoxClient_bak.py" />
     <Compile Include="start.py" />
-    <Compile Include="test.py">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="config_sample.json" />

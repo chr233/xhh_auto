@@ -78,60 +78,39 @@ class HeyboxClient():
         self.logger = logging.getLogger(str(tag))
         self.logger.debug(f'初始化完成{f" @ [{heybox_id}]" if heybox_id else ""}')
 
-    #[自动]
-    def auto(self):#,viewcount,likecount,sharecount,followcount):
-        self.get_ads_info()
-        self.check_achieve_alert()
-        self.sign()
-        idlist = self.get_news_list(30)
-        self.simu_view_news(idlist[0][0],idlist[0][1],0)
-        self.share(idlist[0][1])
+        #[自动]
+        #def auto(self):#,viewcount,likecount,sharecount,followcount):
+        #    self.get_ads_info()
+        #    self.check_achieve_alert()
+        #    self.sign()
+        #    idlist = self.get_news_list(30)
+        #    self.simu_view_news(idlist[0][0],idlist[0][1],0)
+        #    self.share(idlist[0][1])
 
-        self.simu_view_like_newses(idlist,10)
+        #    self.simu_view_like_newses(idlist,10)
 
-        self.auto_follow_followers(30)
-        self.auto_like_follows(30)
+        #    self.auto_follow_followers(30)
+        #    self.auto_like_follows(30)
 
-
-    #[自动]批量模拟浏览文章
-    def auto_simu_view_newses(self,limit=10):
-        idlist = self.get_news_list(30)
-        self.simu_view_newses(idlist,limit)
-        return(True)
-    #[自动]批量模拟浏览并点赞文章
-    def auto_simu_view_like_newses(self,limit=10):
-        idlist = self.get_news_list(30)
-        self.simu_view_like_newses(idlist,limit)
-        return(True)
-    #[自动]批量点赞动态
-    def auto_like_follows(self,limit=10):
-        likelist = self.get_follow_post(limit)
-        self.simu_like_follows(likelist,limit)
-        return(True)
-    #[自动]关注新粉丝
-    def auto_follow_followers(self,limit=30):
-        followerlist = self.get_follower_list()
-        self.simu_follow_followers(followerlist,limit)
-
-    #[自动]取关单向关注(取关粉丝-关注>value的用户)
-    def auto_clean_follering_list(self,value=20):
-        followinglist = self.get_following_list()
-        self.followinglist_filter(followinglist,value)
-
-    #[自动]关注推荐关注(过滤后)
-    def auto_follow_filtered_recomment(self,limit=15):
-        reclist = self.get_recommend_follow_list()
-        reclist = self.followlist_filter(reclist,100)
-        self.simu_follow_followers(reclist,limit)
-    #[自动]关注推荐关注(未过滤)
-    def auto_follow_raw_recomment(self,limit=30):
-        reclist = self.get_recommend_follow_list()
-        self.simu_follow_followers(reclist,limit)
+    def sample_auto():
+        '''
+        简单的自动化执行示例
+        '''
+        pass
 
     #NT
-    #批量操作文章([(linkid,newsid),…],操作码,初始索引),成功返回True|False
-    #操作码参见OperateType,1:浏览,2:浏览分享,3:浏览点赞,4:浏览点赞分享
-    def batch_news_operate(self,idsetlist:list,operatetype:int=1,indexstart:int=1):
+    def batch_newslist_operate(self,idsetlist:list,operatetype:int=1,indexstart:int=1):
+        '''
+        批量操作文章列表
+        参数:
+            idsetlist:[(linkid,newsid),…]
+            operatetype:操作码  操作码参见OperateType,1:浏览,2:浏览分享,3:浏览点赞,4:浏览点赞分享
+            indexstart:初始索引
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
         if operatetype == OperateType.View:
             view,like,share = True,False,False
         elif operatetype == OperateType.ViewLike:
@@ -151,7 +130,7 @@ class HeyboxClient():
                 try:
                     linkid,newsid = idobj
                     if view:
-                        has_viedo,is_liked = self.get_news_links_info(linkid,newsid,index)
+                        has_viedo,is_liked = self.get_news_links(linkid,newsid,index)
                         if not has_viedo:
                             self.get_news_body(newsid,index)
                         else:
@@ -179,8 +158,16 @@ class HeyboxClient():
             return(False)  
 
     #NT
-    #批量点赞动态([(linkid,type,已点赞?),…]),成功返回True|False
-    def batch_news_operate(self,idsetlist:list):
+    def batch_like_followposts(self,idsetlist:list):
+        '''
+        批量点赞动态
+        参数:
+            idsetlist:[(linkid,type,已点赞?),…]
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
         if idsetlist:
             errorcount = 0
             operatecount = 0
@@ -206,12 +193,118 @@ class HeyboxClient():
             self.logger.error(f'参数错误[{idsetlist}]')
             return(False)  
 
+    #NT
+    def batch_userlist_operate(self,useridlist:list,operatetype:int=1):
+        '''
+        批量关注/取关粉丝
+        参数:
+            useridlist:[用户id,……]
+            operatetype:操作码,1:关注,2:取关  释义参见OperateType
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        def follow_user(userid:int) -> bool:
+            '''
+            关注用户
+            参数:
+                userid:用户id
+            成功返回:
+                True
+            '''
+            if userid == self.heybox_id:
+                self.logger.debug('不能粉自己哦')
+                return(True)
+            url = URLS.FOLLOW_USER
+            headers = {
+                **self._headers,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+            data = {
+                'following_id': userid,
+            }
+            self.__flush_params()
+            resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug(f'关注用户[{userid}]成功')
+            return(True)
+        def unfollow_user(userid:int) -> bool:
+            '''
+            取关用户
+            参数:
+                userid:用户id
+            成功返回:
+                True
+            '''
+            if userid == self.heybox_id:
+                self.logger.debug('不能取关自己哦')
+                return(True)
+            url = URLS.FOLLOW_USER_CANCEL
+            headers = {
+                **self._headers,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+            data = {
+                'following_id': userid,
+            }
+            self.__flush_params()
+            resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug(f'取关用户[{userid}]成功')
+            return(True)
+        #========================================
+        if operatetype == OperateType.FollowUser:
+            operater = follow_user
+        elif operatetype == OperateType.UnFollowUser:
+            operater = unfollow_user
+        else:
+            self.logger.error(f'错误的操作码[{operatetype}],操作码参见OperateType类')
+            return(False)
+        
+        if useridlist and type(useridlist) == list:
+            if type(useridlist[0]) != int:
+                useridlist = self.userlist_simplify(useridlist) #简化userlist
+            errorcount = 0 #错误计数
+            operatecount = 0 #操作计数
+            for userobj in useridlist:
+                try:
+                    operater(userobj)
+                    operatecount+=1
+                except FollowLimitedError as e:
+                    self.logger.error(f'达到每日关注上限，停止操作[{e}]')
+                    return(False)
+                except ClientException as e:
+                    self.logger.debug(f'关注/取关用户出错[{e}]')
+                    errorcount+=1
+                    if errorcount >= 3:
+                        self.logger.error(f'批量关注/取关用户遇到大量错误，停止操作')
+                        return(False)                      
+            self.logger.debug(f'成功关注/取关了[{operatecount}]个用户')
+            return(True)
+        else:
+            self.logger.error(f'参数错误[{useridlist}]')
+            return(False)
 
     #NT
-    #拉取首页文章列表(value=30)，返回[(linkid,newsid),……]
-    def get_news_list(self,value=30):
-        #拉取首页文章列表(offset=0)，返回[(linkid,newsid),……]
-        def _get_news_list(offset=0):
+    def get_news_list(self,value:int=30):
+        '''
+        拉取首页文章列表
+        参数:
+            value:要拉取的数量
+        成功返回:
+            newsidlist:[(linkid,newsid),……]
+        '''        
+        def _get_news_list(offset:int=0):
+            '''     
+            拉取首页文章列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                newslist:[(linkid,newsid),……]
+            '''
             url = URLS.GET_NEWS_LIST
             self.__flush_params()
             params = {
@@ -276,13 +369,24 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，新闻列表为空，可能遇到错误')
         return(newsidlist)
     
-
     #NT
-    #拉取动态列表(value=30,忽略已点赞=True),返回[(linkid,posttype,已点赞?),……]
-    #type释义参见FollowPostType
-    def get_follow_post(self,value=30,ignoreliked=True):
-        #拉取动态列表(offset=0),返回[(linkid,type,已点赞?),……]
-        def _get_follow_post(offset=0):
+    def get_follow_post(self,value:int=30,ignoreliked:bool=True):
+        '''
+        拉取动态列表
+        参数:
+            value:要拉取的数量
+            ignoreliked:忽略已点赞的动态?
+        成功返回:
+            eventslist:[(linkid,posttype,已点赞?),……] posttype释义参见:FollowPostType
+        '''
+        def _get_follow_post(offset:int=0):
+            '''     
+            拉取动态列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                postlist:[(linkid,posttype,已点赞?),……]  posttype释义参见FollowPostType
+            '''
             url = URLS.GET_SUBSCRIBED_EVENTS
             self.__flush_params()
             params = {
@@ -363,8 +467,19 @@ class HeyboxClient():
         return(eventslist)
     
     #NT
-    #拉取文章附加信息(linkid,newsid,index=1),返回(是视频?,已点赞?)|False
-    def get_news_links_info(self,linkid:int,newsid:int,index=1):
+    def get_news_links(self,linkid:int,newsid:int,index:int=1):
+        '''   
+        拉取文章附加信息
+        参数:
+            linkid:链接id
+            newsid:新闻id
+            index:索引
+        成功返回:
+            has_video:是视频?
+            is_liked:已点赞?
+        失败返回:    
+            False
+        '''
         url = URLS.GET_LINK_TREE
         self.__flush_params()
         params = {
@@ -400,8 +515,20 @@ class HeyboxClient():
             return(False)  
         
     #NT
-    #拉取文章更多附加信息(linkid,newsid,index=1),返回(标题,(作者,作者id,作者等级),(点击数,点赞数,评论数)|False
-    def get_news_links_info_ex(self,linkid:int,newsid:int,index=1):
+    def get_news_links_ex(self,linkid:int,newsid:int,index:int=1):
+        '''   
+        拉取文章更多附加信息
+        参数:
+            linkid:链接id
+            newsid:新闻id
+            index:索引
+        成功返回:
+            title:标题
+            (author_name,author_id,author_level):(作者,作者id,作者等级)
+            (click,like_count,comment_count):(点击数,点赞数,评论数)
+        失败返回:    
+            False
+        '''
         url = URLS.GET_LINK_TREE
         self.__flush_params()
         params = {
@@ -442,10 +569,22 @@ class HeyboxClient():
             return(False) 
     
     #NT
-    #拉取可参与的ROLL房列表(value=30),返回[(link_id,room_id,人数,价格),……]
-    def get_active_roll_room(self,value=30):
-        #拉取可参与的ROLL房列表(offset=0),返回[(link_id,room_id,人数,价格),……]
+    def get_active_roll_room(self,value:int=30):
+        '''
+        拉取可参与的ROLL房列表
+        参数:
+            value:要拉取的数量
+        成功返回:
+            rollroomlist:[(link_id,room_id,人数,价格),……]
+        '''
         def _get_active_roll_room(offset=0):
+            '''
+            拉取可参与的ROLL房列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                rollroomlist:[(link_id,room_id,人数,价格),……]
+            '''
             url = URLS.GET_ACTIVE_ROLL_ROOM
             self.__flush_params()
             params = {
@@ -510,10 +649,22 @@ class HeyboxClient():
         return(rollroomlist)
 
     #NT
-    #拉取推荐关注列表(value=30),返回[(id,关系,类型)……] 类型释义参见:RecTagTyoe 关系释义参见:RelationType
-    def get_recommend_follow_list(self,value=30):
-        #拉取推荐关注列表(offset=0),返回[(id,类型,关系)……]
-        def _get_recommend_follow_list(offset=0):
+    def get_recommend_follow_list(self,value:int=30):
+        '''
+        拉取推荐关注列表
+        参数:
+            value:要拉取的数量
+        成功返回:
+            recfollowlist:[(id,关系,类型)……] 关系释义参见:RelationType
+        '''
+        def _get_recommend_follow_list(offset:int=0):
+            '''
+            拉取推荐关注列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                userlist:[(id,关系,类型)……] 关系释义参见:RelationType
+            '''
             url = URLS.GET_RECOMMEND_FOLLOWING
             self.__flush_params()
             params = {
@@ -579,9 +730,22 @@ class HeyboxClient():
         return(recfollowlist)
 
     #NT
-    #拉取粉丝列表(value=30),返回[(id,关系)……] 关系释义参见:RelationType
-    def get_follower_list(self,value=30):
-        def _get_follower_list(offset=0):
+    def get_follower_list(self,value:int=30):
+        '''
+        拉取粉丝列表
+        参数:
+            value:要拉取的数量
+        成功返回:
+            followerlist:[(id,关系)……] 关系释义参见:RelationType
+            '''
+        def _get_follower_list(offset:int=0):
+            '''
+            拉取粉丝列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                userlist:[(id,关系)……] 关系释义参见:RelationType
+            '''
             url = URLS.GET_FOLLOWER_LIST
             self.__flush_params()
             params = {
@@ -640,9 +804,22 @@ class HeyboxClient():
 
     #NT
     #拉取关注列表(value=30),返回[(id,关系)……] 关系释义参见:RelationType
-    def get_following_list(self,value=30):
-        #拉取关注列表(linkid,newsid,[index]),返回[(id,关系)……]
-        def _get_following_list(offset=0):
+    def get_following_list(self,value:int=30):
+        '''
+        拉取关注列表
+        参数:
+            value:要拉取的数量
+        成功返回:
+            followinglist:[(id,关系)……] 关系释义参见:RelationType
+            '''
+        def _get_following_list(offset:int=0):
+            '''
+            拉取关注列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                userlist:[(id,关系)……] 关系释义参见:RelationType
+            '''
             url = URLS.FOLLOWING_LIST
             self.__flush_params()
             params = {
@@ -700,8 +877,14 @@ class HeyboxClient():
         return(followinglist)
 
     #NT
-    #拉取广告信息，成功返回广告标题|False
     def get_ads_info(self):
+        '''
+        拉取广告信息
+        成功返回:
+            广告标题
+        失败返回:
+            False
+        '''
         url = URLS.GET_ADS_INFO
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
@@ -717,8 +900,18 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #给新闻点赞(linkid,newsid,index=1)，成功返回True|False
-    def like_news(self,linkid:int,newsid:int,index=1):
+    def like_news(self,linkid:int,newsid:int,index:int=1):
+        '''
+        给新闻点赞
+        参数:
+            linkid:链接id
+            newsid:新闻id
+            index:索引
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
         url = URLS.LIKE_LINK
         headers = {
             **self._headers,
@@ -756,8 +949,17 @@ class HeyboxClient():
             return(False)
     
     #NT
-    #给关注的动态点赞(linkid,type=0)，成功返回True|False
-    def like_follow_post(self,linkid:int,type=0):
+    def like_follow_post(self,linkid:int,followtype:int=0): 
+        '''
+        给好友动态点赞
+        参数:
+            linkid:链接id
+            type:动态类型,释义参见FollowPostType
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
         headers = {
             **self._headers,
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -765,7 +967,7 @@ class HeyboxClient():
         data = {
             'link_id': linkid,
         }
-        if type == FollowPostType.CommentGame:
+        if followtype == FollowPostType.CommentGame:
             url = URLS.SUPPORT_COMMENT
             data['support_type'] = 1
         else:
@@ -787,8 +989,14 @@ class HeyboxClient():
             return(False)
      
     #NT
-    #简化userlist,只保留userid,成功返回简化后的userlist|False
     def userlist_simplify(self,userlist:list):
+        '''
+        简化userlist,只保留userid
+        参数:
+            userlist:[userobj,…],userobj应该是包含userid的对象
+        成功返回:
+            suserlist:[userid,…],简化后的userlist
+        '''
         suserlist = []
         if userlist:
             for userobj in userlist:
@@ -804,119 +1012,95 @@ class HeyboxClient():
             suserlist = userlist
         return(suserlist)
 
-    #NT
-    #批量关注/取关粉丝([userid,……],操作码=1) 成功返回True|False
-    #操作码释义参见OperateType,1=关注,2=取关
-    def batch_follow_unfollow(self,useridlist:list,operatetype:int=1):
-        #关注用户(userid)，成功返回True|False
-        def follow_user(userid:int) -> bool:
-            if userid == self.heybox_id:
-                self.logger.debug('不能粉自己哦')
-                return(True)
-            url = URLS.FOLLOW_USER
-            headers = {
-                **self._headers,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-            data = {
-                'following_id': userid,
-            }
-            self.__flush_params()
-            resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
-            jsondict = resp.json()
-            self.__check_status(jsondict)
-            self.logger.debug(f'关注用户[{userid}]成功')
-            return(True)
-        #取关用户(userid)，成功返回True|False
-        def unfollow_user(userid:int) -> bool:
-            if userid == self.heybox_id:
-                self.logger.debug('不能取关自己哦')
-                return(True)
-            url = URLS.FOLLOW_USER_CANCEL
-            headers = {
-                **self._headers,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-            data = {
-                'following_id': userid,
-            }
-            self.__flush_params()
-            resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
-            jsondict = resp.json()
-            self.__check_status(jsondict)
-            self.logger.debug(f'取关用户[{userid}]成功')
-            return(True)
-        #========================================
-        if operatetype == OperateType.FollowUser:
-            operater = follow_user
-        elif operatetype == OperateType.UnFollowUser:
-            operater = unfollow_user
-        else:
-            self.logger.error(f'错误的操作码[{operatetype}],操作码参见OperateType类')
-            return(False)
-        
-        useridlist = self.userlist_simplify(useridlist)
-        if useridlist:
-            errorcount = 0 #错误计数
-            operatecount = 0 #操作计数
-            for userobj in useridlist:
-                try:
-                    operater(userobj)
-                    operatecount+=1
-                except FollowLimitedError as e:
-                    self.logger.error(f'达到每日关注上限，停止操作[{e}]')
-                    return(False)
-                except ClientException as e:
-                    self.logger.debug(f'关注/取关用户出错[{e}]')
-                    errorcount+=1
-                    if errorcount >= 3:
-                        self.logger.error(f'批量关注/取关用户遇到大量错误，停止操作')
-                        return(False)                      
-            self.logger.debug(f'成功关注/取关了[{operatecount}]个用户')
-            return(True)
-        else:
-            self.logger.error(f'参数错误[{useridlist}]')
-            return(False)
+
             
                 
     #NT
-    #用户列表过滤,([(userid,关系,[类型]),…],过滤器设置),成功返回过滤后的列表|False
-    #过滤器设置按照从上到下的顺序匹配第一个有效的设置
-    #'FollowValue':过滤阈值 [粉丝-关注>给定值的将被过滤]
-    #'RelationType':过滤关系 [正数:白名单,负数:黑名单] 数字含义参见RelationType
-    #'RecTagType':过滤类型 [userid需要包含'类型';正数:白名单,负数:黑名单] 数字含义参见RecTagType
     def userlist_filte(self,userlist:list,filtersetting:dict):
-        #能通过过滤器返回True,否则False|False
-        #根据关注数量和粉丝数量过滤
-        def filter_by_follow(user:list):
+        '''
+        用户列表过滤
+        参数:
+            userlist:[(用户id,关系类型,用户标签),…]
+            filtersetting:过滤器设置,过滤器设置按照从上到下的顺序匹配第一个有效的设置
+                'FollowValue':过滤阈值  粉丝-关注>给定值的将被过滤
+                'RelationType':过滤关系  正数:白名单|负数:黑名单  数字含义参见RelationType
+                'RecTagType':过滤类型  正数:白名单|负数:黑名单  数字含义参见RecTagType  userlist需要包含'用户标签'
+                'InvalidType':任意值  过滤正确的数值,不完整或者有错误的值会被过滤掉
+        成功返回:
+            fuserlist:过滤后的列表
+        失败返回:
+            False
+        '''
+        def filter_by_follow(userobj:list) -> bool:
+            '''
+            根据关注数量和粉丝数量过滤
+            参数:
+                userobj:(userid,关系,[类型])
+            能通过返回:
+                True
+            通不过返回:
+                False
+            '''
             try:
-                follow_num , fan_num , awd_num = self.get_user_profile(user[0])
+                userid = int(userobj[0])
+                relation = int(userobj[1])
+                follow_num , fan_num , awd_num = self.get_user_profile(userobj[0])
                 return(fan_num - follow_num <= value)
-            except ValueError:
+            except (ValueError,IndexError,TypeError):
                 return(False)
-        #根据关系过滤
-        def filter_by_relation(user:list):
+        def filter_by_relation(userobj:list) -> bool:
+            '''
+            根据关系过滤
+            参数:
+                userobj:(userid,关系,[类型])
+            能通过返回:
+                True
+            通不过返回:
+                False
+            '''
             try:
-                relation = user[1]
+                userid = int(userobj[0])
+                relation = int(userobj[1])
                 if value >= 0:
                     return(relation == value)
                 else:
                     return(relation != -value)
-            except ValueError:
+            except (ValueError,IndexError,TypeError):
                 return(False)
-        #根据类型过滤
-        def filter_by_tagtype(user:list):
-            try:
-                type = user[2]
+        def filter_by_tagtype(userobj:list) -> bool:
+            '''
+            根据类型过滤
+            参数:
+                userobj:(userid,关系,类型)
+            能通过返回:
+                True
+            通不过返回:
+                False
+            '''
+            try:                
+                userid = int(userobj[0])
+                relation = int(userobj[1])
+                type = int(userobj[2])
                 if value >= 0:
                     return(type == value)
                 else:
                     return(type != -value)
-            except (ValueError,IndexError):
+            except (ValueError,IndexError,TypeError):
                 return(False)
-        #默认过滤器,不过滤
-        def filter_default(user:list):
-            return(True)
+        def filter_Invalid(userobj:list) -> bool:
+            '''
+            默认过滤器,过滤掉格式不对的userobj
+            能通过返回:
+                True
+            通不过返回:
+                False
+            '''
+            try:
+                userid = int(userobj[0])
+                relation = int(userobj[1])
+                return(True)
+            except(ValueError,IndexError,TypeError):
+                return(False)
         #========================================
         if 'FollowValue' in filtersetting:
             value = filtersetting['FollowValue']
@@ -927,9 +1111,11 @@ class HeyboxClient():
         elif 'RecTagType' in filtersetting:
             value = filtersetting['RecTagType']
             filter = filter_by_tagtype
+        elif 'InvalidType' in filtersetting:
+            filter = filter_Invalid
         else:
-            self.logger.waring('未设置过滤器,不会进行过滤操作,请指定正确的过滤器')
-            filter = filter_default
+            self.logger.waring('未设置过滤器,请指定正确的过滤器')
+            return(False)
 
         fuserlist = []
         for user in userlist:
@@ -942,10 +1128,25 @@ class HeyboxClient():
         return(fuserlist)
 
     #NT
-    #分享新闻,(newsid,index=1),成功返回True|False
-    def share(self,newsid,index=1):
-        #模拟点击分享按钮,成功返回True|False
+    def share(self,newsid:int,index:int=1):
+        '''
+        分享新闻
+        参数:
+            newsid:新闻id
+            index:索引
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
         def simu_share():
+            '''
+            模拟点击分享按钮
+            成功返回:
+                True
+            失败返回:
+                False
+            '''
             url = URLS.SHARE_CLICK
             self.__flush_params()
             referer = {
@@ -984,8 +1185,12 @@ class HeyboxClient():
             except ClientException as e:
                 self.logger.error(f'分享出错[{e}]')
                 return(False)
-        #检查分享结果,成功返回True|False
         def check_share_task_qq():
+            '''
+            检查分享结果
+            成功返回:
+                True
+            '''
             url = URLS.SHARE_CHECK
             self.__flush_params()
             params = {
@@ -1008,8 +1213,14 @@ class HeyboxClient():
         return(op1 and op2)
     
     #NT
-    #签到,成功返回True|False
     def sign(self):
+        '''
+        签到
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
         url = URLS.SIGN
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
@@ -1039,8 +1250,17 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #发送消息(userid,text),成功返回True|False
-    def send_message(self,userid,text):
+    def send_message(self,userid:int,message:str):
+        '''
+        发送消息
+        参数:
+            userid:用户id
+            text:消息文字
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
         url = URLS.SEND_MESSAGE
         self.__flush_params()
         params = {
@@ -1052,7 +1272,7 @@ class HeyboxClient():
             **self._headers
         }
         data = {
-            'text':text,
+            'text':message,
             'img':''
         }
         resp = self.Session.post(url=url,headers=headers,cookies=self._cookies,params=params,data=data)
@@ -1066,14 +1286,19 @@ class HeyboxClient():
             return(False)
 
     #NT
-
     def get_game_detail(self,appid:int):
         '''
         读取游戏信息
-        参数:appid:游戏id
-        成功返回(中文名,英文名),关注?,(免费?,原价,现价,折扣),(评分,评价),平台|False
-            评价释义参见GameReviewSummaryType
-            平台释义参见GamePlatformType
+        参数:
+            appid:游戏id
+        成功返回:
+            (name,name_en):(中文名,英文名)
+            is_follow:关注?
+            (is_free,initial_price,current_price,discount):(免费?,原价,现价,折扣)
+            (score,game_review_summary_num):(评分,评价):评价释义参见GameReviewSummaryType
+            game_platform_type_num:平台:释义参见GamePlatformType
+        失败返回:
+            False
         '''
         url = URLS.GET_GAME_DETAIL
         self.__flush_params()
@@ -1152,8 +1377,15 @@ class HeyboxClient():
     def get_game_detail_ex(self,appid:int):
         '''
         读取游戏更多信息
-        参数:appid:游戏id
-        成功返回(开发商,发行商,发布日期),(关注数,帖子数),[黑盒标签],[Steam标签]|False
+        参数:
+            appid:游戏id
+        成功返回:
+            (developer,publishers,release_date):(开发商,发行商,发布日期)
+            (follow_num,link_num):(关注数,帖子数)
+            tags:[黑盒标签]
+            genres:[Steam标签]
+        失败返回:
+            False
         '''
         url = URLS.GET_GAME_DETAIL
         self.__flush_params()
@@ -1210,12 +1442,18 @@ class HeyboxClient():
     def do_communitu_surver(self):
         '''
         完成社区答题
-        返回True|False
+        成功返回:
+            True
+        失败返回:
+            False
         '''
         def get_community_survey():
             '''
             拉取社区答题题目
-            返回True|False
+                成功返回:
+                    True
+                失败返回:
+                    False
             '''
             url = URLS.COMMUNITY_SURVEY
             headers = {
@@ -1238,12 +1476,13 @@ class HeyboxClient():
             html = resp.text
             self.logger.debug(f'题库共[{len(html)}]字')
             return(True)
-        #
         def get_bbs_qa_state():
             '''
             获取答题情况，调用可以完成答题任务
-            返回state|False
-                state:1:第一次完成答题,2:已经作答
+            成功返回:
+                state:1:答题成功,2:已经答过了|释义参见StateType
+            失败返回:
+                False
             '''
             url = URLS.BBS_QA_STATE
             self.__flush_params()
@@ -1286,12 +1525,16 @@ class HeyboxClient():
             return(False)
 
     #NT
-  
     def get_news_body(self,newsid:int,index:int=1):
         '''
         拉取文章正文内容
-        参数:newsid,[index]
-        返回文章正文|False
+        参数:
+            newsid:新闻id
+            index:索引
+        成功返回:
+            文章正文
+        失败返回:
+            False
         '''
         url = URLS.GET_NEWS_DETAIL + str(newsid)
         headers = {
@@ -1341,8 +1584,14 @@ class HeyboxClient():
     def get_video_title(self,linkid:int,newsid:int,index:int=1):
         '''
         拉取视频标题
-        参数:linkid,newsid,[index]
-        返回视频标题|False
+        参数:
+            linkid:链接id
+            newsid:新闻id
+            index:索引
+        成功返回:
+            视频标题
+        失败返回:
+            False
         '''
         url = URLS.GET_VIDEO_VIEW
         headers = {
@@ -1390,7 +1639,13 @@ class HeyboxClient():
     def check_achieve_alert(self):
         '''
         查询有无新成就
-        有成就返回(成就名,描述),无成就返回True|False
+        有成就返回:
+            text:成就名
+            desc:成就描述
+        无成就返回:
+            True
+        失败返回:
+            False
         '''
         url = URLS.ACHIEVE_LIST
         self.__flush_params()
@@ -1416,12 +1671,15 @@ class HeyboxClient():
             self.logger.error(f'查询新成就出错[{e}]')
             return(False)    
 
-
     #NT
     def get_daily_task_stats(self):
         '''
         获取每日任务状态
-        返回(完成数,任务总数)|False
+        成功返回:
+            finish_count:完成数
+            task_count:任务总数
+        失败返回:
+            False
         '''
         url = URLS.GET_TASK_STATS
         self.__flush_params()
@@ -1430,11 +1688,11 @@ class HeyboxClient():
             jsondict = resp.json()
             self.__check_status(jsondict)
             result = jsondict['result']
-            wait = result['wait']
-            task = result['task']
-            finish = task - wait
+            wait_count = result['wait']
+            task_count = result['task']
+            finish_count = task_count - wait_count
             self.logger.debug(f'任务完成度[{finish}/{task}]')
-            return((finish,task))
+            return((finish_count,task_count))
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取任务状态出错[{e}]')
             return(False)
@@ -1443,7 +1701,12 @@ class HeyboxClient():
     def get_daily_task_detail(self):
         '''
         获取每日任务详情
-        返回(签到?,分享?,点赞?)|False
+        成功返回:
+            is_sign:签到?
+            is_share:分享?
+            is_like:点赞?
+        失败返回:
+            False
         '''
         url = URLS.GET_TASK_LIST
         self.__flush_params()
@@ -1451,13 +1714,13 @@ class HeyboxClient():
         try:
             jsondict = resp.json()
             self.__check_status(jsondict)
-
+            
             task_list = jsondict['result']['task_list'][0]['tasks']
-            sign = BoolenString(task_list[0]['state'] == 'finish')
-            share = BoolenString(task_list[1]['state'] == 'finish')
-            like = BoolenString(task_list[2]['state'] == 'finish')
+            is_sign = BoolenString(task_list[0]['state'] == 'finish')
+            is_share = BoolenString(task_list[1]['state'] == 'finish')
+            is_like = BoolenString(task_list[2]['state'] == 'finish')
             self.logger.debug(f"签到{sign}|分享{share}|点赞{like}")
-            return((sign,share,like))
+            return((is_sign,is_share,like))
         except ClientException as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
@@ -1466,9 +1729,16 @@ class HeyboxClient():
     def get_ex_task_detail(self):
         '''
         获取更多任务详情
-        返回(绑定?,微信?,公开?,评价?,答题?,推送?,资料?)|False
-                True:该任务*可能*完成
-                False:该任务*一定*未完成
+        成功返回:(True:该任务*可能*完成,False:该任务*一定*未完成)
+            band:绑定?
+            bandwx:微信?
+            public:公开?
+            evaluate:评价?
+            exam:答题?
+            push:推送?
+            profile:资料?
+        失败返回:
+        False
         '''
         url = URLS.GET_TASK_LIST
         self.__flush_params()
@@ -1503,7 +1773,13 @@ class HeyboxClient():
     def get_my_data(self):
         '''
         获取我的任务数据
-        返回(昵称,H币,等级,经验,下级经验,连续签到天数)|False
+        成功返回:
+            username:昵称
+            coin:H币
+            (level,exp,max_exp):(等级,经验,下级经验)
+            sign_in_streak:连续签到天数)
+        失败返回:
+            False
         '''
         url = URLS.GET_TASK_LIST
         self.__flush_params()
@@ -1524,7 +1800,7 @@ class HeyboxClient():
             sign_in_streak = jsondict['result']['task_list'][0]['tasks'][0]['sign_in_streak']
             self.logger.debug(f'昵称:{username} @{userid} [{level}级]')
             self.logger.debug(f'盒币[{coin}]|经验[{exp}/{max_exp}]|连续签到[{sign_in_streak}]天')
-            return((username,coin,level,exp,max_exp,sign_in_streak))
+            return((username,coin,(level,exp,max_exp),sign_in_streak))
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取我的任务数据详情出错[{e}]')
             return(False)
@@ -1533,8 +1809,14 @@ class HeyboxClient():
     def get_user_profile(self,userid:int=-1):
         '''
         获取个人资料
-        参数:userid:用户id,不填代入自己的id
-        返回(关注数,粉丝数,获赞数)|False
+        参数:
+            userid:用户id,不填代入自己的id
+        成功返回:
+            follow_num:关注数
+            fan_num:粉丝数
+            awd_num:获赞数
+        失败返回:
+            False
         '''
         url = URLS.GET_USER_PROFILE
         if userid < 0:
@@ -1570,7 +1852,11 @@ class HeyboxClient():
     def get_auth_info(self):
         '''
         获取自己的认证信息
-        返回(有密码?,手机号)|False
+        成功返回:
+            has_password:有密码?
+            phone_num:手机号
+        失败返回:
+            False
         '''
         url = URLS.GET_AUTH_INFO
         self.__flush_params()
@@ -1581,12 +1867,12 @@ class HeyboxClient():
 
             result = jsondict['result'][0]
             has_password = BoolenString(result['has_password'] == 1)
-            src_id = result['src_id']
+            phone_num = result['src_id']
             if has_password:
                 self.logger.debug(f'手机号[{src_id}]')
             else:
                 self.logger.debug(f'手机号[{src_id}],**未设置密码**')
-            return((has_password,src_id))
+            return((has_password,phone_num))
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取安全信息出错[{e}]')
             return(False)
@@ -1595,7 +1881,10 @@ class HeyboxClient():
     def check_heybox_version(self):
         '''
         检查小黑盒最新版本
-        检查更新成功返回True|False
+        成功返回:
+            True
+        失败返回:
+            False
         '''
         url = URLS.HEYBOX_VERSION_CHECK
         resp = self.Session.get(url=url,headers=self._headers)
@@ -1612,32 +1901,40 @@ class HeyboxClient():
             return(False)
 
     #未实现
-    def NotImplementedupdate_profile(self,birthday=0,career='在校学生',education='本科',gender=1,nickname='',email=''):
-        '''
-        ***未实现***
-        修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
-        '''
-        url = URLS.UPDATE_PROFILE
-        self.logger.error('该函数尚未实现')
-        raise NotImplemented
-        return(False)
+    #def
+    #NotImplementedupdate_profile(self,birthday=0,career='在校学生',education='本科',gender=1,nickname='',email=''):
+    #    '''
+    #    ***未实现***
+    #    修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
+    #    '''
+    #    url = URLS.UPDATE_PROFILE
+    #    self.logger.error('该函数尚未实现')
+    #    raise NotImplemented
+    #    return(False)
 
 
     #未实现
-    def NotImplementedcheck_notice(self):
-        '''
-        ***未实现***
-        查询有无新消息,返回True,False
-        '''
-        self.logger.error('该函数尚未实现')
-        raise NotImplementedError
-        return(False)
+    #def NotImplementedcheck_notice(self):
+    #    '''
+    #    ***未实现***
+    #    查询有无新消息,返回True,False
+    #    '''
+    #    self.logger.error('该函数尚未实现')
+    #    raise NotImplementedError
+    #    return(False)
 
     #NT
     def check_script_version(self):
         '''
         检查脚本有无更新。
-        有更新返回(最新版本,更新内容,下载地址),无更新返回False|False
+        有更新返回:
+            tag_name:最新版本名称
+            detail:更新简介
+            download_url:下载地址)
+        无更新返回:
+            False
+        失败返回:
+            False
         '''
         url = URLS.SCRIPT_UPDATE_CHECK
         resp = requests.get(url=url)
@@ -1658,9 +1955,16 @@ class HeyboxClient():
             self.logger.error(f'检测脚本更新出错[{e}]')
             return(False)
 
-    #N
-    #检查返回值，参数(json字典)，通过返回True|抛出异常，**未处理可能的异常
+    #NT
     def __check_status(self,jsondict:dict):
+        '''
+        检查返回值
+        参数:
+            jsondict:json字典
+        成功返回:
+            True
+        失败抛出异常
+        '''
         try:
             status = jsondict['status']
             if status == 'ok':
@@ -1705,9 +2009,11 @@ class HeyboxClient():
             self.logger.debug(f'{jsondict}')
             raise JsonAnalyzeError
 
-    #N
-    #刷新web表单
+    #NT
     def __flush_params(self):
+        '''
+        刷新_params里的time_和hkey键
+        '''
         def gen_hkey(time:int):
             strhash = 'xiaoheihe/_time=' + str(time)
             md5 = hashlib.md5()
