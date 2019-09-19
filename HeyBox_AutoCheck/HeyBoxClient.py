@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import urllib
 import os
 import traceback
+from heybox_static import *
 
 '''
 Python3实现的小黑盒客户端
@@ -40,75 +41,6 @@ else:
 #"[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]#%(message)s"
 LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
 logging.basicConfig(level=LEVEL,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
-
-
-
-#URL常量
-class URLS():
-    HEYBOX_VERSION_CHECK = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'#检查更新
-    SCRIPT_UPDATE_CHECK = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'#脚本更新检查
-
-    GET_TASK_STATS = 'https://api.xiaoheihe.cn/task/stats/'#任务状态
-    GET_TASK_LIST = 'https://api.xiaoheihe.cn/task/list/'#任务列表
-    GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注更新提醒
-    GET_SUBSCRIBED_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'#关注列表
-    GET_NEWS_LIST = 'https://api.xiaoheihe.cn/maxnews/app/list'#新闻列表
-    GET_LINK_TREE = 'https://api.xiaoheihe.cn/bbs/app/link/tree'#文章附加信息
-    GET_NEWS_DETAIL = 'https://api.xiaoheihe.cn/maxnews/app/detail/'#文章页
-    GET_VIDEO_VIEW = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'#视频页框架
-    GET_GAME_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/game/comments/'#游戏评价
-    GET_GAME_DETAIL = 'https://api.xiaoheihe.cn/game/get_game_detail/'#游戏详情
-    GET_GAME_REVIEWS = 'https://api.xiaoheihe.cn/bbs/app/link/game/reviews'#游戏文章
-    LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
-    SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
-    SIGN = 'https://api.xiaoheihe.cn/task/sign/'#签到
-    SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
-    SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'#检查分享
-    GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人资料
-    GET_FOLLOWER_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#粉丝列表
-    FOLLOWING_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'#关注列表
-    FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
-    FOLLOW_USER_CANCEL = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
-    GET_AUTH_INFO = 'https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
-    GET_ACTIVE_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'#拉取ROLL房列表
-    ACHIEVE_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'#检查有没有解锁新成就
-    BBS_QA_STATE = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'#社区答题提交
-    COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'#社区答题
-    UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
-    NOTIFY_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
-    GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
-    SEND_MESSAGE = 'https://api.xiaoheihe.cn/chat/send_message/'#发送私信
-    GET_RECOMMEND_FOLLOWING = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/following'#拉取推荐关注列表
-    GET_ADS_INFO = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
-    pass
-#逻辑型字符串
-class BoolenString():
-    __boolen = False
-    __string = '×'
-    def __init__(self, boolen):
-        super().__init__()
-        self.__boolen = bool(boolen)
-        self.__string = '√'if boolen else '×'
-    def __eq__(self, value):
-        if isinstance(value, BoolenString):
-            return self.__boolen == value.__boolen
-        elif isinstance(value,bool):
-            return (self.__boolen == value)
-        elif isinstance(value,str):
-            return (self.__string == value)
-        else:
-            return(False)
-    def __bool__(self):
-        return(self.__boolen)
-    def getbool(self):
-        return(self.__boolen)
-    def __hash__(self):
-        return hash(self.__boolen) 
-    def __str__(self):
-        return(self.__string)
-    def __repr__(self):
-        return(self.__string)
-    pass
 
 #Python版小黑盒客户端
 class HeyboxClient():
@@ -786,7 +718,7 @@ class HeyboxClient():
 
     #NT
     #给新闻点赞(linkid,newsid,index=1)，成功返回True|False
-    def like_news(self,linkid,newsid,index=1):
+    def like_news(self,linkid:int,newsid:int,index=1):
         url = URLS.LIKE_LINK
         headers = {
             **self._headers,
@@ -1211,8 +1143,12 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #读取游戏更多信息(appid)，成功返回((开发商,发行商,发布日期),(关注数,帖子数),[黑盒标签],[Steam标签])|False
     def get_game_detail_ex(self,appid:int):
+        '''
+        读取游戏更多信息
+        参数:appid:游戏id
+        成功返回((开发商,发行商,发布日期),(关注数,帖子数),[黑盒标签],[Steam标签])|False
+        '''
         url = URLS.GET_GAME_DETAIL
         self.__flush_params()
         params = {
@@ -1265,10 +1201,16 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #完成社区答题，成功返回True|False
     def do_communitu_surver(self):
-        #拉取社区答题题目,成功返回True|False
+        '''
+        完成社区答题
+        返回True|False
+        '''
         def get_community_survey():
+            '''
+            拉取社区答题题目
+            返回True|False
+            '''
             url = URLS.COMMUNITY_SURVEY
             headers = {
                 'Host': 'api.xiaoheihe.cn',
@@ -1290,8 +1232,13 @@ class HeyboxClient():
             html = resp.text
             self.logger.debug(f'题库共[{len(html)}]字')
             return(True)
-        #获取答题情况，调用可以完成答题任务，成功返回(state),1:第一次完成答题,2:已经作答|False
+        #
         def get_bbs_qa_state():
+            '''
+            获取答题情况，调用可以完成答题任务
+            返回state|False
+                    1:第一次完成答题,2:已经作答
+            '''
             url = URLS.BBS_QA_STATE
             self.__flush_params()
             headers = {
@@ -1332,8 +1279,13 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #拉取文章正文内容(newsid,index=1),成功返回文章html|False
+  
     def get_news_body(self,newsid:int,index:int=1):
+        '''
+        拉取文章正文内容
+        参数:newsid,[index]
+        返回文章正文|False
+        '''
         url = URLS.GET_NEWS_DETAIL + str(newsid)
         headers = {
             'Host': 'api.xiaoheihe.cn',
@@ -1379,8 +1331,12 @@ class HeyboxClient():
             return(False)    
 
     #NT
-    #拉取视频标题(linkid,newsid,[index]),成功返回视频标题|False
     def get_video_title(self,linkid:int,newsid:int,index:int=1):
+        '''
+        拉取视频标题
+        参数:linkid,newsid,[index]
+        返回视频标题|False
+        '''
         url = URLS.GET_VIDEO_VIEW
         headers = {
             'Host': 'api.xiaoheihe.cn',
@@ -1424,8 +1380,11 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #查询有无新成就,有成就返回(成就名,描述),无成就返回True|False
     def check_achieve_alert(self):
+        '''
+        查询有无新成就
+        有成就返回(成就名,描述),无成就返回True|False
+        '''
         url = URLS.ACHIEVE_LIST
         self.__flush_params()
         params = {
@@ -1452,8 +1411,11 @@ class HeyboxClient():
 
 
     #NT
-    #获取每日任务状态，返回(完成数,任务总数)|False
     def get_daily_task_stats(self):
+        '''
+        获取每日任务状态
+        返回(完成数,任务总数)|False
+        '''
         url = URLS.GET_TASK_STATS
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
@@ -1471,8 +1433,11 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #获取每日任务详情，成功返回(签到,分享,点赞),True:该任务完成,False:该任务未完成|False
     def get_daily_task_detail(self):
+        '''
+        获取每日任务详情
+        返回(签到?,分享?,点赞?)|False
+        '''
         url = URLS.GET_TASK_LIST
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
@@ -1491,8 +1456,13 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #获取更多任务详情，成功返回(绑定,微信,公开,评价,答题,推送,资料)True:该任务*可能*完成,False:该任务*一定*未完成|False
     def get_ex_task_detail(self):
+        '''
+        获取更多任务详情
+        返回(绑定?,微信?,公开?,评价?,答题?,推送?,资料?)|False
+                True:该任务*可能*完成
+                False:该任务*一定*未完成
+        '''
         url = URLS.GET_TASK_LIST
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
@@ -1523,8 +1493,11 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #获取我的任务数据，成功返回(昵称,H币,等级,经验,下级经验,连续签到天数)|False
     def get_my_data(self):
+        '''
+        获取我的任务数据
+        返回(昵称,H币,等级,经验,下级经验,连续签到天数)|False
+        '''
         url = URLS.GET_TASK_LIST
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
@@ -1550,8 +1523,12 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #获取个人资料,(userid),不填代入自己的id，返回(关注数,粉丝数,获赞数)|False
     def get_user_profile(self,userid:int=-1):
+        '''
+        获取个人资料
+        参数:userid:用户id,不填代入自己的id
+        返回(关注数,粉丝数,获赞数)|False
+        '''
         url = URLS.GET_USER_PROFILE
         if userid < 0:
             userid = self.heybox_id
@@ -1583,8 +1560,11 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #获取自己的认证信息，成功返回(有密码?,手机号)|False
     def get_auth_info(self):
+        '''
+        获取自己的认证信息
+        返回(有密码?,手机号)|False
+        '''
         url = URLS.GET_AUTH_INFO
         self.__flush_params()
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
@@ -1605,8 +1585,11 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #检查小黑盒最新版本，检查更新成功返回True|False
     def check_heybox_version(self):
+        '''
+        检查小黑盒最新版本
+        检查更新成功返回True|False
+        '''
         url = URLS.HEYBOX_VERSION_CHECK
         resp = self.Session.get(url=url,headers=self._headers)
         global HEYBOX_VERSION
@@ -1621,24 +1604,34 @@ class HeyboxClient():
             self.logger.error(f'获取小黑盒最新版本出错[{e}]')
             return(False)
 
-    
-    #修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
+    #未实现
     def NotImplementedupdate_profile(self,birthday=0,career='在校学生',education='本科',gender=1,nickname='',email=''):
+        '''
+        ***未实现***
+        修改个人信息(生日,职业,教育经历,性别[1男2女],昵称,邮箱)
+        '''
         url = URLS.UPDATE_PROFILE
         self.logger.error('该函数尚未实现')
         raise NotImplemented
         return(False)
 
 
-    #查询有无新消息,返回True,False
+    #未实现
     def NotImplementedcheck_notice(self):
+        '''
+        ***未实现***
+        查询有无新消息,返回True,False
+        '''
         self.logger.error('该函数尚未实现')
         raise NotImplementedError
         return(False)
 
     #NT
-    #检查脚本有无更新，有更新返回(最新版本,更新内容,下载地址),无更新返回False|False
     def check_script_version(self):
+        '''
+        检查脚本有无更新。
+        有更新返回(最新版本,更新内容,下载地址),无更新返回False|False
+        '''
         url = URLS.SCRIPT_UPDATE_CHECK
         resp = requests.get(url=url)
         try:
@@ -1723,147 +1716,6 @@ class HeyboxClient():
         self._params['hkey'] = gen_hkey(asctime)    
         self._params['_time'] = asctime
 
-#====================================
-#常量类
-#推荐关注列表用户类型分类
-class RecTagType():
-    UnknownType = 0 #未知
-    SteamFriend = 1 #Steam好友
-    HasFriend = 2 #多位共同好友
-    Author = 3 #作者
-
-#好友关系分类
-class RelationType():
-    NotFollowed = 0 #没有关系
-    IFollowedHim = 1 #我关注他
-    HeFollowedMe = 2 #他关注我
-    BOthFollowed = 3 #双向关注
-
-#首页新闻类型
-class NewsContentType():
-    UnknownType = 0 #未知
-    CommunityArticle = 1 #社区帖子
-    TextNews = 2 #普通新闻
-    MultipleNews = 7 #多条新闻
-
-#动态类型
-class FollowPostType():
-    UnknownType = 0 #未知
-    PostLink = 1 #发帖
-    FollowGame = 2 #关注游戏
-    PurchaseGame = 3 #购买游戏
-    AchieveGame = 4 #获得成就
-    CommentGame = 5 #评价游戏
-    CreateRollRoom = 6 #赠送游戏
-
-#游戏平台类型
-class GamePlatformType():
-    UnknownType = 0 #未知
-    PCGame = 1 #PC游戏
-    ConsoleGame = 2 #主机游戏
-
-#游戏评价类型
-class GameReviewSummaryType():
-    UnknownType = 0 #未知
-    No = 1 #无总体评价
-    PPPP = 2 #好评如潮
-    PPP = 3 #特别好评
-    PP = 4 #多半好评
-    PN = 5 #褒贬不一
-    NP = 5 #褒贬不一
-    NN = 6 #多半差评
-    NNN = 7 #特别差评
-    NNNN = 8 #差评如潮
-
-#操作类型
-class OperateType:
-    UnknownType = 0 #未知
-    #批量操作用户列表的操作码
-    FollowUser = 1 #关注用户
-    UnFollowUser = 2 #取关用户
-    #批量浏览新闻的操作码
-    View = 1 #浏览
-    ViewShare = 2 #浏览分享
-    ViewLike = 3 #浏览点赞
-    ViewLikeShare = 4 #浏览点赞分享
-
-#异常基类
-#====================================
-class HeyboxException(Exception):
-    def __init__(self,ErrorInfo):
-        super().__init__()
-        self.errorinfo = ErrorInfo
-    def __str__(self): 
-        return (self.errorinfo)
-#====================================
-#函数未完成
-class NotImplemented(HeyboxException):
-    def __init__(self):
-        super().__init__('函数未完成')
-#未知错误
-class UnknownError(HeyboxException):
-    def __init__(self):
-        super().__init__('未知错误')
-#====================================
-#账户相关错误
-class AccountException(HeyboxException):
-    def __init__(self,ErrorInfo):
-        super().__init__(ErrorInfo)
-#客户端错误
-class ClientException(HeyboxException):
-    def __init__(self,ErrorInfo):
-        super().__init__(ErrorInfo)
-#空消息错误
-class ShareError(HeyboxException):
-    def __init__(self):
-        super().__init__('应该只有在尝试分享的时候会出现')
-#====================================
-#凭据错误
-class TokenError(AccountException):
-    def __init__(self):
-        super().__init__('凭据错误，请检查配置文件')
-#用户ID错误
-class UseridError(AccountException):
-    def __init__(self):
-        super().__init__('UserID不正确，请检查配置文件')
-#------------------------------------
-#任务已完成
-class Ignore(ClientException):
-    def __init__(self):
-        super().__init__('操作已经完成')
-#参数错误
-class ParamsError(ClientException):
-    def __init__(self):
-        super().__init__('参数错误')
-#时间错误
-class LocalTimeError(ClientException):
-    def __init__(self):
-        super().__init__('本地时间错误')
-class JsonAnalyzeError(ClientException):
-    def __init__(self):
-        super().__init__('Json解析失败')
-#------------------------------------
-#关注次数用尽
-class FollowLimitedError(ClientException):
-    def __init__(self):
-        super().__init__('关注次数用尽')
-#赞赏次数已用完
-class LikeLimitedError(ClientException):
-    def __init__(self):
-        super().__init__('点赞次数用尽')
-#无法给自己的评测点赞
-class SupportMyselfError(ClientException):
-    def __init__(self):
-        super().__init__('无法给自己的评测点赞')
-#无法关注自己
-class FollowMyselfError(ClientException):
-    def __init__(self):
-        super().__init__('无法关注自己')
-#对象不存在/已删除
-class ObjectError(ClientException):
-    def __init__(self):
-        super().__init__('对象不存在或者已被删除')
-#------------------------------------
 if __name__ == '__main__':
     print("请勿直接运行本模块，使用方法参见【README.md】")
 else:
