@@ -1066,9 +1066,15 @@ class HeyboxClient():
             return(False)
 
     #NT
-    #读取游戏信息(appid)，成功返回((中文名,英文名),关注?,(免费?,原价,现价,折扣),(评分,评价),平台)|False
-    #评价释义参见GameReviewSummaryType 平台释义参见GamePlatformType
+
     def get_game_detail(self,appid:int):
+        '''
+        读取游戏信息
+        参数:appid:游戏id
+        成功返回(中文名,英文名),关注?,(免费?,原价,现价,折扣),(评分,评价),平台|False
+            评价释义参见GameReviewSummaryType
+            平台释义参见GamePlatformType
+        '''
         url = URLS.GET_GAME_DETAIL
         self.__flush_params()
         params = {
@@ -1147,7 +1153,7 @@ class HeyboxClient():
         '''
         读取游戏更多信息
         参数:appid:游戏id
-        成功返回((开发商,发行商,发布日期),(关注数,帖子数),[黑盒标签],[Steam标签])|False
+        成功返回(开发商,发行商,发布日期),(关注数,帖子数),[黑盒标签],[Steam标签]|False
         '''
         url = URLS.GET_GAME_DETAIL
         self.__flush_params()
@@ -1237,7 +1243,7 @@ class HeyboxClient():
             '''
             获取答题情况，调用可以完成答题任务
             返回state|False
-                    1:第一次完成答题,2:已经作答
+                state:1:第一次完成答题,2:已经作答
             '''
             url = URLS.BBS_QA_STATE
             self.__flush_params()
@@ -1267,15 +1273,16 @@ class HeyboxClient():
         #==========================================
         get_community_survey()
         state = get_bbs_qa_state()
-        if state == 1:
-            self.logger.debug('答题完成，获得10经验')
-        elif state == 2:
-            self.logger.debug('已经答过题了，无法重复答题')
-        else:
-            self.logger.debug('答题出错')
+
         if state == 1 or state == 2:
+            if state == StateType.Complete:
+                self.logger.debug('答题完成，获得10经验')
+            elif state == StateType.AlreadyDone:
+                self.logger.debug('已经答过题了，无法重复答题')
+
             return(True)
         else:
+            self.logger.debug('答题出错')
             return(False)
 
     #NT
