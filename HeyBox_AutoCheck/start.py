@@ -1,5 +1,7 @@
-#from Account_Manager import Accountmanager
+#!/usr/bin/python3
 import HeyBoxClient
+from heybox_static import *
+
 import json
 import requests
 import os
