@@ -194,6 +194,37 @@ class HeyboxClient():
             return(False)  
 
     #NT
+    def batch_like_commentlist(self,commentlist:list):
+        '''
+        批量点赞评论
+        参数:
+            commentlist:[(linkid,类型),…] 类型释义参见CommentType
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        if commentlist:
+            errorcount = 0
+            operatecount = 0
+            for commentobj in commentlist:
+                try:
+                    linkid,commemttype = commentobj
+                    self.like_comment(linkid,commemttype)
+                    operatecount+=1
+                except (ValueError,TypeError,ClientException) as e:
+                    self.logger.debug(f'批量点赞遇到错误[{e}]')
+                    errorcount+=1
+                    if errorcount >= 5:
+                        self.logger.error('批量点赞遇到大量错误,停止操作')
+                        return(False)
+            self.logger.debug(f'批量操作完成,执行了[{operatecount}]次操作')
+            return(True)
+        else:
+            self.logger.error(f'参数错误[{commentlist}]')
+            return(False) 
+
+    #NT
     def batch_userlist_operate(self,useridlist:list,operatetype:int=1):
         '''
         批量关注/取关粉丝
@@ -241,7 +272,7 @@ class HeyboxClient():
             if userid == self.heybox_id:
                 self.logger.debug('不能取关自己哦')
                 return(True)
-            url = URLS.FOLLOW_USER_CANCEL
+            url = URLS.UNFOLLOW_USER
             headers = {
                 **self._headers,
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -339,27 +370,31 @@ class HeyboxClient():
         #==========================================
         newsidlist = []
         max = (value // 30) + 3 #最大拉取次数
-        i = 0
+        i = 1
+        errorcount = 0
         while True:
             try:
-                templist = _get_news_list(i * 30)
+                templist = _get_news_list((i - 1) * 30)
+                if templist:
+                    self.logger.info(f'拉取第[{i}]批新闻')
+                    newsidlist.extend(templist)
+                    sortedlist = list(set(newsidlist))
+                    sortedlist.sort(key=newsidlist.index)
+                    newsidlist = sortedlist
+                else:
+                    self.logger.debug('新闻列表为空，可能遇到错误')
+                    break
+
+                if len(newsidlist) >= value or i >= max:#防止请求过多被屏蔽
+                    break
             except ClientException as e:
-                continue
+                self.logger.debug(f'拉取首页文章列表出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.debug('拉取首页文章列表遇到大量错误,停止操作')
+                    break
             finally:
                 i+=1
-
-            if templist:
-                self.logger.info(f'拉取第[{i}]批新闻')
-                newsidlist.extend(templist)
-                sortedlist = list(set(newsidlist))
-                sortedlist.sort(key=newsidlist.index)
-                newsidlist = sortedlist
-            else:
-                self.logger.debug('新闻列表为空，可能遇到错误')
-                break
-
-            if len(newsidlist) >= value or i >= max:#防止请求过多被屏蔽
-                break
         
         if len(newsidlist) > value:
             newsidlist = newsidlist[:value]
@@ -399,13 +434,13 @@ class HeyboxClient():
             jsondict = resp.json()
             self.__check_status(jsondict)
             postlist = []
-            for moments in jsondict['result']['moments']:
+            for moment in jsondict['result']['moments']:
                 try:
-                    link = moments['link']
+                    link = moment['link']
                     linkid = int(link['linkid'])
                     is_liked = BoolenString(link['is_award_link'] == 1)
-                    userid = moments['user']['userid']
-                    posttype = moments['content_type']
+                    userid_=moment['user']['userid']
+                    posttype = moment['content_type']
                     if posttype == 'post_link':#发帖
                         posttype = FollowPostType.PostLink
                     elif posttype == 'follow_game':#关注游戏
@@ -432,32 +467,33 @@ class HeyboxClient():
             return(postlist)
         #==========================================
         eventslist = []
-        if ignoreliked:
-            max = (value // 15) + 3 #拉取的最大批数
-        else:
-            max = (value // 30) + 3 #拉取的最大批数
-        i = 0
+        max = (value // 15 if ignoreliked else 30) + 3 #拉取的最大批数
+        i = 1
+        errorcount = 0
         while True:
             try:
-                templist = _get_follow_post(i * 30)
+                templist = _get_follow_post((i - 1) * 30)
+                if templist:
+                    self.logger.debug(f'拉取第[{i}]批动态')
+                    eventslist.extend(templist)
+                    sortedlist = list(set(eventslist))
+                    sortedlist.sort(key=eventslist.index)
+                    eventslist = sortedlist
+                else:
+                    self.logger.debug('动态列表为空，可能遇到错误')
+                    break
+
+                if len(eventslist) >= value or i >= max:#防止请求过多被屏蔽
+                    break
             except ClientException as e:
-                continue
+                self.logger.debug(f'拉取动态列表出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.debug('拉取动态列表遇到大量错误,停止操作')
+                    break
             finally:
                 i+=1
-
-            if templist:
-                self.logger.debug(f'拉取第[{i}]批动态')
-                eventslist.extend(templist)
-                sortedlist = list(set(eventslist))
-                sortedlist.sort(key=eventslist.index)
-                eventslist = sortedlist
-            else:
-                self.logger.debug('动态列表为空，可能遇到错误')
-                break
-
-            if len(eventslist) >= value or i >= max:#防止请求过多被屏蔽
-                break
-
+            
         if len(eventslist) > value:
             eventslist = eventslist[:value]
         if len(eventslist) > 0:
@@ -567,7 +603,274 @@ class HeyboxClient():
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'拉取文章附加信息出错[{e}]')
             return(False) 
+
+    #NT
+    def get_user_follow_post_list(self,userid:int,value:int=30,ignoreliked:bool=True):
+        '''
+        拉取用户动态列表
+        参数:
+            userid:用户id
+            value:要拉取的数量
+            ignoreliked:忽略已点赞?
+        成功返回:
+            followinglist:[(id,类型,已点赞?)……] 类型释义参见:FollowPostType
+            '''
+        def _get_user_follow_post_list(offset:int=0):
+            '''
+            拉取用户动态列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                userlist:[(id,类型,已点赞?)……] 类型释义参见:FollowPostType
+            '''
+            url = URLS.GET_USER_FOLLOW_POST
+            self.__flush_params()
+            params = {
+                'userid':userid,
+                'offset':offset,
+                'limit':30,
+                **self._params
+            }
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            postlist = []
+            for moment in jsondict['result']['moments']:
+                try:
+                    link = moment['link']
+                    linkid = int(link['linkid'])
+                    is_liked = BoolenString(link['is_award_link'] == 1)
+                    posttype = moment['content_type']
+                    if posttype == 'post_link':#发帖
+                        posttype = FollowPostType.PostLink
+                    elif posttype == 'follow_game':#关注游戏
+                        posttype = FollowPostType.FollowGame
+                    elif posttype == 'game_purchase':#购买游戏
+                        posttype = FollowPostType.PurchaseGame
+                    elif posttype == 'game_achieve':#获得成就
+                        posttype = FollowPostType.AchieveGame
+                    elif posttype == 'game_comment':#评价游戏
+                        posttype = FollowPostType.CommentGame
+                    elif posttype == 'roll_room':#赠送游戏
+                        posttype = FollowPostType.CreateRollRoom
+                    else:
+                        posttype = FollowPostType.UnknownType
+                    #self.logger.debug(f'ID[{linkid}] 点赞[{is_liked}]
+                    #类型[{posttype}]')
+                    if is_liked == False or ignoreliked == False :
+                        postlist.append((linkid,posttype,is_liked))
+                except KeyError as e:
+                    self.logger.debug(f'提取动态列表出错[{moment}]')
+
+            self.logger.debug(f'拉取[{len(postlist)}]条动态')
+            return(postlist)
+        #==========================================
+        eventslist = []
+        max = (value // 15 if ignoreliked else 30) + 3 #最大拉取次数
+        i = 1
+        errorcount = 0
+        while True:
+            try:
+                templist = _get_user_follow_post_list((i - 1) * 30)
+                if templist:
+                    self.logger.info(f'拉取第[{i}]批动态列表')
+                    eventslist.extend(templist)             
+                    sortedlist = list(set(eventslist))
+                    sortedlist.sort(key=eventslist.index)
+                    eventslist = sortedlist
+                else:
+                    self.logger.error('拉取完毕，动态列表为空，可能遇到错误')
+                    break
+
+                if len(eventslist) >= value or i >= max:
+                    break
+
+            except ClientException:
+                self.logger.debug(f'拉取动态列表出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.error('拉取动态列表遇到大量错误,停止操作')
+                    break
+            finally:
+                i+=1
+
+        if len(eventslist) > value:
+            eventslist = eventslist[:value]
+        if len(eventslist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(commentslist)}]条评论')
+        else:
+            self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
+        return(eventslist)
     
+    #NT
+    def get_user_post_list(self,userid:int,value:int=30,ignoreliked:bool=True):
+        '''
+        拉取用户发帖列表
+        参数:
+            userid:用户id
+            value:要拉取的数量
+            ignoreliked:忽略已点赞?
+        成功返回:
+            followinglist:[(id,类型,已点赞?)……] 类型为FollowPostType.PostLink
+            '''
+        def _get_user_post_list(offset:int=0):
+            '''
+            拉取用户发帖列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                userlist:[(id,已点赞?)……]
+            '''
+            url = URLS.GET_USER_POST
+            self.__flush_params()
+            params = {
+                'userid':userid,
+                'offset':offset,
+                'limit':30,
+                **self._params
+            }
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            postlist = []
+            for postlink in jsondict['post_links']:
+                try:
+                    linkid = int(postlink['linkid'])
+                    title = postlink['title']
+                    description = postlink['description']
+                    is_liked = BoolenString(postlink['is_award_link'] == 1)
+                    #self.logger.debug(f'ID[{linkid}] 标题[{title}]'
+                    #f'摘要[{description}] 点赞[{is_liked}]')
+                    if is_liked == False or ignoreliked == False:
+                        postlist.append((linkid,FollowPostType.PostLink,is_liked))
+                except KeyError as e:
+                    self.logger.debug(f'提取发帖列表出错[{postlink}]')
+
+            self.logger.debug(f'拉取[{len(postlist)}]条帖子')
+            return(postlist)
+        #==========================================
+        eventslist = []
+        max = (value // 30) + 3 #最大拉取次数
+        i = 1
+        errorcount = 0
+        while True:
+            try:
+                templist = _get_user_post_list((i - 1) * 30)
+                if templist:
+                    self.logger.info(f'拉取第[{i}]批发帖列表')
+                    eventslist.extend(templist)             
+                    sortedlist = list(set(eventslist))
+                    sortedlist.sort(key=eventslist.index)
+                    eventslist = sortedlist
+                else:
+                    self.logger.error('拉取完毕，发帖列表为空，可能遇到错误')
+                    break
+
+                if len(eventslist) >= value or i >= max:
+                    break
+
+            except ClientException:
+                self.logger.debug(f'拉取发帖列表出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.error('拉取发帖列表遇到大量错误,停止操作')
+                    break
+            finally:
+                i+=1
+
+        if len(eventslist) > value:
+            eventslist = eventslist[:value]
+        if len(eventslist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(eventslist)}]条评论')
+        else:
+            self.logger.debug('拉取完毕，发帖列表为空，可能遇到错误')
+        return(eventslist)
+
+    #NT
+    def get_user_comment_list(self,userid:int,value:int=30):
+        '''
+        拉取用户评论列表
+        参数:
+            userid:用户id
+            value:要拉取的数量
+        成功返回:
+            followinglist:[(id,类型)……] 类型释义参见:CommentType  1:楼中楼,2:回复
+            '''
+        def _get_user_comment_list(offset:int=0):
+            '''
+            拉取用户评论列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                userlist:[(id,类型)……] 类型释义参见:CommentType
+            '''
+            url = URLS.GET_USER_COMMENT
+            self.__flush_params()
+            params = {
+                'userid':userid,
+                'offset':offset,
+                'limit':30,
+                **self._params
+            }
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            commentlist = []
+            for comment in jsondict['result']:
+                try:
+                    comment_id = int(comment['comment_id'])
+                    comment_type = int(comment['comment_type'])
+                    text = comment['text']
+                    #self.logger.debug(f'ID[{comment_id}] 类型[{comment_type}]'
+                    #f'内容[{text}]')
+                    commentlist.append((comment_id,comment_type))
+                except KeyError as e:
+                    self.logger.debug(f'提取评论列表出错[{comment}]')
+
+            self.logger.debug(f'拉取[{len(commentlist)}]条评论')
+            return(commentlist)
+        #==========================================
+        commentslist = []
+        max = (value // 30) + 3 #最大拉取次数
+        i = 1
+        errorcount = 0
+        while True:
+            try:
+                templist = _get_user_comment_list((i - 1) * 30)
+                if templist:
+                    self.logger.info(f'拉取第[{i}]批评论列表')
+                    commentslist.extend(templist)             
+                    sortedlist = list(set(commentslist))
+                    sortedlist.sort(key=commentslist.index)
+                    commentslist = sortedlist
+                else:
+                    self.logger.error('拉取完毕，评论列表为空，可能遇到错误')
+                    break
+
+                if len(commentslist) >= value or i >= max:
+                    break
+
+            except ClientException:
+                self.logger.debug(f'拉取评论出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.error('拉取评论遇到大量错误,停止操作')
+                    break
+            finally:
+                i+=1
+
+        if len(commentslist) > value:
+            commentslist = commentslist[:value]
+        if len(commentslist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(commentslist)}]条评论')
+        else:
+            self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
+        return(commentslist)
+
+
     #NT
     def get_active_roll_room(self,value:int=30):
         '''
@@ -618,27 +921,31 @@ class HeyboxClient():
         #==========================================
         rollroomlist = []
         max = (value // 30) + 3 #最大拉取次数
-        i = 0
+        i = 1
+        errorcount = 0
         while True:
             try:
-                templist = _get_active_roll_room(i * 30)
+                templist = _get_active_roll_room((i - 1) * 30)
+                if templist:
+                    self.logger.debug(f'拉取第[{i}]批ROLL房列表')
+                    rollroomlist.extend(templist)
+                    rollroomlist = list(set(newsidlist))
+                    sortedlist.sort(key=rollroomlist.index)
+                    rollroomlist = sortedlist
+                else:
+                    self.logger.debug('ROLL房列表为空，可能没有可参与的ROLL房，也可能遇到错误')
+                    break
+
+                if len(rollroomlist) >= value or i >= max:
+                    break
+
             except ClientException as e:
-                continue
+                self.logger.debug(f'拉取ROLL房出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.error('拉取ROLL房遇到大量错误,停止操作')
             finally:
                 i+=1
-
-            if templist:
-                self.logger.debug(f'拉取第[{i}]批ROLL房列表')
-                rollroomlist.extend(templist)
-                rollroomlist = list(set(newsidlist))
-                sortedlist.sort(key=rollroomlist.index)
-                rollroomlist = sortedlist
-            else:
-                self.logger.debug('ROLL房列表为空，可能没有可参与的ROLL房，也可能遇到错误')
-                break
-
-            if len(rollroomlist) >= value or i >= max:
-                break
 
         if len(rollroomlist) > value:
             rollroomlist = rollroomlist[:value]
@@ -699,27 +1006,31 @@ class HeyboxClient():
         #==========================================
         recfollowlist = []
         max = (value // 30) + 3 #最大拉取次数
-        i = 0
+        i = 1
+        errorcount = 0
         while True:
             try:
-                templist = _get_recommend_follow_list(i * 30)
+                templist = _get_recommend_follow_list((i - 1) * 30)
+                if templist:
+                    self.logger.debug(f'拉取第[{i}]批推荐关注列表')
+                    recfollowlist.extend(templist)
+                    sortedlist = list(set(recfollowlist))
+                    sortedlist.sort(key=recfollowlist.index)
+                    recfollowlist = sortedlist
+                else:
+                    self.logger.debug('推荐关注列表为空，可能遇到错误')
+                    break
+
+                if len(recfollowlist) >= value or i >= max:
+                    break
+
             except ClientException as e:
-                continue
+                self.logger.debug(f'拉取推荐关注列表出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.error('拉取推荐关注列表遇到大量错误,停止操作')
             finally:
                 i+=1
-
-            if templist:
-                self.logger.debug(f'拉取第[{i}]批推荐关注列表')
-                recfollowlist.extend(templist)
-                sortedlist = list(set(recfollowlist))
-                sortedlist.sort(key=recfollowlist.index)
-                recfollowlist = sortedlist
-            else:
-                self.logger.debug('推荐关注列表为空，可能遇到错误')
-                break
-
-            if len(recfollowlist) >= value or i >= max:
-                break
 
         if len(recfollowlist) > value:
             recfollowlist = recfollowlist[:value]
@@ -766,33 +1077,37 @@ class HeyboxClient():
                     #self.logger.debug(f'ID{userid}|关系{is_follow}')
                     userlist.append((userid,is_follow))
                 except KeyError as e:
-                    self.logger.debug(f'提取粉丝列表出错[{item}]')
+                    self.logger.debug(f'提取粉丝列表出错[{user}]')
             self.logger.debug(f'拉取[{len(userlist)}]个用户')
             return(userlist)
         #==========================================
         followerlist = []
         max = (value // 30) + 3 #最大拉取次数
-        i = 0
+        i = 1
+        errorcount = 0
         while True:
             try:
-                templist = _get_follower_list(i * 30)
+                templist = _get_follower_list((i - 1) * 30)
+                if templist:
+                    self.logger.debug(f'拉取第[{i}]批粉丝列表')
+                    followerlist.extend(templist)
+                    sortedlist = list(set(followerlist))
+                    sortedlist.sort(key=followerlist.index)
+                    followerlist = sortedlist
+                else:
+                    self.logger.debug('粉丝列表为空，可能遇到错误')
+                    break
+
+                if len(followerlist) >= value or i >= max:
+                    break
             except ClientException as e:
-                continue
+                self.logger.debug(f'拉取粉丝列表出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.debug('拉取粉丝列表遇到大量错误,停止操作')
+                    break
             finally:
                 i+=1
-
-            if templist:
-                self.logger.debug(f'拉取第[{i}]批粉丝列表')
-                followerlist.extend(templist)
-                sortedlist = list(set(followerlist))
-                sortedlist.sort(key=followerlist.index)
-                followerlist = sortedlist
-            else:
-                self.logger.debug('粉丝列表为空，可能遇到错误')
-                break
-
-            if len(followerlist) >= value or i >= max:
-                break
 
         if len(followerlist) > value:
             followerlist = followerlist[:value]
@@ -803,7 +1118,6 @@ class HeyboxClient():
         return(followerlist)
 
     #NT
-    #拉取关注列表(value=30),返回[(id,关系)……] 关系释义参见:RelationType
     def get_following_list(self,value:int=30):
         '''
         拉取关注列表
@@ -820,7 +1134,7 @@ class HeyboxClient():
             成功返回:
                 userlist:[(id,关系)……] 关系释义参见:RelationType
             '''
-            url = URLS.FOLLOWING_LIST
+            url = URLS.GET_FOLLOWING_LIST
             self.__flush_params()
             params = {
                 'userid':self.heybox_id,
@@ -840,33 +1154,38 @@ class HeyboxClient():
                     #self.logger.debug(f'ID{userid}|关系{is_follow}')
                     userlist.append((userid,is_follow))
                 except KeyError as e:
-                    self.logger.debug(f'提取关注列表出错[{item}]')
+                    self.logger.debug(f'提取关注列表出错[{user}]')
 
             self.logger.debug(f'拉取[{len(userlist)}]个用户')
             return(userlist)
         #==========================================
         followinglist = []
         max = (value // 30) + 3 #最大拉取次数
-        i = 0
+        i = 1
+        errorcount = 0
         while True:
             try:
-                templist = _get_following_list(i * 30)
+                templist = _get_following_list((i - 1) * 30)
+                if templist:
+                    self.logger.info(f'拉取第[{i}]批关注列表')
+                    followinglist.extend(templist)             
+                    sortedlist = list(set(followinglist))
+                    sortedlist.sort(key=followinglist.index)
+                    followinglist = sortedlist
+                else:
+                    self.logger.error('拉取完毕，关注列表为空，可能遇到错误')
+                    break
+
+                if len(followinglist) >= value or i >= max:
+                    break
             except ClientException:
-                continue
-            i+=1
-
-            if templist:
-                self.logger.info(f'拉取第[{i}]批关注列表')
-                followinglist.extend(templist)             
-                sortedlist = list(set(followinglist))
-                sortedlist.sort(key=followinglist.index)
-                followinglist = sortedlist
-            else:
-                self.logger.error('拉取完毕，关注列表为空，可能遇到错误')
-                break
-
-            if len(followinglist) >= value or i >= max:
-                break
+                self.logger.debug(f'拉取关注列表出错[{e}]')
+                errorcount+=1
+                if errorcount >= 3:
+                    self.logger.debug('拉取关注列表遇到大量错误,停止操作')
+                    break
+            finally:
+                i+=1
 
         if len(followinglist) > value:
             followinglist = followinglist[:value]
@@ -987,7 +1306,48 @@ class HeyboxClient():
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'动态点赞出错[{e}]')
             return(False)
-     
+    
+    #NT
+    def like_comment(self,linkid:int,commenttype:int=2): 
+        '''
+        给评论点赞
+        参数:
+            linkid:链接id
+            commenttype:评论类型,1:楼中楼,2:一般回复  释义参见 CommentType
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        if commenttype == CommentType.SubRComment:
+            #self.logger.debug('楼中楼无法点赞')
+            return(False)
+
+        url = URLS.LIKE_COMMENT
+        headers = {
+            **self._headers,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        data = {
+            'comment_id':linkid,
+            'support_type': 1,
+        }
+        self.__flush_params()
+
+        resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
+        try:
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug('评论点赞成功')
+            return(True)
+        except Ignore:
+            self.logger.debug('已经点过赞了')
+            return(True)
+        except (ClientException,KeyError,NameError) as e:
+            self.logger.error(f'评论点赞出错[{e}]')
+            return(False)
+
+
     #NT
     def userlist_simplify(self,userlist:list):
         '''
@@ -1011,10 +1371,7 @@ class HeyboxClient():
             self.logger.waring('Userlist是空的! 没有进行任何操作')
             suserlist = userlist
         return(suserlist)
-
-
-            
-                
+          
     #NT
     def userlist_filte(self,userlist:list,filtersetting:dict):
         '''
@@ -1455,7 +1812,7 @@ class HeyboxClient():
                 失败返回:
                     False
             '''
-            url = URLS.COMMUNITY_SURVEY
+            url = URLS.GET_COMMUNITY_SURVEY
             headers = {
                 'Host': 'api.xiaoheihe.cn',
                 'Connection': 'keep-alive',
@@ -1647,7 +2004,7 @@ class HeyboxClient():
         失败返回:
             False
         '''
-        url = URLS.ACHIEVE_LIST
+        url = URLS.GET_ACHIEVE_LIST
         self.__flush_params()
         params = {
             'userid':self.heybox_id,
@@ -1995,6 +2352,8 @@ class HeyboxClient():
                     raise ParamsError
                 elif msg == '系统时间不正确':
                     raise LocalTimeError
+                elif msg == '该用户已注销':
+                    raise UseridNotExists
                 elif msg == '':
                     raise ShareError
                 self.logger.error(f'未知的返回值[{msg}]')

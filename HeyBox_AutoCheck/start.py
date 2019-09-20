@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import heybox_client
+from heybox_client import HeyboxClient
 from heybox_static import *
 
 import json
@@ -64,12 +64,12 @@ if __name__ == '__main__':
             try:
                 pkey = item['pkey']
                 imei = item['imei']
-                heybox_id = item['heybox_id']
+                heybox_id = int(item['heybox_id'])
             except KeyError as e:
                 print('第%d个账户实例配置出错，跳过该账户' % i,e)
                 continue
             
-            heybox1 = HeyBoxClient.HeyboxClient(heybox_id,imei,pkey,i)
+            heybox1 = HeyboxClient(heybox_id,imei,pkey,i)
 
 
             if env_dist.get('MODE') == 'DEBUG':
@@ -77,7 +77,8 @@ if __name__ == '__main__':
                 #调试模式
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
-                #heybox1.auto_follow_filtered_recomment(5)
+                a=heybox1.get_user_post_list(13081382,60)
+                heybox1.batch_like_followposts(a)
                 if i == len(accountlist):
                     result=heybox1.get_follow_post(10)
                     print(result)
