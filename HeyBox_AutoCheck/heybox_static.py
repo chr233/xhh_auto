@@ -25,27 +25,32 @@ class URLS():
     GET_GAME_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/game/comments/'#游戏评价
     GET_GAME_DETAIL = 'https://api.xiaoheihe.cn/game/get_game_detail/'#游戏详情
     GET_GAME_REVIEWS = 'https://api.xiaoheihe.cn/bbs/app/link/game/reviews'#游戏文章
+    GET_RECOMMEND_FOLLOWING = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/following'#拉取推荐关注列表
+    GET_ADS_INFO = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
+    GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
+    GET_AUTH_INFO = 'https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
+    GET_ACTIVE_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'#拉取ROLL房列表
+    GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#获取个人资料
+    GET_FOLLOWER_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#拉取粉丝列表
+    GET_FOLLOWING_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'#拉取关注列表
+    GET_COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'#拉取社区答题题目
+    GET_ACHIEVE_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'#检查有没有解锁新成就
+    GET_NOTIFY_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
+    GET_USER_FOLLOW_POST = 'https://api.xiaoheihe.cn/bbs/app/profile/events'#拉取用户动态
+    GET_USER_POST = 'https://api.xiaoheihe.cn/bbs/app/profile/user/link/list'#拉取用户发帖
+    GET_USER_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/profile/news/comment/list'#拉取用户评论
+
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
+    LIKE_COMMENT='https://api.xiaoheihe.cn/bbs/app/comment/support'#评论点赞
     SIGN = 'https://api.xiaoheihe.cn/task/sign/'#签到
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'#检查分享
-    GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'#个人资料
-    GET_FOLLOWER_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'#粉丝列表
-    FOLLOWING_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'#关注列表
     FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'#加关注
-    FOLLOW_USER_CANCEL = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
-    GET_AUTH_INFO = 'https://api.xiaoheihe.cn/account/get_auth_info/'#获取账户验证信息
-    GET_ACTIVE_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'#拉取ROLL房列表
-    ACHIEVE_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'#检查有没有解锁新成就
+    UNFOLLOW_USER = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'#取消关注
     BBS_QA_STATE = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'#社区答题提交
-    COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'#社区答题
     UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
-    NOTIFY_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'#私信/通知提醒
-    GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'#关注列表更新提醒
     SEND_MESSAGE = 'https://api.xiaoheihe.cn/chat/send_message/'#发送私信
-    GET_RECOMMEND_FOLLOWING = 'https://api.xiaoheihe.cn/bbs/app/profile/recommend/following'#拉取推荐关注列表
-    GET_ADS_INFO = 'https://api.xiaoheihe.cn/account/get_ads_info/'#拉取广告
     pass
 
 class RecTagType():
@@ -116,17 +121,19 @@ class OperateType():
     ViewShare = 2 #浏览分享
     ViewLike = 3 #浏览点赞
     ViewLikeShare = 4 #浏览点赞分享
-    #批量执行用户列表的操作码
-     = 1 #浏览
-    ViewShare = 2 #浏览分享
-    ViewLike = 3 #浏览点赞
-    ViewLikeShare = 4 #浏览点赞分享
 class StateType():
     '''
     答题结果
     '''
     Complete = 1 #答题完成
     AlreadyDone = 2 #已经答过了,无法重复作答
+class CommentType():
+    '''
+    评论类型
+    '''
+    UnknownType = 0 #未知
+    SubRComment = 1 #楼中楼,无法点赞
+    Comment = 2 #一般回复
 class BoolenString():
     '''
     逻辑型字符串,可以打印出×和√,不影响逻辑判断。
@@ -259,6 +266,12 @@ class SupportMyselfError(ClientException):
     '''
     def __init__(self):
         super().__init__('无法给自己的评测点赞')
+class UseridNotExists(ClientException):
+    '''
+    用户已注销或不存在
+    '''
+    def __init__(self):
+        super().__init__('用户已注销或不存在')
 class FollowMyselfError(ClientException):
     '''
     无法关注自己
@@ -272,6 +285,5 @@ class ObjectError(ClientException):
     def __init__(self):
         super().__init__('对象不存在或者已被删除')
 #------------------------------------
-
-if __name__=='__main__':
+if __name__ == '__main__':
     print('')
