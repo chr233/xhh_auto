@@ -46,7 +46,7 @@ if __name__ == '__main__':
             dict = json.loads(f.read())
         try:
             accountlist = dict['accounts']
-            settings = dict['settings']
+            #settings = dict['settings']
         except KeyError as e:
             print('配置文件错误，请参考config_sample.json',e)
         i = 0
