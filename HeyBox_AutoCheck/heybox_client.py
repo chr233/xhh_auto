@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import urllib
 import os
 import traceback
+from heybox_basic import *
 from heybox_static import *
 
 '''
@@ -26,21 +27,6 @@ SCRIPT_VERSION = 'v0.3'
 
 #小黑盒版本号,会自动设置为最新版
 HEYBOX_VERSION = '1.2.80'
-
-#调试模式开启
-env_dist = os.environ
-
-if env_dist.get('MODE') == 'DEBUG':
-    LEVEL = logging.DEBUG
-    DEBUG = True
-else:
-    LEVEL = logging.INFO
-    Debug = False
-
-#LOG_FORMAT =
-#"[%(asctime)s][%(levelname)s][%(funcName)s][%(name)s]#%(message)s"
-LOG_FORMAT = "[%(levelname)s][%(name)s]%(message)s"
-logging.basicConfig(level=LEVEL,format=LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 #Python版小黑盒客户端
 class HeyboxClient():
@@ -75,7 +61,7 @@ class HeyboxClient():
             'hkey': ''
         }
         self.heybox_id = heybox_id
-        self.logger = logging.getLogger(str(tag))
+        self.logger = get_logger(str(tag))
         self.logger.debug(f'初始化完成{f" @ [{heybox_id}]" if heybox_id else ""}')
 
         #[自动]

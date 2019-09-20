@@ -7,6 +7,7 @@ heybox_client模块中所使用的静态变量
 作者: Chr_
 Email: chr@chrxw.com
 """
+from heybox_basic import get_logger
 class URLS():
     '''
     URL常量
@@ -187,6 +188,12 @@ class UnknownError(HeyboxException):
     '''
     def __init__(self):
         super().__init__('未知错误')
+class Uninitialized(HeyboxException):
+    '''
+    未初始化
+    '''
+    def __init__(self):
+        super().__init__('未初始化')
 #====================================
 class AccountException(HeyboxException):
     '''
@@ -286,4 +293,5 @@ class ObjectError(ClientException):
         super().__init__('对象不存在或者已被删除')
 #------------------------------------
 if __name__ == '__main__':
-    print('')
+    logger=get_logger('static')
+    logger.error('本模块不支持直接运行,请使用[from heybox_static import *]导入本模块使用')
