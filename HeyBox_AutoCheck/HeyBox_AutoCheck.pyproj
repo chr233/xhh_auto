@@ -37,14 +37,12 @@
     <Compile Include="heybox_client.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HeyBoxClient_bak.py" />
     <Compile Include="heybox_tools.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="start.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config_sample.json" />
     <Content Include="Methods.md" />
     <Content Include="requirements.txt" />
   </ItemGroup>

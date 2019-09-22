@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from heybox_errors import *
 from heybox_static import *
 from heybox_client import HeyboxClient
 
