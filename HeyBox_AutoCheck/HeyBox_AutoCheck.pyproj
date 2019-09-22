@@ -27,7 +27,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Account_Manager.py" />
+    <Compile Include="heybox_file.py" />
     <Compile Include="heybox_basic.py">
       <SubType>Code</SubType>
     </Compile>
