@@ -5,10 +5,8 @@ import time
 import hashlib
 import random
 from requests.exceptions import RequestException
-import logging
 from bs4 import BeautifulSoup
 import urllib
-import os
 import traceback
 from heybox_basic import *
 from heybox_static import *
@@ -37,6 +35,7 @@ class HeyboxClient():
     _headers = {}
     _cookies = {}
     _params = {}
+    logger = None
     
     #3个参数抓包可以拿到,最后一个是标签
     def __init__(self, heybox_id:int=0,imei:str='',pkey:str='',tag:str='未指定'):
@@ -78,12 +77,41 @@ class HeyboxClient():
         #    self.auto_follow_followers(30)
         #    self.auto_like_follows(30)
 
-    def sample_auto():
+    def tool_follow_followers(self):
         '''
-        简单的自动化执行示例
+        关注粉丝
+        成功返回:
+            True
+        失败返回:
+            False
         '''
-        pass
+        try:
+            follow,fan,adward = self.get_user_profile(self.heybox_id)
+            fanlist=self.get_follower_list(fan)
+            fliteredlist=self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
+            if fliteredlist:
+                self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'关注粉丝遇到错误[{e}]')
 
+    def tool_unfollow_singlefollowers(self):
+        '''
+        关注粉丝
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        try:
+            follow,fan,adward = self.get_user_profile(self.heybox_id)
+            fanlist=self.get_follower_list(fan)
+            fliteredlist=self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
+            if fliteredlist:
+                self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'关注粉丝遇到错误[{e}]')
     #NT
     def batch_newslist_operate(self,idsetlist:list,operatetype:int=1,indexstart:int=1):
         '''
@@ -425,7 +453,7 @@ class HeyboxClient():
                     link = moment['link']
                     linkid = int(link['linkid'])
                     is_liked = BoolenString(link['is_award_link'] == 1)
-                    userid_=moment['user']['userid']
+                    userid_ = moment['user']['userid']
                     posttype = moment['content_type']
                     if posttype == 'post_link':#发帖
                         posttype = FollowPostType.PostLink
@@ -1359,7 +1387,7 @@ class HeyboxClient():
         return(suserlist)
           
     #NT
-    def userlist_filte(self,userlist:list,filtersetting:dict):
+    def filte_userlist(self,userlist:list,filtersetting:dict):
         '''
         用户列表过滤
         参数:
