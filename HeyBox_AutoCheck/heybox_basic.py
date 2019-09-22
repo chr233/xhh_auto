@@ -36,6 +36,12 @@ def __init_settings() -> bool:
                 "FtqqSKEY": None,
                 "Debug": False
             }
+            try:
+                with open('settingsw.json', 'w', encoding='utf-8') as f:
+                    f.write(json.dumps(settings))
+            except IOError:
+                pass
+
         debug = settings.get('Debug',False) 
         ftqqskey = settings.get('FtqqSKEY','') 
 
@@ -63,7 +69,7 @@ def is_debug_mode() -> bool:
     return(debug)
 
 
-def get_logger(tag:str='null'):
+def get_logger(tag:str='null')->logging.Logger:
     '''
     返回logger对象
     参数:
@@ -77,8 +83,8 @@ def get_logger(tag:str='null'):
         __init_settings()
     return(logging.getLogger(str(tag)))
 
-def send_result(datalist):
-    url = FTQQ_URL % ftqqskey
+def send_to_ftqq(datalist):
+    url = 'https://sc.ftqq.com/%s.send' % ftqqskey
     strlong = ""
     for item in datalist:
         format = (item[0],item[2],item[3],item[4],item[6],item[7],item[8],item[1],item[5],item[9])
@@ -98,5 +104,3 @@ def send_result(datalist):
 
 if __name__ == '__main__':
     get_logger('basic').error('本模块不支持直接运行,请使用[from heybox_basic import *]导入本模块使用')
-else:
-    __init_settings()

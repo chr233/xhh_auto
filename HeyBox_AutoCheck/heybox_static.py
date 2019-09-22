@@ -45,7 +45,7 @@ class URLS():
 
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
-    LIKE_COMMENT='https://api.xiaoheihe.cn/bbs/app/comment/support'#评论点赞
+    LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'#评论点赞
     SIGN = 'https://api.xiaoheihe.cn/task/sign/'#签到
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'#分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'#检查分享

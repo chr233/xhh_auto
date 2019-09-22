@@ -77,9 +77,9 @@ class HeyboxClient():
         #    self.auto_follow_followers(30)
         #    self.auto_like_follows(30)
 
-    def tool_follow_followers(self):
+    def tool_follow_followers(self)->bool:
         '''
-        关注粉丝
+        关注关注你的人
         成功返回:
             True
         失败返回:
@@ -92,26 +92,32 @@ class HeyboxClient():
             if fliteredlist:
                 self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
             return(True)
+        except FollowLimitedError as e:
+            self.logger.error(f'当日关注次数用尽或者关注数达到上限,停止操作[{e}]')
+            return(False)
         except ClientException as e:
             self.logger.error(f'关注粉丝遇到错误[{e}]')
+            return(False)
+    def tool_unfollow_singlefollowers(self)->bool:
+        '''
+        取关你的单向关注
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        try:
+            follow,fan,adward = self.get_user_profile(self.heybox_id)
+            followlist = self.get_following_list(follow)
+            fliteredlist = self.filte_userlist(followlist,{'RelationType':RelationType.IFollowedHim})
+            fliteredlist = self.filte_userlist(followlist,{'FollowValue':100})
+            if fliteredlist:
+                self.batch_userlist_operate(fliteredlist,OperateType.UnFollowUser)
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'关注粉丝遇到错误[{e}]')
+            return(False)
 
-    def tool_unfollow_singlefollowers(self):
-        '''
-        关注粉丝
-        成功返回:
-            True
-        失败返回:
-            False
-        '''
-        try:
-            follow,fan,adward = self.get_user_profile(self.heybox_id)
-            fanlist = self.get_follower_list(fan)
-            fliteredlist = self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
-            if fliteredlist:
-                self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
-            return(True)
-        except ClientException as e:
-            self.logger.error(f'关注粉丝遇到错误[{e}]')
     #NT
     def batch_newslist_operate(self,idsetlist:list,operatetype:int=1,indexstart:int=1):
         '''
@@ -1087,7 +1093,7 @@ class HeyboxClient():
             for user in jsondict['follow_list']:
                 try:
                     userid = int(user['userid'])
-                    is_follow = BoolenString(user['is_follow'] == 1)
+                    is_follow = user['is_follow'] 
                     #self.logger.debug(f'ID{userid}|关系{is_follow}')
                     userlist.append((userid,is_follow))
                 except KeyError as e:
@@ -2355,9 +2361,9 @@ class HeyboxClient():
                 elif msg == '自己不能粉自己哦':
                     raise FollowMyselfError
                 elif msg == '您今日的关注次数已用完':
-                    raise FollowLimitedError
+                    raise FollowLimitedError('今日的关注次数已用尽')
                 elif msg == '您的关注已经到上限了':
-                    raise FollowLimitedError
+                    raise FollowLimitedError('关注数已经到上限')
                 elif msg == '您今日的赞赏次数已用完':
                     raise LikeLimitedError
                 elif msg == 'invalid userid':
