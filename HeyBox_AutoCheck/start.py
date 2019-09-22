@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from heybox_client import HeyboxClient
 from heybox_static import *
+from heybox_client import HeyboxClient
 
 import json
 import requests

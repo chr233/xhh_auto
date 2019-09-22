@@ -1,6 +1,7 @@
 from heybox_static import *
 import os
 import logging
+import json
 
 __initialized = False
 print(1)
@@ -13,11 +14,12 @@ def __init_settings() -> bool:
         with open('settings.json', 'r', encoding='utf-8') as f:
             jsondict = json.loads(f.read())
         try:
-            settings = jsondict['settings']
+            #Debug= jsondict['settings']
+            pass
         except KeyError:
             print('配置文件错误，请参考[settings_sample.json]')
             print('**使用默认配置**')
-            seeting = {
+            settings = {
                 "Help":"配置帮助请查看[https://github.com/chr233/xhh_auto/blob/master/README.md]",
                 "FtqqSKEY": None,
                 "Debug": False,

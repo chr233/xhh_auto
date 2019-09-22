@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>HeyBox_AutoCheck</Name>
     <RootNamespace>HeyBox_AutoCheck</RootNamespace>
-    <InterpreterId>Global|PythonCore|3.7</InterpreterId>
+    <InterpreterId>MSBuild|env3.7|$(MSBuildProjectFullPath)</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <Environment>DEBUG=TRUE</Environment>
