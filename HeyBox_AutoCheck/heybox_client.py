@@ -8,8 +8,9 @@ from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
 import urllib
 import traceback
-from heybox_basic import *
+from heybox_basic import get_logger
 from heybox_static import *
+from heybox_errors import *
 
 '''
 Python3实现的小黑盒客户端
