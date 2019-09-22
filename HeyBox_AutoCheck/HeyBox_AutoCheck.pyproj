@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>HeyBox_AutoCheck</Name>
     <RootNamespace>HeyBox_AutoCheck</RootNamespace>
-    <InterpreterId>MSBuild|env3.7|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>Global|PythonCore|3.7</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <Environment>DEBUG=TRUE</Environment>
@@ -45,17 +45,6 @@
   <ItemGroup>
     <Content Include="Methods.md" />
     <Content Include="requirements.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Interpreter Include="env3.7\">
-      <Id>env3.7</Id>
-      <Version>3.7</Version>
-      <Description>env3.7 (Python 3.7 (64-bit))</Description>
-      <InterpreterPath>Scripts\python.exe</InterpreterPath>
-      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>X64</Architecture>
-    </Interpreter>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.7" />
