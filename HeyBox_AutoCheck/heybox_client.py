@@ -453,7 +453,7 @@ class HeyboxClient():
                     link = moment['link']
                     linkid = int(link['linkid'])
                     is_liked = BoolenString(link['is_award_link'] == 1)
-                    userid_ = moment['user']['userid']
+                    userid_ = int(moment['user']['userid'])
                     posttype = moment['content_type']
                     if posttype == 'post_link':#发帖
                         posttype = FollowPostType.PostLink
@@ -470,7 +470,7 @@ class HeyboxClient():
                     else:
                         posttype = FollowPostType.UnknownType
                         
-                    if posttype == FollowPostType.CommentGame and userid == self.heybox_id:#过滤自己的评测
+                    if posttype == FollowPostType.CommentGame and userid_ == self.heybox_id:#过滤自己的评测
                         continue
                     if is_liked == False or ignoreliked == False :#忽略已点赞的动态
                         postlist.append((linkid,posttype,is_liked))
@@ -1545,7 +1545,7 @@ class HeyboxClient():
             }
             cookies = { 
                 'user_pkey' : self._cookies['pkey'],
-                'user_heybox_id' : self.heybox_id
+                'user_heybox_id' : str(self.heybox_id)
             }
             resp = self.Session.get(url=url,headers=headers,cookies=cookies)
             try:
@@ -1840,7 +1840,7 @@ class HeyboxClient():
             cookies = { 
                 **self._cookies,
                 'user_pkey' : self._cookies['pkey'],
-                'user_heybox_id' : self.heybox_id
+                'user_heybox_id' : str(self.heybox_id)
             }
             self.__flush_params()
             resp = self.Session.get(url=url,headers=headers,params=self._params,cookies=cookies)
@@ -1869,7 +1869,7 @@ class HeyboxClient():
             }
             cookies = {
                 **self._cookies,
-                'user_heybox_id':self.heybox_id
+                'user_heybox_id':str(self.heybox_id)
             }
             resp = self.Session.get(url=url,headers=self._headers,cookies=cookies)
             try:
@@ -1921,7 +1921,7 @@ class HeyboxClient():
         cookies = { 
             **self._cookies,
             'user_pkey' : self._cookies['pkey'],
-            'user_heybox_id' : self.heybox_id
+            'user_heybox_id' : str(self.heybox_id)
         }
         self.__flush_params()
         params = {
@@ -1978,7 +1978,7 @@ class HeyboxClient():
         cookies = { 
             **self._cookies,
             'user_pkey' : self._cookies['pkey'],
-            'user_heybox_id' : self.heybox_id
+            'user_heybox_id' : str(self.heybox_id)
         }
         self.__flush_params()
         params = {
