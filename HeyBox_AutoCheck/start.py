@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from heybox_basic import *
 from heybox_errors import *
 from heybox_static import *
 from heybox_client import HeyboxClient
@@ -73,17 +74,17 @@ if __name__ == '__main__':
             heybox1 = HeyboxClient(heybox_id,imei,pkey,i)
 
 
-            if env_dist.get('MODE') == 'DEBUG':
+            if is_debug_mode():
                                
                 #调试模式
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
-                a=heybox1.get_news_list(60)
+                a = heybox1.get_news_list(60)
                 heybox1.batch_newslist_operate(a,OperateType.ViewLikeShare)
                 if i == len(accountlist):
-                    result=heybox1.get_follow_post(10)
+                    result = heybox1.get_follow_post(10)
                     print(result)
-                    result=heybox1.batch_followposts_operate(result)
+                    result = heybox1.batch_followposts_operate(result)
                     print(result)
 
                     print(0)
@@ -108,8 +109,8 @@ if __name__ == '__main__':
                 datalist.append(data)
 
         try:
-            if(datalist and settings['ftqqskey'] and settings['ftqqskey'] != '这里填方糖的SKEY(用于接收微信推送)，留空关闭该功能'):
-                send_result(datalist,settings['ftqqskey'])
+            if datalist :
+                send_result(datalist)
         except KeyError as e:
             print('未配置SKEY')
 

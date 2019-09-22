@@ -40,10 +40,9 @@ def __init_settings() -> bool:
         ftqqskey = settings.get('FtqqSKEY','') 
 
         env_dist = os.environ
-        env_debug = str(env_dist.get('DEBUG') ).upper== 'TRUE'
-        if debug or env_debug: #调试模式开启
+        debug =debug or str(env_dist.get('DEBUG','FALSE') ).upper()== 'TRUE'
+        if debug : #调试模式开启
             log_level = logging.DEBUG
-            debug=True
         else:
             log_level = logging.WARN
         log_format = "[%(levelname)s][%(name)s]%(message)s"
