@@ -3,7 +3,7 @@ import os
 import logging
 
 __initialized = False
-print(1)
+
 def __init_settings() -> bool:
     '''
     初始化
@@ -29,7 +29,7 @@ def __init_settings() -> bool:
             debug = settings.get('debug',False) 
             env_dist = os.environ
             env_debug = str(env_dist.get('DEBUG','')).upper == 'True'
-            if debug or env_debug:#调试模式开启
+            if debug or env_debug: #调试模式开启
                 log_level = logging.DEBUG
             else:
                 log_level = logging.WARN

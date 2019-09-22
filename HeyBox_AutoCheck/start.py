@@ -77,8 +77,8 @@ if __name__ == '__main__':
                 #调试模式
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
-                a=heybox1.get_user_post_list(13081382,60)
-                heybox1.batch_like_followposts(a)
+                a=heybox1.get_news_list(60)
+                heybox1.batch_newslist_operate(a,OperateType.ViewLikeShare)
                 if i == len(accountlist):
                     result=heybox1.get_follow_post(10)
                     print(result)
