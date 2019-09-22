@@ -30,8 +30,7 @@ HEYBOX_VERSION = '1.2.80'
 #Python版小黑盒客户端
 class HeyboxClient():
     Session = requests.session()
-    Session.headers = {}
-    Session.headers = {}
+    Session.headers = {}    
     heybox_id = 0
     _headers = {}
     _cookies = {}
@@ -88,8 +87,8 @@ class HeyboxClient():
         '''
         try:
             follow,fan,adward = self.get_user_profile(self.heybox_id)
-            fanlist=self.get_follower_list(fan)
-            fliteredlist=self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
+            fanlist = self.get_follower_list(fan)
+            fliteredlist = self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
             if fliteredlist:
                 self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
             return(True)
@@ -106,8 +105,8 @@ class HeyboxClient():
         '''
         try:
             follow,fan,adward = self.get_user_profile(self.heybox_id)
-            fanlist=self.get_follower_list(fan)
-            fliteredlist=self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
+            fanlist = self.get_follower_list(fan)
+            fliteredlist = self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
             if fliteredlist:
                 self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
             return(True)
@@ -156,13 +155,13 @@ class HeyboxClient():
                         self.share(newsid,index)
                     operatecount+=1
                 except LikeLimitedError as e:
-                    self.logger.debug(f'达到每日点赞上限,停止操作[{e}]')
-                    return(False)
-                except (ValueError,TypeError,ClientException) as e:
-                    self.logger.debug(f'批量点赞遇到错误[{e}]')
+                    self.logger.debug(f'达到每日点赞上限,停止点赞操作[{e}]')
+                    like = False
+                except (ClientException) as e: #ValueError,TypeError
+                    self.logger.debug(f'批量操作新闻列表遇到错误[{e}]')
                     errorcount+=1
                     if errorcount >= 5:
-                        self.logger.error('批量点赞遇到大量错误,停止操作')
+                        self.logger.error('批量操作新闻列表大量错误,停止操作')
                         return(False)
                 finally:
                     index+=1
@@ -365,7 +364,7 @@ class HeyboxClient():
             jsondict = resp.json()
             self.__check_status(jsondict)
             newslist = []
-            for newsitem in jsondict['result']:
+            for newsitem in jsondict['result']['feeds']:
                 news_type = newsitem['content_type']
                 #过滤掉杂七杂八的新闻类型
                 if news_type == NewsContentType.TextNews or news_type == NewsContentType.CommunityArticle:
@@ -559,7 +558,7 @@ class HeyboxClient():
             is_liked = BoolenString(link['is_award_link'] == 1)
             #is_favour = BoolenString(link['is_favour'] == 1)
             has_video = BoolenString(link['has_video'] == 1)
-            self.logger.debug(f'点赞{is_liked} 视频{has_video}')
+            #self.logger.debug(f'点赞{is_liked} 视频{has_video}')
             return((has_video,is_liked))
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'拉取文章附加信息出错[{e}]')
