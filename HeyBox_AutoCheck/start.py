@@ -19,29 +19,6 @@ import logging
 电邮:chr@chrxw.com
 '''
 
-
-FTQQ_URL = 'https://sc.ftqq.com/%s.send'
-env_dist = os.environ
-
-def send_result(datalist,skey):
-    url = FTQQ_URL % skey
-    strlong = ""
-    for item in datalist:
-        format = (item[0],item[2],item[3],item[4],item[6],item[7],item[8],item[1],item[5],item[9])
-        s = '#### 昵称[%s] [%s级|%s/%s]\n##### 关注[%s] 粉丝[%d] 获赞[%s]\n##### H币[%s] 连续签到[%s]天\n##### [%s]\n##### ' + '=' * 30 + '\n'
-        strlong+=s % format
-    data = {
-        'text':'小黑盒自动脚本',
-        'desp':strlong
-        }
-    resp = requests.post(url=url,data=data)
-    try:
-        dict = resp.json()
-        print('执行结束',dict)
-    except ValueError as e:
-        print('出错了')
-
-
 if __name__ == '__main__':
     try:
         with open('config.json', 'r', encoding='utf-8') as f:
@@ -79,18 +56,14 @@ if __name__ == '__main__':
                 #调试模式
                 #heybox1.auto()
                 #heybox1.auto_clean_follering_list()
-                a = heybox1.get_news_list(10)
-                heybox1.batch_newslist_operate(a[:1],OperateType.ViewLikeShare)
-                heybox1.batch_newslist_operate(a[1:],OperateType.ViewLike)
+                #heybox1.sign()
+                #a = heybox1.get_news_list(10)
+                #heybox1.batch_newslist_operate(a[:1],OperateType.ViewLikeShare)
+                #heybox1.batch_newslist_operate(a[1:],OperateType.ViewLike)
+                heybox1.batch_userlist_operate([18410498],OperateType.FollowUser)
                 if i == len(accountlist):
-                    result = heybox1.get_follow_post(10)
-                    print(result)
-                    result = heybox1.batch_followposts_operate(result)
-                    print(result)
 
-                    print(0)
-
-                    print(1)
+                    heybox1.tool_follow_followers()
                     pass
                 
                 continue
@@ -111,7 +84,7 @@ if __name__ == '__main__':
 
         try:
             if datalist :
-                send_result(datalist)
+                send_to_ftqq(datalist)
         except KeyError as e:
             print('未配置SKEY')
 

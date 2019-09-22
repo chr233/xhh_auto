@@ -103,8 +103,8 @@ class FollowLimitedError(ClientException):
     '''
     关注次数用尽
     '''
-    def __init__(self):
-        super().__init__('关注次数用尽')
+    def __init__(self,msg):
+        super().__init__(msg)
 
 class LikeLimitedError(ClientException):
     '''
