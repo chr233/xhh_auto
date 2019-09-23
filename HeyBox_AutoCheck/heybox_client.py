@@ -63,20 +63,25 @@ class HeyboxClient():
         self.logger = get_logger(str(tag))
         self.logger.debug(f'初始化完成{f" @ [{heybox_id}]" if heybox_id else ""}')
 
-        #[自动]
-        #def auto(self):#,viewcount,likecount,sharecount,followcount):
-        #    self.get_ads_info()
-        #    self.check_achieve_alert()
-        #    self.sign()
-        #    idlist = self.get_news_list(30)
-        #    self.simu_view_news(idlist[0][0],idlist[0][1],0)
-        #    self.share(idlist[0][1])
+    #NT
+    def tool_do_daily_tasks()->bool:
+        '''
+        完成每日任务示例
+        返回:
+            每日任务是否完成?
+        '''
+        self.sign()
+        newslist=self.get_news_list(10)
+        self.batch_newslist_operate(newsidlist[:1],OperateType.ViewLikeShare)
+        self.batch_newslist_operate(newsidlist[1:],OperateType.ViewLike)
 
-        #    self.simu_view_like_newses(idlist,10)
+        postlist=self.get_follow_post(100)
+        self.batch_like_followposts(postlist)
 
-        #    self.auto_follow_followers(30)
-        #    self.auto_like_follows(30)
+        finish,total=self.get_daily_task_stats()
+        return(finish==total)
 
+    #NT
     def tool_follow_followers(self)->bool:
         '''
         关注关注你的人
@@ -98,9 +103,13 @@ class HeyboxClient():
         except ClientException as e:
             self.logger.error(f'关注粉丝遇到错误[{e}]')
             return(False)
-    def tool_unfollow_singlefollowers(self)->bool:
+
+    #NT
+    def tool_unfollow_singlefollowers(self,value:int=100)->bool:
         '''
-        取关你的单向关注
+        清理单向关注
+        参数:
+            value:粉丝数跟关注数相差阈值,大于阈值的会被取关,不影响双向关注的人
         成功返回:
             True
         失败返回:
@@ -110,12 +119,34 @@ class HeyboxClient():
             follow,fan,adward = self.get_user_profile(self.heybox_id)
             followlist = self.get_following_list(follow)
             fliteredlist = self.filte_userlist(followlist,{'RelationType':RelationType.IFollowedHim})
-            fliteredlist = self.filte_userlist(followlist,{'FollowValue':100})
+            fliteredlist = self.filte_userlist(followlist,{'FollowValue':value})
             if fliteredlist:
                 self.batch_userlist_operate(fliteredlist,OperateType.UnFollowUser)
             return(True)
         except ClientException as e:
-            self.logger.error(f'关注粉丝遇到错误[{e}]')
+            self.logger.error(f'清理单向关注遇到错误[{e}]')
+            return(False)
+
+    #NT
+    def tool_follow_recommand(self,count:int=10,value:int=100)->bool:
+        '''
+        关注推荐关注的人
+        参数:
+            count:拉取推荐列表数量
+            value:粉丝数跟关注数相差阈值,只关注小于阈值的人
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        try:
+            recfollowlist = self.get_recommend_follow_list(count)
+            fliteredlist = self.filte_userlist(recfollowlist,{'FollowValue':value})
+            if fliteredlist:
+                self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'清理单向关注遇到错误[{e}]')
             return(False)
 
     #NT
@@ -1007,7 +1038,7 @@ class HeyboxClient():
             for user in jsondict['result']['rec_users']:
                 try:
                     userid = int(user['userid'])
-                    is_follow = BoolenString(user['is_follow'] == 1)
+                    is_follow = user['is_follow']
                     rec_tag = user['rec_tag']
                     if(rec_tag == '您的Steam好友'):
                         rec_type = RecTagType.SteamFriend
@@ -1170,7 +1201,7 @@ class HeyboxClient():
             for user in jsondict['follow_list']:
                 try:
                     userid = int(user['userid'])
-                    is_follow = BoolenString(user['is_follow'] == 1)
+                    is_follow = user['is_follow'] 
                     #self.logger.debug(f'ID{userid}|关系{is_follow}')
                     userlist.append((userid,is_follow))
                 except KeyError as e:
