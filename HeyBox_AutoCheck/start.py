@@ -48,34 +48,25 @@ if __name__ == '__main__':
                 print('第%d个账户实例配置出错，跳过该账户' % i,e)
                 continue
             
-            heybox1 = HeyboxClient(heybox_id,imei,pkey,i)
+            hbc = HeyboxClient(heybox_id,imei,pkey,i)
 
-
-            if is_debug_mode():
-                               
+            if is_debug_mode():               
                 #调试模式
-                #heybox1.auto()
-                #heybox1.auto_clean_follering_list()
-                #heybox1.sign()
-                #a = heybox1.get_news_list(10)
-                #heybox1.batch_newslist_operate(a[:1],OperateType.ViewLikeShare)
-                #heybox1.batch_newslist_operate(a[1:],OperateType.ViewLike)
-                heybox1.batch_userlist_operate([18410498],OperateType.FollowUser)
+                hbc.tool_do_daily_tasks()
                 if i == len(accountlist):
-
-                    heybox1.tool_follow_followers()
                     pass
-                
                 continue
             
             #正常逻辑
-            heybox1.auto()#自动完成每日任务，自动动态点赞
-            heybox1.auto_clean_follering_list(400)#整理关注列表，清理单向关注
+            hbc.tool_do_daily_tasks() #完成每日任务
+            hbc.tool_follow_recommand(10,100) #关注推荐关注
+            hbc.tool_follow_followers() #关注粉丝
+            hbc.tool_unfollow_singlefollowers(100) #取关单向关注
             
-            b = heybox1.get_task_stats()#获取任务完成度
-            heybox1.get_task_detail()#获取任务详情
-            mydata = heybox1.get_my_data()
-            myprofile = heybox1.get_my_profile()
+            b = hbc.get_task_stats()#获取任务完成度
+            hbc.get_task_detail()#获取任务详情
+            mydata = hbc.get_my_data()
+            myprofile = hbc.get_my_profile()
             
             if mydata and myprofile:
                 data = list(mydata + myprofile)
