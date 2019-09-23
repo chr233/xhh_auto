@@ -84,6 +84,9 @@ def get_logger(tag:str='null')->logging.Logger:
     return(logging.getLogger(str(tag)))
 
 def send_to_ftqq(datalist):
+    '''
+    发送消息到方糖气球
+    '''
     url = 'https://sc.ftqq.com/%s.send' % ftqqskey
     strlong = ""
     for item in datalist:
@@ -100,6 +103,19 @@ def send_to_ftqq(datalist):
         print('执行结束',dict)
     except ValueError as e:
         print('出错了')
+
+
+def load_account_from_file(file_path:str):
+    with open('account.json', 'r', encoding='utf-8') as f:
+        jsondict = json.loads(f.read())
+    try:
+        accountlist = jsondict['accounts']
+        #settings = dict['settings']
+    except (KeyError,FileNotFoundError) as e:
+        logger=get_logger('main')
+        logger.error('配置文件不存在或者文件格式错误,请参考[account_sample.json],并将配置保存为[account.json]')
+        logger.error(f'错误详情:[{e}]',e)
+
 
 
 if __name__ == '__main__':

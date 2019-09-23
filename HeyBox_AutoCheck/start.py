@@ -5,7 +5,6 @@ from heybox_static import *
 from heybox_client import HeyboxClient
 
 import json
-import requests
 import os
 import logging
 
@@ -21,13 +20,16 @@ import logging
 
 if __name__ == '__main__':
     try:
-        with open('config.json', 'r', encoding='utf-8') as f:
-            dict = json.loads(f.read())
+        with open('account.json', 'r', encoding='utf-8') as f:
+            jsondict = json.loads(f.read())
         try:
-            accountlist = dict['accounts']
+            accountlist = jsondict['accounts']
             #settings = dict['settings']
-        except KeyError as e:
-            print('配置文件错误，请参考config_sample.json',e)
+        except (KeyError,FileNotFoundError) as e:
+            logger=get_logger('main')
+            logger.error('配置文件不存在或者文件格式错误,请参考[account_sample.json],并将配置保存为[account.json]')
+            logger.error(f'错误详情:[{e}]',e)
+
         i = 0
         datalist = []
 
@@ -49,30 +51,34 @@ if __name__ == '__main__':
                 continue
             
             hbc = HeyboxClient(heybox_id,imei,pkey,i)
-
-            if is_debug_mode():               
-                #调试模式
-                hbc.tool_do_daily_tasks()
-                if i == len(accountlist):
-                    pass
-                continue
-            
-            #正常逻辑
-            hbc.tool_do_daily_tasks() #完成每日任务
-            hbc.tool_follow_recommand(10,100) #关注推荐关注
-            hbc.tool_follow_followers() #关注粉丝
-            hbc.tool_unfollow_singlefollowers(100) #取关单向关注
-            
-            b = hbc.get_task_stats()#获取任务完成度
-            hbc.get_task_detail()#获取任务详情
-            mydata = hbc.get_my_data()
-            myprofile = hbc.get_my_profile()
-            
-            if mydata and myprofile:
-                data = list(mydata + myprofile)
-                data.append('任务全部完成' if b else '任务还未完成')
-                datalist.append(data)
-
+            try:
+    
+                if is_debug_mode():               
+                    #调试模式
+                    hbc.sample_do_daily_tasks()
+                    if i == len(accountlist):
+                        pass
+                    continue
+                
+                #正常逻辑
+                hbc.sample_do_daily_tasks() #完成每日任务
+                hbc.tools_follow_recommand(10,100) #关注推荐关注
+                hbc.tools_follow_followers() #关注粉丝
+                hbc.tools_unfollow_singlefollowers(100) #取关单向关注
+                
+                b = hbc.get_task_stats()#获取任务完成度
+                hbc.get_task_detail()#获取任务详情
+                mydata = hbc.get_my_data()
+                myprofile = hbc.get_my_profile()
+                
+                if mydata and myprofile:
+                    data = list(mydata + myprofile)
+                    data.append('任务全部完成' if b else '任务还未完成')
+                    datalist.append(data)
+            except AccountException as e:
+                pass
+            except HeyboxException as e:
+                pass
         try:
             if datalist :
                 send_to_ftqq(datalist)

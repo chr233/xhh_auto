@@ -64,7 +64,7 @@ class HeyboxClient():
         self.logger.debug(f'初始化完成{f" @ [{heybox_id}]" if heybox_id else ""}')
 
     #NT
-    def tool_do_daily_tasks()->bool:
+    def sample_do_daily_tasks(self)->bool:
         '''
         完成每日任务示例
         返回:
@@ -82,7 +82,18 @@ class HeyboxClient():
         return(finish==total)
 
     #NT
-    def tool_follow_followers(self)->bool:
+    def sample_like_follow_posts(self,value:int=100)->bool:
+        '''
+        动态点赞示例
+        返回:
+            True
+        '''
+        postlist=self.get_follow_post(60,True)
+        self.batch_like_followposts(postlist)
+        return(True)
+
+    #NT
+    def tools_follow_followers(self)->bool:
         '''
         关注关注你的人
         成功返回:
@@ -105,9 +116,9 @@ class HeyboxClient():
             return(False)
 
     #NT
-    def tool_unfollow_singlefollowers(self,value:int=100)->bool:
+    def tools_unfollow_singlefollowers(self,value:int=100)->bool:
         '''
-        清理单向关注
+        清理单向关注示例
         参数:
             value:粉丝数跟关注数相差阈值,大于阈值的会被取关,不影响双向关注的人
         成功返回:
@@ -128,7 +139,7 @@ class HeyboxClient():
             return(False)
 
     #NT
-    def tool_follow_recommand(self,count:int=10,value:int=100)->bool:
+    def tools_follow_recommand(self,count:int=10,value:int=100)->bool:
         '''
         关注推荐关注的人
         参数:
