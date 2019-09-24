@@ -72,8 +72,8 @@ class HeyboxClient():
         '''
         self.sign()
         newslist=self.get_news_list(10)
-        self.batch_newslist_operate(newsidlist[:1],OperateType.ViewLikeShare)
-        self.batch_newslist_operate(newsidlist[1:],OperateType.ViewLike)
+        self.batch_newslist_operate(newslist[:1],OperateType.ViewLikeShare)
+        self.batch_newslist_operate(newslist[1:],OperateType.ViewLike)
 
         postlist=self.get_follow_post(100)
         self.batch_like_followposts(postlist)
@@ -274,7 +274,7 @@ class HeyboxClient():
                     linkid,commemttype = commentobj
                     self.like_comment(linkid,commemttype)
                     operatecount+=1
-                except (ValueError,TypeError,ClientException) as e:
+                except (Ignore,ValueError,TypeError,ClientException) as e:
                     self.logger.debug(f'批量点赞遇到错误[{e}]')
                     errorcount+=1
                     if errorcount >= 5:
@@ -2110,7 +2110,7 @@ class HeyboxClient():
             wait_count = result['wait']
             task_count = result['task']
             finish_count = task_count - wait_count
-            self.logger.debug(f'任务完成度[{finish}/{task}]')
+            self.logger.debug(f'任务完成度[{finish_count}/{task_count}]')
             return((finish_count,task_count))
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取任务状态出错[{e}]')
@@ -2395,6 +2395,8 @@ class HeyboxClient():
                 if msg == '操作已经完成':
                     raise Ignore
                 elif msg == '不能进行重复的操作哦':
+                    raise Ignore
+                elif msg=='不能重复赞哦':
                     raise Ignore
                 elif msg == '帖子已被删除':
                     raise ObjectError
