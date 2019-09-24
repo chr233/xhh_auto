@@ -15,21 +15,31 @@ Email: chr@chrxw.com
 __initialized = False
 debug = False
 ftqqskey = ''
-
+jsondict = {}
 
 def __init_settings() -> bool:
     '''
     初始化
     '''
     global __initialized
-    global debug
-    global ftqqskey
+    global jsondict
 
+    
+    logger = logging.getLogger('basic')
     if  not __initialized:
         try:
+            logger.debug('加载[settings.json]')
             with open('settingsw.json', 'r', encoding='utf-8') as f:
-                settings = json.loads(f.read())
+                jsondict = json.loads(f.read())
+                settings={
+                    'Help' : jsondict.get('Help',"配置帮助请查看[https://github.com/chr233/xhh_auto/blob/master/README.md]"),
+                    'CfgVer': jsondict.get("CfgVer",'1'),
+                    'FtqqSKEY': jsondict.get("FtqqSKEY", None),
+                    'Debug': jsondict.get("Debug", False)
+                }
+
         except FileNotFoundError:
+            logger.debug('[settings.json]不存在,正在生成默认配置……')
             settings = {
                 "Help":"配置帮助请查看[https://github.com/chr233/xhh_auto/blob/master/README.md]",
                 "CfgVer":"1",
@@ -37,13 +47,14 @@ def __init_settings() -> bool:
                 "Debug": False
             }
             try:
-                with open('settingsw.json', 'w', encoding='utf-8') as f:
+                with open('settings.json', 'w', encoding='utf-8') as f:
                     f.write(json.dumps(settings))
+                    logger.waring('默认配置已保存到[settings.json]')
             except IOError:
-                pass
+                logger.error('写出默认[settings.json]失败,请检查是否拥有目录写权限')
 
-        debug = settings.get('Debug',False) 
-        ftqqskey = settings.get('FtqqSKEY','') 
+        debug = jsondict.get('Debug',False) 
+        ftqqskey = jsondict.get('FtqqSKEY','') 
 
         env_dist = os.environ
         debug = debug or str(env_dist.get('DEBUG','FALSE')).upper() == 'TRUE'
@@ -83,7 +94,7 @@ def get_logger(tag:str='null') -> logging.Logger:
         __init_settings()
     return(logging.getLogger(str(tag)))
 
-def send_to_ftqq(title:str,text:str='')->bool:
+def send_to_ftqq(title:str,text:str='') -> bool:
     '''
     发送消息到方糖气球
     '''
@@ -109,7 +120,7 @@ def send_to_ftqq(title:str,text:str='')->bool:
         return(False)
 
 
-def load_accounts_from_file(filepath:str=''):
+def load_accounts(filepath:str=''):
     '''
     从文件加载账号数据
     参数:
