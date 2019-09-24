@@ -1,10 +1,14 @@
+# 因为小黑盒修改了部分API接口，master分支部分函数失效，现提前放出重构中的新版本。
+# 重构进度96%，模块内部主要函数已经完成，正在拆分、重组外部调用逻辑。
+## 以下内容可能过期，请等待更新。
+
 ### 本项目仅供学习使用，请勿用于非法用途
 ### 本项目遵从 GPL v3.0 协议
 
 ## 使用方法
 1. 从[releases](https://github.com/chr233/xhh_auto/releases)下载最新的脚本
 2. 修改config_sample.json，填入自己的账号凭据,[方糖skey获取](http://sc.ftqq.com)
-3. 将文件另存为config.json
+3. 将文件另存为account.json
 4. 切换到脚本所在目录
 5. `pip install -r requirements.txt`
 6. `python3 ./start.py`
@@ -12,6 +16,7 @@
 
 
 PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
+account.json
 ```json
 {
   "accounts": [
@@ -25,12 +30,18 @@ PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
       "imei": "这里填imei",
       "heybox_id": "黑盒数字ID"
     }
-  ],
+  ]
+}
+```
+settings.json
+```json
+{
   "settings": {
     "ftqqskey": "这里填方糖的SKEY(用于接收微信推送)，留空关闭该功能"
   }
 }
 ```
+
 
 ## 凭据获取方法
 1. 抓包环境要求
