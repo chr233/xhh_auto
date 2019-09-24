@@ -18,17 +18,13 @@ import logging
 电邮:chr@chrxw.com
 '''
 
-if __name__ == '__main__':
+def main():
     try:
-        with open('account.json', 'r', encoding='utf-8') as f:
-            jsondict = json.loads(f.read())
-        try:
-            accountlist = jsondict['accounts']
-            #settings = dict['settings']
-        except (KeyError,FileNotFoundError) as e:
-            logger=get_logger('main')
-            logger.error('配置文件不存在或者文件格式错误,请参考[account_sample.json],并将配置保存为[account.json]')
-            logger.error(f'错误详情:[{e}]',e)
+        logger=get_logger('start')
+        accountlist=load_accounts_from_file('./accounts.json')
+
+        if accountlist:
+            pass
 
         i = 0
         datalist = []
@@ -91,3 +87,7 @@ if __name__ == '__main__':
         print('未找到配置文件，请将config_sample.json重命名为config.json并填入账号凭据',e)
     except json.JSONDecodeError as e:
         print('config.json格式有误', e)
+
+
+if __name__ == '__main__':
+    main()

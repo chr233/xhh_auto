@@ -46,7 +46,7 @@ def __init_settings() -> bool:
         ftqqskey = settings.get('FtqqSKEY','') 
 
         env_dist = os.environ
-        debug =debug or str(env_dist.get('DEBUG','FALSE') ).upper()== 'TRUE'
+        debug = debug or str(env_dist.get('DEBUG','FALSE')).upper() == 'TRUE'
         if debug : #调试模式开启
             log_level = logging.DEBUG
         else:
@@ -69,7 +69,7 @@ def is_debug_mode() -> bool:
     return(debug)
 
 
-def get_logger(tag:str='null')->logging.Logger:
+def get_logger(tag:str='null') -> logging.Logger:
     '''
     返回logger对象
     参数:
@@ -83,40 +83,76 @@ def get_logger(tag:str='null')->logging.Logger:
         __init_settings()
     return(logging.getLogger(str(tag)))
 
-def send_to_ftqq(datalist):
+def send_to_ftqq(title:str,text:str='')->bool:
     '''
     发送消息到方糖气球
     '''
-    url = 'https://sc.ftqq.com/%s.send' % ftqqskey
+    '''
     strlong = ""
     for item in datalist:
         format = (item[0],item[2],item[3],item[4],item[6],item[7],item[8],item[1],item[5],item[9])
         s = '#### 昵称[%s] [%s级|%s/%s]\n##### 关注[%s] 粉丝[%d] 获赞[%s]\n##### H币[%s] 连续签到[%s]天\n##### [%s]\n##### ' + '=' * 30 + '\n'
         strlong+=s % format
+    '''
+    url = f'https://sc.ftqq.com/%s.send' % ftqqskey
     data = {
-        'text':'小黑盒自动脚本',
-        'desp':strlong
+        'text':title,
+        'desp':text
         }
     resp = requests.post(url=url,data=data)
     try:
-        dict = resp.json()
-        print('执行结束',dict)
+        jsondict = resp.json()
+        print('执行结束',jsondict)
+        return(True)
     except ValueError as e:
         print('出错了')
+        return(False)
 
 
-def load_account_from_file(file_path:str):
-    with open('account.json', 'r', encoding='utf-8') as f:
-        jsondict = json.loads(f.read())
+def load_accounts_from_file(filepath:str=''):
+    '''
+    从文件加载账号数据
+    参数:
+        filepath:文件路径,例如'./accounts.json',默认为./accounts.json
+    成功返回:
+        vaccountlist:有效的账户列表,[heybox_id,imei,pkey,tag]
+    失败返回:
+        False
+    '''
+    if not filepath:
+        filepath = './accounts.json'
     try:
+        logger = get_logger('basic')
+        with open(filepath, 'r', encoding='utf-8') as f:
+            jsondict = json.loads(f.read())
+    
         accountlist = jsondict['accounts']
-        #settings = dict['settings']
-    except (KeyError,FileNotFoundError) as e:
-        logger=get_logger('main')
-        logger.error('配置文件不存在或者文件格式错误,请参考[account_sample.json],并将配置保存为[account.json]')
-        logger.error(f'错误详情:[{e}]',e)
+        vaccountlist = []
+        i = 1
+        for item in accountlist:
+            try:
+                pkey = item['pkey']
+                imei = item['imei']
+                heybox_id = int(item['heybox_id'])
+                vaccountlist.append((heybox_id,imei,pkey,i))
+            except (KeyError,ValueError) :
+                logger.warning(f'第[{i}]个账户实例配置出错，跳过该账户 [{item}]')
+                continue
+            finally:
+                i+=1
 
-
+        if vaccountlist:
+            logger.debug(f'成功读取了[{len(vaccountlist)}]个账号')
+            return(vaccountlist)
+        else:
+            logger.warning('有效账号列表为空,请检查[accounts.json]格式')
+            return(False)
+    except KeyError :
+        logger.error('[accounts.json]格式有错误,请参考[accounts_sample.json]修改')
+        return(False)
+    except FileNotFoundError :
+        logger.error('[accounts.json]不存在,请参考[accounts_sample.json],并将配置保存为[accounts.json]')
+        return(False)
 
 if __name__ == '__main__':
     get_logger('basic').error('本模块不支持直接运行,请使用[from heybox_basic import *]导入本模块使用')
