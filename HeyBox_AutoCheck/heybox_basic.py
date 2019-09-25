@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import requests
 
 """
 heybox模块的前置类,提供一些基础方法
@@ -12,60 +13,64 @@ heybox模块的前置类,提供一些基础方法
 Email: chr@chrxw.com
 """
 
-__initialized = False
-debug = False
-ftqqskey = ''
-jsondict = {}
+initialized = False
+settings = {}
 
 def __init_settings() -> bool:
     '''
-    初始化
+    初始化,读取settings
     '''
-    global __initialized
-    global jsondict
+    def savejson(jsondict:dict):
+        '''
+        保存settings到settings.json
+        成功返回:
+            True
+        失败返回
+            False
+        '''
 
+    global initialized
+    global settings
     
     logger = logging.getLogger('basic')
-    if  not __initialized:
+    if  not initialized:
         try:
             logger.debug('加载[settings.json]')
             with open('settings.json', 'r', encoding='utf-8') as f:
                 jsondict = json.loads(f.read())
-                settings={
-                    'Help' : jsondict.get('Help',"配置帮助请查看[https://github.com/chr233/xhh_auto/blob/master/README.md]"),
-                    'CfgVer': jsondict.get("CfgVer",'1'),
-                    'FtqqSKEY': jsondict.get("FtqqSKEY", None),
-                    'Debug': jsondict.get("Debug", False)
-                }
-
-        except FileNotFoundError:
-            logger.debug('[settings.json]不存在,正在生成默认配置……')
             settings = {
-                "Help":"配置帮助请查看[https://github.com/chr233/xhh_auto/blob/master/README.md]",
+                'CfgVer': jsondict.get("CfgVer",'1'),
+                'FtqqSKEY': jsondict.get("FtqqSKEY", None),
+                'Debug': bool(jsondict.get("Debug", False))
+            }
+        except json.decoder.JSONDecodeError:
+            logger.warning('[settings.json]格式有误,正在生成默认配置……')
+            settings = {
                 "CfgVer":"1",
                 "FtqqSKEY": None,
                 "Debug": False
             }
-            try:
-                with open('settings.json', 'w', encoding='utf-8') as f:
-                    f.write(json.dumps(settings))
-                    logger.waring('默认配置已保存到[settings.json]')
-            except IOError:
-                logger.error('写出默认[settings.json]失败,请检查是否拥有目录写权限')
+        except FileNotFoundError:
+            logger.warning('[settings.json]不存在,正在生成默认配置……')
+            settings = {
+                "CfgVer":"1",
+                "FtqqSKEY": None,
+                "Debug": False
+            }
 
-        debug = jsondict.get('Debug',False) 
-        ftqqskey = jsondict.get('FtqqSKEY','') 
+        try:
+            with open('settings.json', 'w', encoding='utf-8') as f:
+                f.write(json.dumps(settings,sort_keys=True,indent=1,separators=(',',':')))
+                logger.warning('默认配置已保存到[settings.json]')
+        except IOError:
+            logger.error('[settings.json]保存失败,请检查是否拥有目录写权限')                
 
-        env_dist = os.environ
-        debug = debug or str(env_dist.get('DEBUG','FALSE')).upper() == 'TRUE'
-        if debug : #调试模式开启
-            log_level = logging.INFO
-        else:
-            log_level = logging.INFO
+        debugmode = settings.get('Debug') or str(os.environ.get('DEBUG','FALSE')).upper() == 'TRUE'
+        log_level = logging.DEBUG if debugmode else logging.INFO
         log_format = "[%(levelname)s][%(name)s]%(message)s"
         logging.basicConfig(level=log_level,format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
-        __initialized = True
-        get_logger('basic').debug('基础模块初始化成功')
+        initialized = True
+        get_logger('basic').debug('基础功能初始化完成')
         return(True)
     else:
         get_logger('basic').debug('已经初始化过了')
@@ -77,7 +82,9 @@ def is_debug_mode() -> bool:
     返回:
         调试模式?
     '''
-    return(debug)
+    if not initialized:
+        __init_settings()
+    return(bool(settings.get('Debug',False)))
 
 
 def get_logger(tag:str='null') -> logging.Logger:
@@ -90,33 +97,49 @@ def get_logger(tag:str='null') -> logging.Logger:
     失败:
         抛出Uninitialized异常
     '''
-    if not __initialized:
+    if not initialized:
         __init_settings()
     return(logging.getLogger(str(tag)))
+
 
 def send_to_ftqq(title:str,text:str='') -> bool:
     '''
     发送消息到方糖气球
+    参数:
+        title:标题
+        text:内容
+    成功返回:
+        True
+    失败返回：
+        False
     '''
-    '''
-    strlong = ""
-    for item in datalist:
-        format = (item[0],item[2],item[3],item[4],item[6],item[7],item[8],item[1],item[5],item[9])
-        s = '#### 昵称[%s] [%s级|%s/%s]\n##### 关注[%s] 粉丝[%d] 获赞[%s]\n##### H币[%s] 连续签到[%s]天\n##### [%s]\n##### ' + '=' * 30 + '\n'
-        strlong+=s % format
-    '''
-    url = f'https://sc.ftqq.com/%s.send' % ftqqskey
-    data = {
-        'text':title,
-        'desp':text
-        }
-    resp = requests.post(url=url,data=data)
-    try:
-        jsondict = resp.json()
-        print('执行结束',jsondict)
-        return(True)
-    except ValueError as e:
-        print('出错了')
+    if not initialized:
+        __init_settings()
+    ftqqskey = settings.get('FtqqSKEY')
+    logger = get_logger('basic')
+    if ftqqskey:
+        url = f'https://sc.ftqq.com/{ftqqskey}.send'
+        data = {
+            'text':str(title),
+            'desp':str(text)
+            }
+        resp = requests.post(url=url,data=data)
+
+        try:
+            jsondict = resp.json()
+            errno = int(jsondict.get('errno',-1))
+            if errno == 0:
+                logger.info('FTQQ推送成功')
+                return(True)
+            else:
+                logger.error('FTQQ推送出错,请检查FtqqSKEY是否正确配置')
+                logger.error(f'返回值:[{jsondict}]')
+                return(False)
+        except ValueError as e:
+            logger.error(f'FTQQ推送出错,程序内部错误[{e}]')
+            return(False)
+    else:
+        logger.warning('未设置FtqqSKEY,设置后可以将执行结果推送到微信,详细参见[README.md]')
         return(False)
 
 
@@ -164,6 +187,12 @@ def load_accounts(filepath:str=''):
     except FileNotFoundError :
         logger.error('[accounts.json]不存在,请参考[accounts_sample.json],并将配置保存为[accounts.json]')
         return(False)
+    except json.decoder.JSONDecodeError:
+        logger.error('[accounts.json]格式有误,请参考[accounts_sample.json]')
+        return(False)
 
 if __name__ == '__main__':
     get_logger('basic').error('本模块不支持直接运行,请使用[from heybox_basic import *]导入本模块使用')
+else:
+    if not initialized:
+        __init_settings()

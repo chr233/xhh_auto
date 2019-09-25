@@ -2430,6 +2430,7 @@ class HeyboxClient():
         except (ValueError,NameError):
             self.logger.debug('JSON格式错误，请提交到chr@chrxw.com')
             self.logger.debug(f'{jsondict}')
+            self.logger.error(f'{traceback.print_stack()}')
             raise JsonAnalyzeError
 
     #NT
@@ -2455,5 +2456,5 @@ class HeyboxClient():
 if __name__ == '__main__':
     print("请勿直接运行本模块，使用方法参见【README.md】")
 else:
-    HeyboxClient(0,'','','模块初始化').check_heybox_version()
+    HeyboxClient(0,'','','client').check_heybox_version()
                  

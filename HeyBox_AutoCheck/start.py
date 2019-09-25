@@ -22,7 +22,9 @@ import logging
 def start():
 
     logger = get_logger('start')
+    logger.info('读取账号列表')
     accountlist = load_accounts('./accounts.json')
+    logger.info(f'成功读取[{len(accountlist)}]个账号')
     if accountlist:
         i=0
         data=[]
@@ -73,10 +75,10 @@ def start():
                     hbc.tools_unfollow_singlefollowers(100) #取关单向关注
                     logger.info('-'*40)
                     logger.info('生成统计数据')
+                    uname,coin,level,sign=hbc.get_my_data()
+                    logger.info(f'数据[昵称{uname}|盒币{coin}|签到{sign}天|等级{level[0]}级|距升级{int(level[1]/level[2])}]')
                     qd,fx,dz=hbc.get_daily_task_detail() #读取任务详情
                     logger.info(f'任务[签到{qd}|分享{fx}|点赞{dz}]')
-                    uname,coin,level,sign=hbc.get_my_data()
-                    logger.info(f'童虎[签到{qd}|分享{fx}|点赞{dz}]')
 
             except AccountException as e:
                 logger.error(f'账号信息信息有问题,请检查:[{e}]')
@@ -86,4 +88,5 @@ def start():
         logger.error('有效账号列表为空,请检查是否正确配置了[accounts.json].')
 
 if __name__ == '__main__':
-    start()
+    send_to_ftqq('2342',245)
+    #start()
