@@ -5,8 +5,5 @@
       "imei": "这里填imei",
       "heybox_id": "黑盒数字ID"
     }
-  ],
-  "settings": {
-    "ftqqskey": "这里填方糖的SKEY(用于接收微信推送)，留空关闭该功能"
-  }
+  ]
 }
