@@ -130,7 +130,7 @@ class HeyboxClient():
             follow,fan,adward = self.get_user_profile(self.heybox_id)
             followlist = self.get_following_list(follow)
             fliteredlist = self.filte_userlist(followlist,{'RelationType':RelationType.IFollowedHim})
-            fliteredlist = self.filte_userlist(followlist,{'FollowValue':value})
+            fliteredlist = self.filte_userlist(fliteredlist,{'FollowValue':value})
             if fliteredlist:
                 self.batch_userlist_operate(fliteredlist,OperateType.UnFollowUser)
             return(True)
@@ -438,7 +438,7 @@ class HeyboxClient():
             try:
                 templist = _get_news_list((i - 1) * 30)
                 if templist:
-                    self.logger.info(f'拉取第[{i}]批新闻')
+                    self.logger.debug(f'拉取第[{i}]批新闻')
                     newsidlist.extend(templist)
                     sortedlist = list(set(newsidlist))
                     sortedlist.sort(key=newsidlist.index)
@@ -659,8 +659,8 @@ class HeyboxClient():
             author_name = link['user']['username']
             author_id = link['user']['userid']
             author_level = link['user']['level_info'].get('level',0)
-            self.logger.info(f'标题[{title}] 作者[{author_name}] @{author_id} [{author_level}级]')
-            self.logger.info(f'点击[{click}] 点赞[{like_count}] 评论[{comment_count}]')
+            self.logger.debug(f'标题[{title}] 作者[{author_name}] @{author_id} [{author_level}级]')
+            self.logger.debug(f'点击[{click}] 点赞[{like_count}] 评论[{comment_count}]')
             return((title,(author_name,author_id,author_level),(click,like_count,comment_count)))
         except (ClientException,KeyError,NameError) as e:
             self.logger.error(f'拉取文章附加信息出错[{e}]')
@@ -736,7 +736,7 @@ class HeyboxClient():
             try:
                 templist = _get_user_follow_post_list((i - 1) * 30)
                 if templist:
-                    self.logger.info(f'拉取第[{i}]批动态列表')
+                    self.logger.debug(f'拉取第[{i}]批动态列表')
                     eventslist.extend(templist)             
                     sortedlist = list(set(eventslist))
                     sortedlist.sort(key=eventslist.index)
@@ -821,7 +821,7 @@ class HeyboxClient():
             try:
                 templist = _get_user_post_list((i - 1) * 30)
                 if templist:
-                    self.logger.info(f'拉取第[{i}]批发帖列表')
+                    self.logger.debug(f'拉取第[{i}]批发帖列表')
                     eventslist.extend(templist)             
                     sortedlist = list(set(eventslist))
                     sortedlist.sort(key=eventslist.index)
@@ -903,7 +903,7 @@ class HeyboxClient():
             try:
                 templist = _get_user_comment_list((i - 1) * 30)
                 if templist:
-                    self.logger.info(f'拉取第[{i}]批评论列表')
+                    self.logger.debug(f'拉取第[{i}]批评论列表')
                     commentslist.extend(templist)             
                     sortedlist = list(set(commentslist))
                     sortedlist.sort(key=commentslist.index)
@@ -1229,7 +1229,7 @@ class HeyboxClient():
             try:
                 templist = _get_following_list((i - 1) * 30)
                 if templist:
-                    self.logger.info(f'拉取第[{i}]批关注列表')
+                    self.logger.debug(f'拉取第[{i}]批关注列表')
                     followinglist.extend(templist)             
                     sortedlist = list(set(followinglist))
                     sortedlist.sort(key=followinglist.index)
@@ -1659,7 +1659,7 @@ class HeyboxClient():
             sign_in_streak = result['sign_in_streak']
 
             self.logger.debug(f'签到成功，连续[{sign_in_streak}]天')
-            self.logger.info(f'获得[{sign_in_coin}]盒币,[{sign_in_exp}]经验')
+            self.logger.debug(f'获得[{sign_in_coin}]盒币,[{sign_in_exp}]经验')
             return(True)
         except Ignore:
             self.logger.debug('已经签过到了')
@@ -2138,8 +2138,8 @@ class HeyboxClient():
             is_sign = BoolenString(task_list[0]['state'] == 'finish')
             is_share = BoolenString(task_list[1]['state'] == 'finish')
             is_like = BoolenString(task_list[2]['state'] == 'finish')
-            self.logger.debug(f"签到{sign}|分享{share}|点赞{like}")
-            return((is_sign,is_share,like))
+            self.logger.debug(f"签到{is_sign}|分享{is_share}|点赞{is_like}")
+            return((is_sign,is_share,is_like))
         except ClientException as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
@@ -2312,7 +2312,7 @@ class HeyboxClient():
             jsondict = resp.json()
             self.__check_status(jsondict)
             version = jsondict['result']['version']
-            self.logger.info(f'检查更新成功，当前版本为[{version}]')
+            self.logger.debug(f'检查更新成功，当前版本为[{version}]')
             HEYBOX_VERSION = version
             return(True)
         except (ClientException,KeyError,NameError) as e:
