@@ -27,7 +27,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="heybox_file.py" />
     <Compile Include="heybox_basic.py">
       <SubType>Code</SubType>
     </Compile>
@@ -35,9 +34,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="heybox_client.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="heybox_tools.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="start.py" />

@@ -29,7 +29,7 @@ def __init_settings() -> bool:
     if  not __initialized:
         try:
             logger.debug('加载[settings.json]')
-            with open('settingsw.json', 'r', encoding='utf-8') as f:
+            with open('settings.json', 'r', encoding='utf-8') as f:
                 jsondict = json.loads(f.read())
                 settings={
                     'Help' : jsondict.get('Help',"配置帮助请查看[https://github.com/chr233/xhh_auto/blob/master/README.md]"),
@@ -59,9 +59,9 @@ def __init_settings() -> bool:
         env_dist = os.environ
         debug = debug or str(env_dist.get('DEBUG','FALSE')).upper() == 'TRUE'
         if debug : #调试模式开启
-            log_level = logging.DEBUG
+            log_level = logging.INFO
         else:
-            log_level = logging.WARN
+            log_level = logging.INFO
         log_format = "[%(levelname)s][%(name)s]%(message)s"
         logging.basicConfig(level=log_level,format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
         __initialized = True
