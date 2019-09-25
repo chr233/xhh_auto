@@ -1,17 +1,16 @@
-import os
-import json
-import logging
-import requests
-
 """
-heybox模块的前置类,提供一些基础方法
+heybox模块的前置模块,提供一些基础方法
 
 导入方法:  
     from heybox_basic import *
 
-作者: Chr_
-Email: chr@chrxw.com
+作者:Chr_
+Email:chr@chrxw.com
 """
+import os
+import json
+import logging
+import requests
 
 initialized = False
 settings = {}
@@ -129,7 +128,7 @@ def send_to_ftqq(title:str,text:str='') -> bool:
             jsondict = resp.json()
             errno = int(jsondict.get('errno',-1))
             if errno == 0:
-                logger.info('FTQQ推送成功')
+                logger.debug('FTQQ推送成功')
                 return(True)
             else:
                 logger.error('FTQQ推送出错,请检查FtqqSKEY是否正确配置')
@@ -140,6 +139,37 @@ def send_to_ftqq(title:str,text:str='') -> bool:
             return(False)
     else:
         logger.warning('未设置FtqqSKEY,设置后可以将执行结果推送到微信,详细参见[README.md]')
+        return(False)
+
+def check_script_version():
+    '''
+    检查脚本有无更新。
+    有更新返回:
+        tag_name:最新版本名称
+        detail:更新简介
+        download_url:下载地址)
+    无更新返回:
+        True
+    失败返回:
+        False
+    '''
+    url = URLS.SCRIPT_UPDATE_CHECK
+    resp = requests.get(url=url)
+    try:
+        jsondict = resp.json()
+        tag_name = jsondict['tag_name']
+        detail = jsondict['body']
+        #date = jsondict['created_at']
+        download_url = jsondict['assets'][0]['browser_download_url']
+        if (SCRIPT_VERSION[1:] != tag_name[1:]):
+            if (float(SCRIPT_VERSION[1:]) < float(tag_name[1:])):
+                self.logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION}|最新版本{tag_name}')
+                return((tag_name,body,download_url))
+        else:
+            self.logger.debug('已经是最新版本')
+            return(True)
+    except (ClientException,KeyError,NameError) as e:
+        self.logger.error(f'检测脚本更新出错[{e}]')
         return(False)
 
 
@@ -192,7 +222,7 @@ def load_accounts(filepath:str=''):
         return(False)
 
 if __name__ == '__main__':
-    get_logger('basic').error('本模块不支持直接运行,请使用[from heybox_basic import *]导入本模块使用')
+    get_logger('basic').error('本模块不支持直接运行,请导入本模块使用')
 else:
     if not initialized:
         __init_settings()

@@ -1,19 +1,5 @@
-import json
-import requests
-import re
-import time
-import hashlib
-import random
-from requests.exceptions import RequestException
-from bs4 import BeautifulSoup
-import urllib
-import traceback
-from heybox_basic import get_logger
-from heybox_static import *
-from heybox_errors import *
-
 '''
-Python3实现的小黑盒客户端
+heybox模块,实现了python3版本的小黑盒客户端
 
 本程序遵循GPLv3协议
 开源地址:https://github.com/chr233/xhh_auto/
@@ -21,8 +7,20 @@ Python3实现的小黑盒客户端
 作者:Chr_
 电邮:chr@chrxw.com
 '''
-#脚本版本
-SCRIPT_VERSION = 'v0.3'
+import json
+import requests
+import re
+import time
+import hashlib
+import random
+from requests.exceptions import RequestException
+from json.decoder import JSONDecodeError
+from bs4 import BeautifulSoup
+import urllib
+import traceback
+from heybox_basic import get_logger
+from heybox_static import *
+from heybox_errors import *
 
 #小黑盒版本号,会自动设置为最新版
 HEYBOX_VERSION = '1.2.80'
@@ -64,36 +62,36 @@ class HeyboxClient():
         self.logger.debug(f'初始化完成{f" @ [{heybox_id}]" if heybox_id else ""}')
 
     #NT
-    def sample_do_daily_tasks(self)->bool:
+    def sample_do_daily_tasks(self) -> bool:
         '''
         完成每日任务示例
         返回:
             每日任务是否完成?
         '''
         self.sign()
-        newslist=self.get_news_list(10)
+        newslist = self.get_news_list(10)
         self.batch_newslist_operate(newslist[:1],OperateType.ViewLikeShare)
         self.batch_newslist_operate(newslist[1:],OperateType.ViewLike)
 
-        postlist=self.get_follow_post(100)
+        postlist = self.get_follow_post(100)
         self.batch_like_followposts(postlist)
 
-        finish,total=self.get_daily_task_stats()
-        return(finish==total)
+        finish,total = self.get_daily_task_stats()
+        return(finish == total)
 
     #NT
-    def sample_like_follow_posts(self,value:int=100)->bool:
+    def sample_like_follow_posts(self,value:int=100) -> bool:
         '''
         动态点赞示例
         返回:
             True
         '''
-        postlist=self.get_follow_post(60,True)
+        postlist = self.get_follow_post(60,True)
         self.batch_like_followposts(postlist)
         return(True)
 
     #NT
-    def tools_follow_followers(self)->bool:
+    def tools_follow_followers(self) -> bool:
         '''
         关注关注你的人
         成功返回:
@@ -116,7 +114,7 @@ class HeyboxClient():
             return(False)
 
     #NT
-    def tools_unfollow_singlefollowers(self,value:int=100)->bool:
+    def tools_unfollow_singlefollowers(self,value:int=100) -> bool:
         '''
         清理单向关注示例
         参数:
@@ -139,7 +137,7 @@ class HeyboxClient():
             return(False)
 
     #NT
-    def tools_follow_recommand(self,count:int=10,value:int=100)->bool:
+    def tools_follow_recommand(self,count:int=10,value:int=100) -> bool:
         '''
         关注推荐关注的人
         参数:
@@ -205,7 +203,7 @@ class HeyboxClient():
                 except LikeLimitedError as e:
                     self.logger.debug(f'达到每日点赞上限,停止点赞操作[{e}]')
                     like = False
-                except (ClientException) as e: #ValueError,TypeError
+                except (JSONDecodeError,ClientException,ValueError,TypeError) as e: 
                     self.logger.debug(f'批量操作新闻列表遇到错误[{e}]')
                     errorcount+=1
                     if errorcount >= 5:
@@ -243,7 +241,7 @@ class HeyboxClient():
                 except LikeLimitedError as e:
                     self.logger.debug(f'达到每日点赞上限,停止操作[{e}]')
                     return(False)
-                except (ValueError,TypeError,ClientException) as e:
+                except (JSONDecodeError,ValueError,TypeError,ClientException) as e:
                     self.logger.debug(f'批量点赞遇到错误[{e}]')
                     errorcount+=1
                     if errorcount >= 5:
@@ -274,7 +272,7 @@ class HeyboxClient():
                     linkid,commemttype = commentobj
                     self.like_comment(linkid,commemttype)
                     operatecount+=1
-                except (Ignore,ValueError,TypeError,ClientException) as e:
+                except (Ignore,JSONDecodeError,ValueError,TypeError,ClientException) as e:
                     self.logger.debug(f'批量点赞遇到错误[{e}]')
                     errorcount+=1
                     if errorcount >= 5:
@@ -369,7 +367,7 @@ class HeyboxClient():
                 except FollowLimitedError as e:
                     self.logger.error(f'达到每日关注上限，停止操作[{e}]')
                     return(False)
-                except ClientException as e:
+                except (JSONDecodeError,ClientException) as e:
                     self.logger.debug(f'关注/取关用户出错[{e}]')
                     errorcount+=1
                     if errorcount >= 3:
@@ -449,7 +447,7 @@ class HeyboxClient():
 
                 if len(newsidlist) >= value or i >= max:#防止请求过多被屏蔽
                     break
-            except ClientException as e:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取首页文章列表出错[{e}]')
                 errorcount+=1
                 if errorcount >= 3:
@@ -547,7 +545,7 @@ class HeyboxClient():
 
                 if len(eventslist) >= value or i >= max:#防止请求过多被屏蔽
                     break
-            except ClientException as e:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取动态列表出错[{e}]')
                 errorcount+=1
                 if errorcount >= 3:
@@ -608,7 +606,7 @@ class HeyboxClient():
             has_video = BoolenString(link['has_video'] == 1)
             #self.logger.debug(f'点赞{is_liked} 视频{has_video}')
             return((has_video,is_liked))
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'拉取文章附加信息出错[{e}]')
             return(False)  
         
@@ -662,7 +660,7 @@ class HeyboxClient():
             self.logger.debug(f'标题[{title}] 作者[{author_name}] @{author_id} [{author_level}级]')
             self.logger.debug(f'点击[{click}] 点赞[{like_count}] 评论[{comment_count}]')
             return((title,(author_name,author_id,author_level),(click,like_count,comment_count)))
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'拉取文章附加信息出错[{e}]')
             return(False) 
 
@@ -748,7 +746,7 @@ class HeyboxClient():
                 if len(eventslist) >= value or i >= max:
                     break
 
-            except ClientException:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取动态列表出错[{e}]')
                 errorcount+=1
                 if errorcount >= 3:
@@ -833,7 +831,7 @@ class HeyboxClient():
                 if len(eventslist) >= value or i >= max:
                     break
 
-            except ClientException:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取发帖列表出错[{e}]')
                 errorcount+=1
                 if errorcount >= 3:
@@ -915,7 +913,7 @@ class HeyboxClient():
                 if len(commentslist) >= value or i >= max:
                     break
 
-            except ClientException:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取评论出错[{e}]')
                 errorcount+=1
                 if errorcount >= 3:
@@ -1001,7 +999,7 @@ class HeyboxClient():
                 if len(rollroomlist) >= value or i >= max:
                     break
 
-            except ClientException as e:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取ROLL房出错[{e}]')
                 errorcount+=1
                 if errorcount >= 3:
@@ -1086,7 +1084,7 @@ class HeyboxClient():
                 if len(recfollowlist) >= value or i >= max:
                     break
 
-            except ClientException as e:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取推荐关注列表出错[{e}]')
                 errorcount+=1
                 if errorcount >= 3:
@@ -1276,7 +1274,7 @@ class HeyboxClient():
             title = jsondict['result']['title']
             self.logger.debug(f'广告标题:[{title}]')
             return(title)
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'拉取广告信息出错[{e}]')
             return(False)
 
@@ -1325,7 +1323,7 @@ class HeyboxClient():
         except Ignore:
             self.logger.debug('已经点过赞了')
             return(True)
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'点赞出错[{e}]')
             return(False)
     
@@ -1365,7 +1363,7 @@ class HeyboxClient():
         except Ignore:
             self.logger.debug('已经点过赞了')
             return(True)
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'动态点赞出错[{e}]')
             return(False)
     
@@ -1405,7 +1403,7 @@ class HeyboxClient():
         except Ignore:
             self.logger.debug('已经点过赞了')
             return(True)
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'评论点赞出错[{e}]')
             return(False)
 
@@ -1601,7 +1599,7 @@ class HeyboxClient():
                 self.__check_status(jsondict)
                 self.logger.debug('模拟点击分享按钮')
                 return(True)
-            except ClientException as e:
+            except (JSONDecodeError,ClientException) as e:
                 self.logger.error(f'分享出错[{e}]')
                 return(False)
         def check_share_task_qq():
@@ -1623,7 +1621,7 @@ class HeyboxClient():
                 self.__check_status(jsondict)
                 self.logger.debug('分享成功')
                 return(True)
-            except (ShareError,ClientException) as e:
+            except (JSONDecodeError,ShareError,ClientException) as e:
                 self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
                 return(True) #貌似也能完成任务，所以返回True
         #==========================================
@@ -1664,7 +1662,7 @@ class HeyboxClient():
         except Ignore:
             self.logger.debug('已经签过到了')
             return(True)
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'签到出错[{e}]')
             return(False)
 
@@ -1700,7 +1698,7 @@ class HeyboxClient():
             self.__check_status(jsondict)
             self.logger.debug('发送私信成功')
             return(True)
-        except ClientException  as e:
+        except (JSONDecodeError,ClientException)  as e:
             self.logger.error(f'发送私信出错[{e}]')
             return(False)
 
@@ -1788,7 +1786,7 @@ class HeyboxClient():
                 self.logger.debug('价格[不支持主机游戏]')
             self.logger.debug(f'评分[{score if score != -1 else "评分较少"}|{game_review_summary}] 发布日期[{release_date}]')
             return(((name,name_en),is_follow,(is_free,initial_price,current_price,discount),(score,game_review_summary_num),game_platform_type_num))
-        except  (ClientException,KeyError,NameError)  as e:
+        except  (JSONDecodeError,ClientException,KeyError,NameError)  as e:
             self.logger.error(f'拉取游戏详情出错[{e}]')
             return(False)
 
@@ -1853,7 +1851,7 @@ class HeyboxClient():
             self.logger.debug(f'黑盒标签[{tags}]')
             self.logger.debug(f'Steam标签[{genres}]')
             return(((developer,publishers,release_date),(follow_num,link_num),tags,genres))
-        except  (ClientException,KeyError,NameError)  as e:
+        except  (JSONDecodeError,ClientException,KeyError,NameError)  as e:
             self.logger.error(f'拉取游戏详情出错[{e}]')
             return(False)
 
@@ -1925,7 +1923,7 @@ class HeyboxClient():
                 self.__check_status(jsondict)
                 state = jsondict['result']['state']
                 return(state)
-            except (ClientException,KeyError,NameError)  as e:
+            except (JSONDecodeError,ClientException,KeyError,NameError)  as e:
                 self.logger.error(f'获取答题情况出错[{e}]')
                 return(False)
         #==========================================
@@ -1995,7 +1993,7 @@ class HeyboxClient():
             else:
                 self.logger.error('拉取内容为空，可能遇到错误')
             return(wz)
-        except (ValueError,AttributeError) as e:
+        except (JSONDecodeError,ValueError,AttributeError) as e:
             self.logger.error(f'拉取文章出错[{e}]')
             return(False)    
 
@@ -2050,7 +2048,7 @@ class HeyboxClient():
             wz = soup.title
             self.logger.debug('**暂不支持视频文章的处理**')
             return(wz)
-        except (ValueError,AttributeError) as e:
+        except (JSONDecodeError,ValueError,AttributeError) as e:
             self.logger.error(f'拉取视频信息出错[{e}]')
             return(False)
 
@@ -2086,7 +2084,7 @@ class HeyboxClient():
             else:
                 self.logger.debug('无新成就')
                 return(True)
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'查询新成就出错[{e}]')
             return(False)    
 
@@ -2112,7 +2110,7 @@ class HeyboxClient():
             finish_count = task_count - wait_count
             self.logger.debug(f'任务完成度[{finish_count}/{task_count}]')
             return((finish_count,task_count))
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取任务状态出错[{e}]')
             return(False)
 
@@ -2140,7 +2138,7 @@ class HeyboxClient():
             is_like = BoolenString(task_list[2]['state'] == 'finish')
             self.logger.debug(f"签到{is_sign}|分享{is_share}|点赞{is_like}")
             return((is_sign,is_share,is_like))
-        except ClientException as e:
+        except (JSONDecodeError,ClientException) as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
@@ -2184,7 +2182,7 @@ class HeyboxClient():
                     evaluate = BoolenString(task['state'] == 'finish')
             self.logger.debug(f'绑定{band}|微信{bandwx}|公开{public}|评价{evaluate}|答题{exam}|推送{push}|资料{profile}')
             return((band,bandwx,public,evaluate,exam,push,profile))
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
@@ -2212,15 +2210,15 @@ class HeyboxClient():
             userid = result['userid']
 
             level_info = jsondict['result']['level_info']
-            coin = level_info['coin']
-            exp = level_info['exp']
-            level = level_info['level']
-            max_exp = level_info['max_exp']
-            sign_in_streak = jsondict['result']['task_list'][0]['tasks'][0]['sign_in_streak']
+            coin = int(level_info['coin'])
+            exp = int(level_info['exp'])
+            level = int(level_info['level'])
+            max_exp = int(level_info['max_exp'])
+            sign_in_streak = int(jsondict['result']['task_list'][0]['tasks'][0]['sign_in_streak'])
             self.logger.debug(f'昵称:{username} @{userid} [{level}级]')
             self.logger.debug(f'盒币[{coin}]|经验[{exp}/{max_exp}]|连续签到[{sign_in_streak}]天')
             return((username,coin,(level,exp,max_exp),sign_in_streak))
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取我的任务数据详情出错[{e}]')
             return(False)
 
@@ -2263,7 +2261,7 @@ class HeyboxClient():
             self.logger.debug(f'昵称:{username} @{userid} [{level}级]')
             self.logger.debug(f'关注[{follow_num}],粉丝[{fan_num}],获赞[{awd_num}]')
             return((follow_num,fan_num,awd_num))
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
@@ -2292,7 +2290,7 @@ class HeyboxClient():
             else:
                 self.logger.debug(f'手机号[{src_id}],**未设置密码**')
             return((has_password,phone_num))
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取安全信息出错[{e}]')
             return(False)
 
@@ -2315,7 +2313,7 @@ class HeyboxClient():
             self.logger.debug(f'检查更新成功，当前版本为[{version}]')
             HEYBOX_VERSION = version
             return(True)
-        except (ClientException,KeyError,NameError) as e:
+        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'获取小黑盒最新版本出错[{e}]')
             return(False)
 
@@ -2343,38 +2341,6 @@ class HeyboxClient():
     #    return(False)
 
     #NT
-    def check_script_version(self):
-        '''
-        检查脚本有无更新。
-        有更新返回:
-            tag_name:最新版本名称
-            detail:更新简介
-            download_url:下载地址)
-        无更新返回:
-            False
-        失败返回:
-            False
-        '''
-        url = URLS.SCRIPT_UPDATE_CHECK
-        resp = requests.get(url=url)
-        try:
-            jsondict = resp.json()
-            tag_name = jsondict['tag_name']
-            detail = jsondict['body']
-            #date = jsondict['created_at']
-            download_url = jsondict['assets'][0]['browser_download_url']
-            if (SCRIPT_VERSION[1:] != tag_name[1:]):
-                if (float(SCRIPT_VERSION[1:]) < float(tag_name[1:])):
-                    self.logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION} | 最新版{tag_name}')
-                    return((tag_name,body,download_url))
-            else:
-                self.logger.debug('已经是最新版本')
-            return(False)
-        except (ClientException,KeyError,NameError) as e:
-            self.logger.error(f'检测脚本更新出错[{e}]')
-            return(False)
-
-    #NT
     def __check_status(self,jsondict:dict):
         '''
         检查返回值
@@ -2396,7 +2362,7 @@ class HeyboxClient():
                     raise Ignore
                 elif msg == '不能进行重复的操作哦':
                     raise Ignore
-                elif msg=='不能重复赞哦':
+                elif msg == '不能重复赞哦':
                     raise Ignore
                 elif msg == '帖子已被删除':
                     raise ObjectError
@@ -2454,7 +2420,7 @@ class HeyboxClient():
         self._params['_time'] = asctime
 
 if __name__ == '__main__':
-    print("请勿直接运行本模块，使用方法参见【README.md】")
+    get_logger('client').error('本模块不支持直接运行,请导入本模块使用')
 else:
     HeyboxClient(0,'','','client').check_heybox_version()
                  
