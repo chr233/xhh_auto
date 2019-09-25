@@ -1,14 +1,5 @@
 beautifulsoup4==4.8.0
 bs4==0.0.1
-certifi==2019.6.16
-chardet==3.0.4
-idna==2.8
 lxml==4.4.1
-lxml-xpath-ipaddress==0.2.0
-pip==19.2.3
-pyasn1==0.4.7
 requests==2.22.0
-rsa==4.0
-setuptools==41.2.0
-soupsieve==1.9.3
 urllib3==1.25.3

@@ -1,4 +1,4 @@
-'''
+"""
 heybox模块,实现了python3版本的小黑盒客户端
 
 本程序遵循GPLv3协议
@@ -6,15 +6,12 @@ heybox模块,实现了python3版本的小黑盒客户端
 
 作者:Chr_
 电邮:chr@chrxw.com
-'''
+"""
 import json
+from json.decoder import JSONDecodeError
 import requests
-import re
 import time
 import hashlib
-import random
-from requests.exceptions import RequestException
-from json.decoder import JSONDecodeError
 from bs4 import BeautifulSoup
 import urllib
 import traceback

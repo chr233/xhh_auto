@@ -1,5 +1,5 @@
 """
-heybox模块中所使用的静态变量以及实用类
+heybox模块的前置模块,提供静态文本对象和实用类
 
 本程序遵循GPLv3协议
 开源地址:https://github.com/chr233/xhh_auto/

@@ -39,7 +39,6 @@
     <Compile Include="start.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Methods.md" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
