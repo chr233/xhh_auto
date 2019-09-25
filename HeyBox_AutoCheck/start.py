@@ -1,16 +1,6 @@
 #!/usr/bin/python3
-from heybox_basic import *
-from heybox_errors import *
-from heybox_static import *
-from heybox_client import HeyboxClient
-from eprogress import MultiProgressManager,LineProgress,CircleProgress
-
-import json
-import os
-import logging
-
 '''
-小黑盒自动脚本，暂未实现登陆过程，凭据需要自行抓包获取
+heybox模块的启动脚本,可以根据需要自行修改
 
 本程序遵循GPLv3协议
 开源地址:https://github.com/chr233/xhh_auto/
@@ -18,30 +8,38 @@ import logging
 作者:Chr_
 电邮:chr@chrxw.com
 '''
+from heybox_basic import *
+from heybox_errors import *
+from heybox_static import *
+from heybox_client import HeyboxClient
+
+import json
+import time
 
 def start():
-
+    start_time = time.time()
     logger = get_logger('start')
     logger.info('读取账号列表')
     accountlist = load_accounts('./accounts.json')
     logger.info(f'成功读取[{len(accountlist)}]个账号')
     if accountlist:
-        i=0
-        data=[]
+        i = 0
+        data = []
         for account in accountlist:
             try:
                 i += 1
-                logger.info('='*40)
+                logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if is_debug_mode() == 6:               
+                if is_debug_mode():               
                     #调试模式
                     hbc.sample_do_daily_tasks()
                     if x == len(accountlist):
                         pass
                 else:
                     #正常逻辑
-                    qd,fx,dz=hbc.get_daily_task_detail() #读取任务详情
+                    result = hbc.get_daily_task_detail() #读取任务详情
+                    qd,fx,dz=result if result else (False,False,False)
                     logger.info(f'任务[签到{qd}|分享{fx}|点赞{dz}]')
                     if not qd:
                         logger.info('签到')
@@ -71,22 +69,66 @@ def start():
                     #hbc.tools_follow_recommand(10,100) #关注推荐关注
                     logger.info('关注新粉丝')
                     hbc.tools_follow_followers() #关注粉丝
-                    logger.info('取关单向关注')
-                    hbc.tools_unfollow_singlefollowers(100) #取关单向关注
-                    logger.info('-'*40)
+                    #logger.info('取关单向关注')
+                                                                    #hbc.tools_unfollow_singlefollowers(100)
+                                                                                                                    ##取关单向关注
+                    logger.info('-' * 40)
+
                     logger.info('生成统计数据')
-                    uname,coin,level,sign=hbc.get_my_data()
-                    logger.info(f'数据[昵称{uname}|盒币{coin}|签到{sign}天|等级{level[0]}级|距升级{int(level[1]/level[2])}]')
-                    qd,fx,dz=hbc.get_daily_task_detail() #读取任务详情
-                    logger.info(f'任务[签到{qd}|分享{fx}|点赞{dz}]')
+                    result = hbc.get_my_data()
+                    uname,coin,level,sign = result if result else ('读取信息出错',0,(0,0,0),0)
+                    logger.info(f'昵称[{uname}]盒币[{coin}]签到[{sign}]天')
+                    logger.info(f'等级[{level[0]}级==>{int((level[1]*100)/level[2])}%==>{level[0]+1}级]')
+
+                    result = hbc.get_user_profile()
+                    follow,fan,awd = result if result else (0,0,0)
+                    logger.info(f'关注[{follow}]粉丝[{fan}]获赞[{awd}]')
+
+                    result = hbc.get_daily_task_stats()
+                    finish,task = result if result else (-1,0)
+
+                    result = hbc.get_daily_task_detail()
+                    qd,fx,dz = result if result else (0,0,0)
+                    logger.info(f'签到[{qd}]分享[{fx}]点赞[{dz}]')
+
+                    data.append(f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
+                                f'#### 等级[{level[0]}级==>{int((level[1]*100)/level[2])}%==>{level[0]+1}级]\n'
+                                f'#### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
+                                f'#### 签到[{qd}]分享[{fx}]点赞[{dz}]\n'
+                                f'#### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]\n'
+                                f'#### {"=" * 30 }')
 
             except AccountException as e:
-                logger.error(f'账号信息信息有问题,请检查:[{e}]')
+                logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')
             except HeyboxException as e:
-                logger.error(f'遇到了未知错误:[{e}]')
+                logger.error(f'第[{i}]个账号遇到了未知错误:[{e}]')
+
+        end_time = time.time()
+        logger.info(f'脚本耗时:[{round(end_time-start_time,4)}]s')
+        data.append(f'脚本耗时:[{round(end_time-start_time,4)}]s')
+        string = '\n'.join(data)
+        logger.info('推送统计信息')
+        result = send_to_ftqq('小黑盒自动脚本',string)
+        if result:
+            logger.info('FTQQ推送成功')
+        else:
+            logger.info('FTQQ推送失败')
+
+        logger.info('检查脚本更新')
+
+        result = check_script_version()
+        if result and result != True:
+            tag_name,body,download_url = result
+            self.logger.info(f'脚本有更新，最新版本[{tag_name}]')
+            self.logger.info(f'更新内容[{body}]')
+            self.logger.info(f'下载地址[{download_url}]')
+            string = f'#### 脚本有更新，最新版本[{tag_name}]\n#### 更新内容[{body}]\n#### 下载地址[{download_url}]'
+            send_to_ftqq('小黑盒自动脚本有更新了',string)
+        logger.info('执行完毕')
+        return(True)
     else:
         logger.error('有效账号列表为空,请检查是否正确配置了[accounts.json].')
+        return(False)
 
 if __name__ == '__main__':
-    send_to_ftqq('2342',245)
-    #start()
+    start()

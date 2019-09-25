@@ -1,14 +1,16 @@
-from heybox_basic import get_logger
-
 """
 heybox模块中所使用的静态变量以及实用类
 
-导入方法:  
-    from heybox_static import *
+本程序遵循GPLv3协议
+开源地址:https://github.com/chr233/xhh_auto/
 
 作者: Chr_
 Email: chr@chrxw.com
 """
+from heybox_basic import get_logger
+
+#脚本版本
+SCRIPT_VERSION = 'v0.5'
 
 class URLS():
     '''
@@ -166,3 +168,6 @@ class BoolenString():
         return(self.__string)
     def __repr__(self):
         return(self.__string)
+
+if __name__ == '__main__':
+    get_logger('static').error('本模块不支持直接运行,请导入本模块使用')
