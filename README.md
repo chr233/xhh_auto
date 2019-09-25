@@ -1,6 +1,8 @@
 ### 本项目仅供学习使用，请勿用于非法用途
 ### 本项目遵从 GPL v3.0 协议
 
+#### 欢迎加入官方群: `916945024`
+
 ## 使用方法
 1. 从[releases](https://github.com/chr233/xhh_auto/releases)下载最新的脚本
 1. 解压,并切换到脚本所在目录
@@ -9,7 +11,7 @@
 1. Linux用户按`Ctrl+Alt+T`打开终端,Windows用户按住`Shift`在目录背景按右键->`在此打开命令行`
 1. 执行`pip install -r ./requirements.txt`
 1. 执行`python3 ./start.py`
- * Linux用户记得先赋予脚本执行权限 `chmod 755 *.py`
+ * Linux用户记得先赋予脚本执行权限`chmod 755 *.py`
 
 PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
 account.json
@@ -17,14 +19,14 @@ account.json
 {
   "accounts": [
     {
-      "pkey": "这里填pkey",
-      "imei": "这里填imei",
-      "heybox_id": "黑盒数字ID"
+      "pkey": "第一个账号的pkey",
+      "imei": "第一个账号的imei",
+      "heybox_id": "第一个账号的数字ID"
     },
     {
-      "pkey": "这里填pkey",
-      "imei": "这里填imei",
-      "heybox_id": "黑盒数字ID"
+      "pkey": "第二个账号的pkey",
+      "imei": "第二个账号的imei",
+      "heybox_id": "第二个账号的ID"
     }
   ]
 }
@@ -40,8 +42,8 @@ account.json
  抓取小黑盒请求后，pkey位于cookies中，heybox_id和imei在web表单中，请填入accounts.json即可使用本脚本。
 
 ## TODO LIST
-[ ] 简单好用的账户管理器
-[ ] 支持直接登陆小黑盒账号
-[ ] 实现小黑盒客户端的大部分功能
-[ ] ~~自动参加ROLL房~~
+- [ ] 简单好用的账户管理器
+- [ ] 支持直接登陆小黑盒账号
+- [ ] 实现小黑盒客户端的大部分功能
+- [ ] ~~自动参加ROLL房~~
  * 受steam影响，小黑盒貌似开始转卖点卡了。对2和4的支持计划延后
