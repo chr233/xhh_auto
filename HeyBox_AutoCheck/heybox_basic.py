@@ -153,7 +153,7 @@ def check_script_version():
     失败返回:
         False
     '''
-    url = URLS.SCRIPT_UPDATE_CHECK
+    url = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'
     resp = requests.get(url=url)
     try:
         jsondict = resp.json()
