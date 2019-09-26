@@ -168,7 +168,7 @@ def check_script_version():
         else:
             self.logger.debug('已经是最新版本')
             return(True)
-    except (ClientException,KeyError,NameError) as e:
+    except (KeyError,NameError) as e:
         self.logger.error(f'检测脚本更新出错[{e}]')
         return(False)
 

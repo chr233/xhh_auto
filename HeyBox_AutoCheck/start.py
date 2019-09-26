@@ -78,7 +78,7 @@ def start():
                     result = hbc.get_my_data()
                     uname,coin,level,sign = result if result else ('读取信息出错',0,(0,0,0),0)
                     logger.info(f'昵称[{uname}]盒币[{coin}]签到[{sign}]天')
-                    logger.info(f'等级[{level[0]}级==>{int((level[1]*100)/level[2])}%==>{level[0]+1}级]')
+                    logger.info(f'等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]')
 
                     result = hbc.get_user_profile()
                     follow,fan,awd = result if result else (0,0,0)
