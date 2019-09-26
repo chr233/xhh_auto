@@ -293,7 +293,7 @@ class HeyboxClient():
         失败返回:
             False
         '''
-        def follow_user(userid:int) -> bool:
+        def follow_user(userid:int):
             '''
             关注用户
             参数:
@@ -318,7 +318,7 @@ class HeyboxClient():
             self.__check_status(jsondict)
             self.logger.debug(f'关注用户[{userid}]成功')
             return(True)
-        def unfollow_user(userid:int) -> bool:
+        def unfollow_user(userid:int):
             '''
             取关用户
             参数:

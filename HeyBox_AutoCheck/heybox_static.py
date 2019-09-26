@@ -10,7 +10,7 @@ Email: chr@chrxw.com
 from heybox_basic import get_logger
 
 #脚本版本
-SCRIPT_VERSION = 'v0.5'
+SCRIPT_VERSION = 'v0.45'
 
 class URLS():
     '''
