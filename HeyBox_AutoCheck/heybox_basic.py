@@ -152,7 +152,10 @@ def check_script_version():
         True
     失败返回:
         False
-    '''
+    '''    
+    if not initialized:
+        __init_settings()
+    logger=get_logger('basic')
     url = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'
     resp = requests.get(url=url)
     try:
@@ -169,7 +172,7 @@ def check_script_version():
             self.logger.debug('已经是最新版本')
             return(True)
     except (KeyError,NameError) as e:
-        self.logger.error(f'检测脚本更新出错[{e}]')
+        logger.error(f'检测脚本更新出错[{e}]')
         return(False)
 
 

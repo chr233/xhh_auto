@@ -92,7 +92,7 @@ def start():
                     logger.info(f'签到[{qd}]分享[{fx}]点赞[{dz}]')
 
                     data.append(f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
-                                f'#### 等级[{level[0]}级==>{int((level[1]*100)/level[2])}%==>{level[0]+1}级]\n'
+                                f'#### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                                 f'#### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
                                 f'#### 签到[{qd}]分享[{fx}]点赞[{dz}]\n'
                                 f'#### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]\n'

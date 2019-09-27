@@ -4,9 +4,6 @@ bs4==0.0.1
 certifi==2019.6.16
 chardet==3.0.4
 colorama==0.4.1
-eprogress==1.0.4
-frida==12.6.11
-frida-tools==2.0.2
 idna==2.8
 lxml==4.4.1
 lxml-xpath-ipaddress==0.2.0
