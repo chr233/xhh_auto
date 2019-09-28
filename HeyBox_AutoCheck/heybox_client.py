@@ -2381,6 +2381,8 @@ class HeyboxClient():
                     raise LocalTimeError
                 elif msg == '该用户已注销':
                     raise UseridNotExists
+                elif msg=='用户名或密码错误或者登录过于频繁':
+                    raise TokenError
                 elif msg == '':
                     raise ShareError
                 self.logger.error(f'未知的返回值[{msg}]')

@@ -33,13 +33,13 @@ def start():
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
                 if is_debug_mode():               
                     #调试模式
-                    hbc.sample_do_daily_tasks()
-                    if x == len(accountlist):
+                    hbc.get_ex_task_detail()
+                    if i == len(accountlist):
                         pass
                 else:
                     #正常逻辑
                     result = hbc.get_daily_task_detail() #读取任务详情
-                    qd,fx,dz=result if result else (False,False,False)
+                    qd,fx,dz = result if result else (False,False,False)
                     logger.info(f'任务[签到{qd}|分享{fx}|点赞{dz}]')
                     if not qd:
                         logger.info('签到')
@@ -69,9 +69,10 @@ def start():
                     #hbc.tools_follow_recommand(10,100) #关注推荐关注
                     logger.info('关注新粉丝')
                     hbc.tools_follow_followers() #关注粉丝
+                    
                     #logger.info('取关单向关注')
-                                                                    #hbc.tools_unfollow_singlefollowers(100)
-                                                                                                                    ##取关单向关注
+                    #hbc.tools_unfollow_singlefollowers(100)
+
                     logger.info('-' * 40)
 
                     logger.info('生成统计数据')
@@ -92,11 +93,11 @@ def start():
                     logger.info(f'签到[{qd}]分享[{fx}]点赞[{dz}]')
 
                     data.append(f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
-                                f'#### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
-                                f'#### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
-                                f'#### 签到[{qd}]分享[{fx}]点赞[{dz}]\n'
-                                f'#### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]\n'
-                                f'#### {"=" * 30 }')
+                                f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
+                                f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
+                                f'##### 签到[{qd}]分享[{fx}]点赞[{dz}]\n'
+                                f'##### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]\n'
+                                f'##### {"=" * 30 }')
 
             except AccountException as e:
                 logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')
@@ -115,16 +116,23 @@ def start():
             logger.info('FTQQ推送失败')
 
         logger.info('检查脚本更新')
-
         result = check_script_version()
         if result and result != True:
-            tag_name,body,download_url = result
-            self.logger.info(f'脚本有更新，最新版本[{tag_name}]')
-            self.logger.info(f'更新内容[{body}]')
+            latest_version,detail,download_url = result
+            self.logger.info(f'脚本有更新，最新版本[{latest_version}]')
+            self.logger.info(f'更新内容[{detail}]')
             self.logger.info(f'下载地址[{download_url}]')
-            string = f'#### 脚本有更新，最新版本[{tag_name}]\n#### 更新内容[{body}]\n#### 下载地址[{download_url}]'
-            send_to_ftqq('小黑盒自动脚本有更新了',string)
-        logger.info('执行完毕')
+            string = (f'- #### 脚本有更新,最新版本[{latest_version}]\n'
+                      f'- #### 下载地址:[GitHub]({download_url})\n'
+                      f'- #### 更新内容\n'
+                      f'- {detail}')
+            send_to_ftqq('小黑盒自动脚本',string)
+        elif result == True:
+            logger.info(f'脚本已是最新')
+        else:
+            self.logger.waring(f'检查脚本更新出错')
+
+        logger.info('脚本执行完毕')
         return(True)
     else:
         logger.error('有效账号列表为空,请检查是否正确配置了[accounts.json].')
