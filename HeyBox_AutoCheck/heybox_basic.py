@@ -12,6 +12,9 @@ import json
 import logging
 import requests
 
+#脚本版本
+SCRIPT_VERSION = 'v0.46'
+
 initialized = False
 settings = {}
 
@@ -65,6 +68,7 @@ def __init_settings() -> bool:
             logger.error('[settings.json]保存失败,请检查是否拥有目录写权限')                
 
         debugmode = settings.get('Debug') or str(os.environ.get('DEBUG','FALSE')).upper() == 'TRUE'
+        settings['Debug']=debugmode
         log_level = logging.DEBUG if debugmode else logging.INFO
         log_format = "[%(levelname)s][%(name)s]%(message)s"
         logging.basicConfig(level=log_level,format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
@@ -145,7 +149,7 @@ def check_script_version():
     '''
     检查脚本有无更新。
     有更新返回:
-        tag_name:最新版本名称
+        latest_version:最新版本名称
         detail:更新简介
         download_url:下载地址)
     无更新返回:
@@ -160,16 +164,21 @@ def check_script_version():
     resp = requests.get(url=url)
     try:
         jsondict = resp.json()
-        tag_name = jsondict['tag_name']
+        latest_version = jsondict['tag_name']
         detail = jsondict['body']
         #date = jsondict['created_at']
         download_url = jsondict['assets'][0]['browser_download_url']
-        if (SCRIPT_VERSION[1:] != tag_name[1:]):
-            if (float(SCRIPT_VERSION[1:]) < float(tag_name[1:])):
-                self.logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION}|最新版本{tag_name}')
-                return((tag_name,body,download_url))
+        if (SCRIPT_VERSION[1:] != latest_version[1:]):
+            if (float(SCRIPT_VERSION[1:]) < float(latest_version[1:])):
+                logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION}|最新版本{latest_version}')
+                logger.debug(f'更新内容[{detail}]')
+                logger.debug(f'下载地址[{download_url}]')
+                return((latest_version,detail,download_url))
+            else:
+                logger.debug('当前版本比发行版高,可能是开发版或者预览版')
+                return(True)
         else:
-            self.logger.debug('已经是最新版本')
+            logger.debug('已经是最新版本')
             return(True)
     except (KeyError,NameError) as e:
         logger.error(f'检测脚本更新出错[{e}]')
