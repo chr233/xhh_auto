@@ -13,7 +13,7 @@ import logging
 import requests
 
 #脚本版本
-SCRIPT_VERSION = 'v0.47'
+SCRIPT_VERSION = 'v0.48'
 
 initialized = False
 settings = {}
