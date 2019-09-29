@@ -15,7 +15,7 @@ from heybox_client import HeyboxClient
 
 import json
 import time
-import trace
+import traceback
 
 def start():
     start_time = time.time()
@@ -32,9 +32,9 @@ def start():
                 logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if not is_debug_mode():               
+                if is_debug_mode():               
                     #调试模式
-
+                    
                     if i == len(accountlist):
                         pass
                 else:
@@ -132,7 +132,6 @@ def start():
             logger.info(f'脚本已是最新')
         else:
             self.logger.waring(f'检查脚本更新出错')
-
         logger.info('脚本执行完毕')
         return(True)
     else:
