@@ -16,6 +16,7 @@ from heybox_client import HeyboxClient
 import json
 import time
 import traceback
+import os
 
 def start():
     start_time = time.time()
@@ -34,7 +35,7 @@ def start():
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
                 if is_debug_mode():               
                     #调试模式
-                    
+
                     if i == len(accountlist):
                         pass
                 else:
@@ -131,7 +132,7 @@ def start():
         elif result == True:
             logger.info(f'脚本已是最新')
         else:
-            self.logger.waring(f'检查脚本更新出错')
+            logger.waring(f'检查脚本更新出错')
         logger.info('脚本执行完毕')
         return(True)
     else:
@@ -144,3 +145,5 @@ if __name__ == '__main__':
     except Exception as e:
         print(f'[ERROR][main]哎呀,又出错了[{e}]')
         print(f'[ERROR][main]{traceback.print_stack()}')
+    finally:
+        os.system('pause')
