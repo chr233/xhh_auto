@@ -15,6 +15,7 @@ from heybox_client import HeyboxClient
 
 import json
 import time
+import trace
 
 def start():
     start_time = time.time()
@@ -31,9 +32,9 @@ def start():
                 logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if is_debug_mode():               
+                if not is_debug_mode():               
                     #调试模式
-                    hbc.get_ex_task_detail()
+
                     if i == len(accountlist):
                         pass
                 else:
@@ -119,9 +120,9 @@ def start():
         result = check_script_version()
         if result and result != True:
             latest_version,detail,download_url = result
-            self.logger.info(f'脚本有更新，最新版本[{latest_version}]')
-            self.logger.info(f'更新内容[{detail}]')
-            self.logger.info(f'下载地址[{download_url}]')
+            logger.info(f'脚本有更新，最新版本[{latest_version}]')
+            logger.info(f'更新内容[{detail}]')
+            logger.info(f'下载地址[{download_url}]')
             string = (f'- #### 脚本有更新,最新版本[{latest_version}]\n'
                       f'- #### 下载地址:[GitHub]({download_url})\n'
                       f'- #### 更新内容\n'
@@ -139,4 +140,8 @@ def start():
         return(False)
 
 if __name__ == '__main__':
-    start()
+    try:
+        start()
+    except Exception as e:
+            print(f'[ERROR][main]哎呀,又出错了[{e}]')
+            print(f'[ERROR][main]{traceback.print_stack()}')
