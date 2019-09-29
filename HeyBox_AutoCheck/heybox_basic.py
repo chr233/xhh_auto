@@ -34,41 +34,44 @@ def __init_settings() -> bool:
     global initialized
     global settings
     
-    logger = logging.getLogger('basic')
+
     if  not initialized:
         try:
-            logger.debug('加载[settings.json]')
+            print('[INFO][basic]加载[settings.json]')
             with open('settings.json', 'r', encoding='utf-8') as f:
                 jsondict = json.loads(f.read())
             settings = {
                 'CfgVer': jsondict.get("CfgVer",'1'),
+                'Debug': bool(jsondict.get("Debug", False)),
+                'EnableFtqq':bool(jsondict.get("EnableFtqq", True)),
                 'FtqqSKEY': jsondict.get("FtqqSKEY", None),
-                'Debug': bool(jsondict.get("Debug", False))
             }
         except json.decoder.JSONDecodeError:
-            logger.warning('[settings.json]格式有误,正在生成默认配置……')
+            print('[WARNING][basic][settings.json]格式有误,正在生成默认配置……')
             settings = {
                 "CfgVer":"1",
+                "Debug": False,
+                "EnableFtqq": True,
                 "FtqqSKEY": None,
-                "Debug": False
             }
         except FileNotFoundError:
-            logger.warning('[settings.json]不存在,正在生成默认配置……')
+            print('[WARNING][basic][settings.json]不存在,正在生成默认配置……')
             settings = {
                 "CfgVer":"1",
-                "FtqqSKEY": None,
-                "Debug": False
+                "Debug": False,
+                "EnableFtqq": True,
+                "FtqqSKEY": None
             }
 
         try:
             with open('settings.json', 'w', encoding='utf-8') as f:
                 f.write(json.dumps(settings,sort_keys=True,indent=1,separators=(',',':')))
-                logger.warning('默认配置已保存到[settings.json]')
+                print('[INFO][basic]配置已保存')
         except IOError:
-            logger.error('[settings.json]保存失败,请检查是否拥有目录写权限')                
+            print('[ERROR][basic][settings.json]保存失败,请检查是否拥有目录写权限')                
 
         debugmode = settings.get('Debug') or str(os.environ.get('DEBUG','FALSE')).upper() == 'TRUE'
-        settings['Debug']=debugmode
+        settings['Debug'] = debugmode
         log_level = logging.DEBUG if debugmode else logging.INFO
         log_format = "[%(levelname)s][%(name)s]%(message)s"
         logging.basicConfig(level=log_level,format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
@@ -118,32 +121,39 @@ def send_to_ftqq(title:str,text:str='') -> bool:
     '''
     if not initialized:
         __init_settings()
+    enableftqq=settings.get('EnableFtqq')
     ftqqskey = settings.get('FtqqSKEY')
     logger = get_logger('basic')
-    if ftqqskey:
-        url = f'https://sc.ftqq.com/{ftqqskey}.send'
-        data = {
-            'text':str(title),
-            'desp':str(text)
-            }
-        resp = requests.post(url=url,data=data)
+    if enableftqq:
+        if ftqqskey:
+            url = f'https://sc.ftqq.com/{ftqqskey}.send'
+            data = {
+                'text':str(title),
+                'desp':str(text)
+                }
+            resp = requests.post(url=url,data=data)
 
-        try:
-            jsondict = resp.json()
-            errno = int(jsondict.get('errno',-1))
-            if errno == 0:
-                logger.debug('FTQQ推送成功')
-                return(True)
-            else:
-                logger.error('FTQQ推送出错,请检查FtqqSKEY是否正确配置')
-                logger.error(f'返回值:[{jsondict}]')
+            try:
+                jsondict = resp.json()
+                errno = int(jsondict.get('errno',-1))
+                if errno == 0:
+                    logger.debug('FTQQ推送成功')
+                    return(True)
+                else:
+                    logger.error('FTQQ推送出错,请检查FtqqSKEY是否正确配置')
+                    logger.error('不要忘记加上双引号,示例:FtqqSKEY:"你的SKEY"')
+                    logger.error(f'返回值:[{jsondict}]')
+                    return(False)
+            except ValueError as e:
+                logger.error(f'FTQQ推送出错,程序内部错误[{e}]')
                 return(False)
-        except ValueError as e:
-            logger.error(f'FTQQ推送出错,程序内部错误[{e}]')
+        else:
+            logger.warning('未设置FtqqSKEY,设置后可以将执行结果推送到微信,详细参见[README.md]')
+            logger.error('不要忘记加上双引号,示例:FtqqSKEY:"你的SKEY"')
+            logger.error('如果不想使用此功能可以将Enableftqq的值修改为false')
             return(False)
-    else:
-        logger.warning('未设置FtqqSKEY,设置后可以将执行结果推送到微信,详细参见[README.md]')
-        return(False)
+    return(False)
+
 
 def check_script_version():
     '''
@@ -159,7 +169,7 @@ def check_script_version():
     '''    
     if not initialized:
         __init_settings()
-    logger=get_logger('basic')
+    logger = get_logger('basic')
     url = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'
     resp = requests.get(url=url)
     try:
