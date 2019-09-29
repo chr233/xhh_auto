@@ -30,6 +30,17 @@ account.json
 }
 ```
 
+PS:settings.json注释
+settings.json
+```json
+{
+  "CfgVer": "1",//配置版本,无需关心
+  "Debug": false,//设置为true开启调试模式,如果不知道在做什么请不要更改
+  "EnableFtqq": true,//启用方糖微信推送功能,设置为false关闭该功能
+  "FtqqSKEY": null//方糖的SKEY[获取地址](http://sc.ftqq.com/),填写的时候记得在Skey外侧加双引号("FtqqSKEY": "你的SKEY")
+}
+```
+
 ## 凭据获取方法
 1. 抓包环境要求
  * 安卓版本在6.0以下，可以使用最新版小黑盒，可以使用`HttpCanary`直接抓包(需要安装SSL证书)
