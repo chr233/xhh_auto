@@ -32,7 +32,7 @@ def start():
                 logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if is_debug_mode():               
+                if not is_debug_mode():               
                     #调试模式
                     
                     if i == len(accountlist):
@@ -142,5 +142,5 @@ if __name__ == '__main__':
     try:
         start()
     except Exception as e:
-            print(f'[ERROR][main]哎呀,又出错了[{e}]')
-            print(f'[ERROR][main]{traceback.print_stack()}')
+        print(f'[ERROR][main]哎呀,又出错了[{e}]')
+        print(f'[ERROR][main]{traceback.print_stack()}')
