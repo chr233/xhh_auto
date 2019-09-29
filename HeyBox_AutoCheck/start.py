@@ -32,7 +32,7 @@ def start():
                 logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if not is_debug_mode():               
+                if is_debug_mode():               
                     #调试模式
                     
                     if i == len(accountlist):
