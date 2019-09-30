@@ -18,6 +18,7 @@ import time
 import traceback
 import os
 import sys
+import termios
 
 
 def start():
@@ -152,11 +153,37 @@ def start():
         logger.error('有效账号列表为空,请检查是否正确配置了[accounts.json].')
         return(False)
 
+def wait():
+    if os.name=='nt':
+        os.system('pause')
+    elif os.name=='posix':
+        sys.stdout.write(msg)
+        sys.stdout.flush()
+    else:
+        pass
+
 if __name__ == '__main__':
+    wait=True
+    if len(sys.argv)>1:
+        for args in sys.argv[1:]:
+            if args=='-n':
+                wait=False
+                break
+            elif args=='-N':
+                wait=False
+                break
+            elif args=='-y':
+                wait=False
+                break
+            elif args=='-Y':
+                wait=False
+                break
+    
     try:
         start()
     except Exception as e:
         print(f'[ERROR][main]哎呀,又出错了[{e}]')
         print(f'[ERROR][main]{traceback.print_stack()}')
     finally:
-        os.system('pause')
+        if wait:
+            wait()
