@@ -78,6 +78,7 @@ class NewsContentType():
     UnknownType = 0 #未知
     CommunityArticle = 1 #社区帖子
     TextNews = 2 #普通新闻
+    TypeRecommand=5 #您是否对XXX感兴趣?'
     MultipleNews = 7 #多条新闻
 class FollowPostType():
     '''

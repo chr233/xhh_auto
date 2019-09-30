@@ -13,7 +13,7 @@ import logging
 import requests
 
 #脚本版本
-SCRIPT_VERSION = 'v0.48'
+SCRIPT_VERSION = 'v0.50'
 
 initialized = False
 settings = {}
@@ -91,6 +91,12 @@ def is_debug_mode() -> bool:
     if not initialized:
         __init_settings()
     return(bool(settings.get('Debug',False)))
+
+
+def get_script_version():
+    if not initialized:
+        __init_settings()
+    return(SCRIPT_VERSION)
 
 
 def get_logger(tag:str='null') -> logging.Logger:

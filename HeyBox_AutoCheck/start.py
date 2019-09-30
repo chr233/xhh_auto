@@ -17,8 +17,13 @@ import json
 import time
 import traceback
 import os
+import sys
+
 
 def start():
+    '''
+    示例程序,可以根据需要自行修改
+    '''
     start_time = time.time()
     logger = get_logger('start')
     logger.info('读取账号列表')
@@ -94,21 +99,29 @@ def start():
                     qd,fx,dz = result if result else (0,0,0)
                     logger.info(f'签到[{qd}]分享[{fx}]点赞[{dz}]')
 
-                    data.append(f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
+                    data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
+                                f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
                                 f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                                 f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
                                 f'##### 签到[{qd}]分享[{fx}]点赞[{dz}]\n'
-                                f'##### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]\n'
-                                f'##### {"=" * 30 }')
+                                f'##### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]'                                )
 
             except AccountException as e:
                 logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')
+                data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
+                            f'#### 账号信息有问题,请检查:[{e}]')
             except HeyboxException as e:
                 logger.error(f'第[{i}]个账号遇到了未知错误:[{e}]')
+                data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
+                            f'#### 遇到了未知错误:[{e}]')
+        logger.info('=' * 40)
+        logger.info(f'##### 脚本版本:[{get_script_version()}]')
+        data.append(f'##### {"=" * 35 }\n'
+                    f'##### 脚本版本:[{get_script_version()}]')
 
         end_time = time.time()
         logger.info(f'脚本耗时:[{round(end_time-start_time,4)}]s')
-        data.append(f'脚本耗时:[{round(end_time-start_time,4)}]s')
+        data.append(f'##### 脚本耗时:[{round(end_time-start_time,4)}]s')
         string = '\n'.join(data)
         logger.info('推送统计信息')
         result = send_to_ftqq('小黑盒自动脚本',string)
