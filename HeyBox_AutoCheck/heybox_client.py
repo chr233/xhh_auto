@@ -417,7 +417,7 @@ class HeyboxClient():
                         newslist.append((linkid,newsid)) 
                     except KeyError:
                         self.logger.debug(f'提取新闻列表出错[{newsitem}]')
-                elif news_type == NewsContentType.MultipleNews:
+                elif news_type == NewsContentType.MultipleNews or news_type==NewsContentType.TypeRecommand:
                     continue
                 else:
                     self.logger.debug(f'未知的文章类型[{news_type}]')
