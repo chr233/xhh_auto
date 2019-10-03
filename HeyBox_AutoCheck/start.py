@@ -39,7 +39,7 @@ def start():
                 logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if not is_debug_mode():               
+                if is_debug_mode():               
                     #调试模式
 
                     if i == len(accountlist):
@@ -157,33 +157,31 @@ def cliwait():
     if os.name=='nt':
         os.system('pause')
     elif os.name=='posix':
-        sys.stdout.write(msg)
-        sys.stdout.flush()
+        input("按回车键退出……")
     else:
-        pass
+        input("按回车键退出……")
 
 if __name__ == '__main__':
     wait=True
     if len(sys.argv)>1:
         for args in sys.argv[1:]:
-            if args=='-n':
+            if args.upper()=='-N':
                 wait=False
                 break
-            elif args=='-N':
-                wait=False
-                break
-            elif args=='-y':
-                wait=False
-                break
-            elif args=='-Y':
-                wait=False
-                break
+            elif args.upper()=='-H':
+                print('参数说明: [忽略大小写]\n'
+                       '-N : 结束时不要求输入,适合全自动运行\n'
+                       '-H 显示帮助')
+            else: 
+                print('\n[ERROR][main]未知的参数,使用-H显示帮助\n')
+
     
     try:
         start()
+    except KeyboardInterrupt as e:
+        print(f'[ERROR][main]被用户终止')
     except Exception as e:
         print(f'[ERROR][main]哎呀,又出错了[{e}]')
-        print(f'[ERROR][main]{traceback.print_stack()}')
     finally:
         if wait:
             cliwait()
