@@ -18,7 +18,7 @@ import time
 import traceback
 import os
 import sys
-import termios
+#import termios
 
 
 def start():
@@ -28,7 +28,7 @@ def start():
     start_time = time.time()
     logger = get_logger('start')
     logger.info('读取账号列表')
-    accountlist = load_accounts('./accounts.json')
+    accountlist = load_accounts()
     if accountlist:
         logger.info(f'成功读取[{len(accountlist)}]个账号')
         i = 0
@@ -39,7 +39,7 @@ def start():
                 logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if is_debug_mode():               
+                if not is_debug_mode():               
                     #调试模式
 
                     if i == len(accountlist):
@@ -53,7 +53,7 @@ def start():
                         logger.info('签到')
                         hbc.sign()
                     if not dz or not fx:
-                        logger.info('获取新闻列表')
+                        logger.info('获取新闻列表……')
                         newslist = hbc.get_news_list(10)
                         logger.info(f'获取[{len(newslist)}]条内容')
                         if not fx:
@@ -65,7 +65,7 @@ def start():
                     else:
                         logger.info('已完成点赞和分享任务,跳过')
                     
-                    logger.info('获取动态列表')
+                    logger.info('获取动态列表……')
                     postlist = hbc.get_follow_post(50)
                     logger.info(f'获取[{len(postlist)}]条内容')
                     if postlist:
@@ -75,7 +75,7 @@ def start():
                         logger.info('没有新内容,跳过')
                     #logger.info('关注推荐关注')
                     #hbc.tools_follow_recommand(10,100) #关注推荐关注
-                    logger.info('关注新粉丝')
+                    logger.info('关注新粉丝……')
                     hbc.tools_follow_followers() #关注粉丝
                     
                     #logger.info('取关单向关注')

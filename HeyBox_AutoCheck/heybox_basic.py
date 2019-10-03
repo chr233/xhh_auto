@@ -33,12 +33,13 @@ def __init_settings() -> bool:
 
     global initialized
     global settings
-    
+
+    filepath=f'{get_script_path()}{os.sep}settings.json'
 
     if  not initialized:
         try:
             print('[INFO][basic]加载[settings.json]')
-            with open('settings.json', 'r', encoding='utf-8') as f:
+            with open(filepath, 'r', encoding='utf-8') as f:
                 jsondict = json.loads(f.read())
             settings = {
                 'CfgVer': jsondict.get("CfgVer",'1'),
@@ -93,11 +94,21 @@ def is_debug_mode() -> bool:
     return(bool(settings.get('Debug',False)))
 
 
-def get_script_version():
-    if not initialized:
-        __init_settings()
+def get_script_version()-> str:
+    '''
+    获取脚本版本
+    返回:
+        脚本版本
+    '''
     return(SCRIPT_VERSION)
 
+def get_script_path()->str:
+    '''
+    获取脚本所在路径
+    返回:
+        路径
+    '''
+    return(os.path.split(os.path.realpath(__file__))[0])
 
 def get_logger(tag:str='null') -> logging.Logger:
     '''
@@ -212,7 +223,7 @@ def load_accounts(filepath:str=''):
         False
     '''
     if not filepath:
-        filepath = './accounts.json'
+        filepath = f'{get_script_path()}{os.sep}accounts.json'
     try:
         logger = get_logger('basic')
         with open(filepath, 'r', encoding='utf-8') as f:

@@ -1989,7 +1989,7 @@ class HeyboxClient():
                 self.logger.debug(f'拉取完成，共[{len(wz)}]字')
             else:
                 self.logger.error('拉取内容为空，可能遇到错误')
-            return(wz)
+            return(wz) 
         except (JSONDecodeError,ValueError,AttributeError) as e:
             self.logger.error(f'拉取文章出错[{e}]')
             return(False)    
