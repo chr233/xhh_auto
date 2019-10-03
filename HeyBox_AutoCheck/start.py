@@ -29,8 +29,8 @@ def start():
     logger = get_logger('start')
     logger.info('读取账号列表')
     accountlist = load_accounts('./accounts.json')
-    logger.info(f'成功读取[{len(accountlist)}]个账号')
     if accountlist:
+        logger.info(f'成功读取[{len(accountlist)}]个账号')
         i = 0
         data = []
         for account in accountlist:
@@ -153,7 +153,7 @@ def start():
         logger.error('有效账号列表为空,请检查是否正确配置了[accounts.json].')
         return(False)
 
-def wait():
+def cliwait():
     if os.name=='nt':
         os.system('pause')
     elif os.name=='posix':
@@ -186,4 +186,4 @@ if __name__ == '__main__':
         print(f'[ERROR][main]{traceback.print_stack()}')
     finally:
         if wait:
-            wait()
+            cliwait()
