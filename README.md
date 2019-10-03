@@ -12,7 +12,8 @@
  * Linux用户记得先赋予脚本执行权限`chmod 755 *.py`
 
 PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
-account.json
+
+account.json:
 ```json
 {
   "accounts": [
@@ -31,12 +32,14 @@ account.json
 ```
 
 PS:settings.json注释
-settings.json
+
+settings.json:
 ```json
 {
   "CfgVer": "1",//配置版本,无需关心
-  "Debug": false,//设置为true开启调试模式,如果不知道在做什么请不要更改
-  "EnableFtqq": true,//启用方糖微信推送功能,设置为false关闭该功能
+  "Debug": false,//是否开启调试模式,如果不知道在做什么请不要更改
+  "UpdateCheck": true,//是否允许脚本检查更新,设置为false禁用,**不建议禁用**
+  "EnableFtqq": true,//是否启用方糖微信推送功能,设置为false关闭该功能
   "FtqqSKEY": null//方糖的SKEY[获取地址](http://sc.ftqq.com/),填写的时候记得在Skey外侧加双引号("FtqqSKEY": "你的SKEY")
 }
 ```
