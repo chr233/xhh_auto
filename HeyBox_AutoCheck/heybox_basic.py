@@ -33,16 +33,18 @@ def __init_settings() -> bool:
 
     global initialized
     global settings
-    
+
+    filepath = f'{get_script_path()}{os.sep}settings.json'
 
     if  not initialized:
         try:
             print('[INFO][basic]加载[settings.json]')
-            with open('settings.json', 'r', encoding='utf-8') as f:
+            with open(filepath, 'r', encoding='utf-8') as f:
                 jsondict = json.loads(f.read())
             settings = {
                 'CfgVer': jsondict.get("CfgVer",'1'),
                 'Debug': bool(jsondict.get("Debug", False)),
+                'UpdateCheck': bool(jsondict.get("UpdateCheck", True)),
                 'EnableFtqq':bool(jsondict.get("EnableFtqq", True)),
                 'FtqqSKEY': jsondict.get("FtqqSKEY", None),
             }
@@ -51,6 +53,7 @@ def __init_settings() -> bool:
             settings = {
                 "CfgVer":"1",
                 "Debug": False,
+                "UpdateCheck": True,
                 "EnableFtqq": True,
                 "FtqqSKEY": None,
             }
@@ -59,12 +62,13 @@ def __init_settings() -> bool:
             settings = {
                 "CfgVer":"1",
                 "Debug": False,
+                "UpdateCheck": True,
                 "EnableFtqq": True,
                 "FtqqSKEY": None
             }
 
         try:
-            with open('settings.json', 'w', encoding='utf-8') as f:
+            with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(settings,sort_keys=True,indent=1,separators=(',',':')))
                 print('[INFO][basic]配置已保存')
         except IOError:
@@ -93,11 +97,21 @@ def is_debug_mode() -> bool:
     return(bool(settings.get('Debug',False)))
 
 
-def get_script_version():
-    if not initialized:
-        __init_settings()
+def get_script_version() -> str:
+    '''
+    获取脚本版本
+    返回:
+        脚本版本
+    '''
     return(SCRIPT_VERSION)
 
+def get_script_path() -> str:
+    '''
+    获取脚本所在路径
+    返回:
+        路径
+    '''
+    return(os.path.split(os.path.realpath(__file__))[0])
 
 def get_logger(tag:str='null') -> logging.Logger:
     '''
@@ -127,7 +141,7 @@ def send_to_ftqq(title:str,text:str='') -> bool:
     '''
     if not initialized:
         __init_settings()
-    enableftqq=settings.get('EnableFtqq')
+    enableftqq = settings.get('EnableFtqq')
     ftqqskey = settings.get('FtqqSKEY')
     logger = get_logger('basic')
     if enableftqq:
@@ -160,7 +174,6 @@ def send_to_ftqq(title:str,text:str='') -> bool:
             return(False)
     return(False)
 
-
 def check_script_version():
     '''
     检查脚本有无更新。
@@ -170,36 +183,42 @@ def check_script_version():
         download_url:下载地址)
     无更新返回:
         True
+    UpdateCheck设置为False返回:
+        True
     失败返回:
         False
     '''    
     if not initialized:
         __init_settings()
-    logger = get_logger('basic')
-    url = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'
-    resp = requests.get(url=url)
-    try:
-        jsondict = resp.json()
-        latest_version = jsondict['tag_name']
-        detail = jsondict['body']
-        #date = jsondict['created_at']
-        download_url = jsondict['assets'][0]['browser_download_url']
-        if (SCRIPT_VERSION[1:] != latest_version[1:]):
-            if (float(SCRIPT_VERSION[1:]) < float(latest_version[1:])):
-                logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION}|最新版本{latest_version}')
-                logger.debug(f'更新内容[{detail}]')
-                logger.debug(f'下载地址[{download_url}]')
-                return((latest_version,detail,download_url))
-            else:
-                logger.debug('当前版本比发行版高,可能是开发版或者预览版')
-                return(True)
-        else:
-            logger.debug('已经是最新版本')
-            return(True)
-    except (KeyError,NameError) as e:
-        logger.error(f'检测脚本更新出错[{e}]')
-        return(False)
 
+    logger = get_logger('basic')
+    if bool(settings.get('UpdateCheck',True)):
+        url = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'
+        resp = requests.get(url=url)
+        try:
+            jsondict = resp.json()
+            latest_version = jsondict['tag_name']
+            detail = jsondict['body']
+            #date = jsondict['created_at']
+            download_url = jsondict['assets'][0]['browser_download_url']
+            if (SCRIPT_VERSION[1:] != latest_version[1:]):
+                if (float(SCRIPT_VERSION[1:]) < float(latest_version[1:])):
+                    logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION}|最新版本{latest_version}')
+                    logger.debug(f'更新内容[{detail}]')
+                    logger.debug(f'下载地址[{download_url}]')
+                    return((latest_version,detail,download_url))
+                else:
+                    logger.debug('当前版本比发行版高,可能是开发版或者预览版')
+                    return(True)
+            else:
+                logger.debug('已经是最新版本')
+                return(True)
+        except (KeyError,NameError) as e:
+            logger.error(f'检测脚本更新出错[{e}]')
+            return(False)
+    else:
+        logger.warning('脚本更新检查已禁用')
+        return(True)
 
 def load_accounts(filepath:str=''):
     '''
@@ -212,7 +231,7 @@ def load_accounts(filepath:str=''):
         False
     '''
     if not filepath:
-        filepath = './accounts.json'
+        filepath = f'{get_script_path()}{os.sep}accounts.json'
     try:
         logger = get_logger('basic')
         with open(filepath, 'r', encoding='utf-8') as f:
