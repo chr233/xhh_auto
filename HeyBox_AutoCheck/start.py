@@ -18,7 +18,7 @@ import time
 import traceback
 import os
 import sys
-#import termios
+import termios
 
 
 def start():
@@ -28,9 +28,9 @@ def start():
     start_time = time.time()
     logger = get_logger('start')
     logger.info('读取账号列表')
-    accountlist = load_accounts()
+    accountlist = load_accounts('./accounts.json')
+    logger.info(f'成功读取[{len(accountlist)}]个账号')
     if accountlist:
-        logger.info(f'成功读取[{len(accountlist)}]个账号')
         i = 0
         data = []
         for account in accountlist:
@@ -53,7 +53,7 @@ def start():
                         logger.info('签到')
                         hbc.sign()
                     if not dz or not fx:
-                        logger.info('获取新闻列表……')
+                        logger.info('获取新闻列表')
                         newslist = hbc.get_news_list(10)
                         logger.info(f'获取[{len(newslist)}]条内容')
                         if not fx:
@@ -65,7 +65,7 @@ def start():
                     else:
                         logger.info('已完成点赞和分享任务,跳过')
                     
-                    logger.info('获取动态列表……')
+                    logger.info('获取动态列表')
                     postlist = hbc.get_follow_post(50)
                     logger.info(f'获取[{len(postlist)}]条内容')
                     if postlist:
@@ -75,7 +75,7 @@ def start():
                         logger.info('没有新内容,跳过')
                     #logger.info('关注推荐关注')
                     #hbc.tools_follow_recommand(10,100) #关注推荐关注
-                    logger.info('关注新粉丝……')
+                    logger.info('关注新粉丝')
                     hbc.tools_follow_followers() #关注粉丝
                     
                     #logger.info('取关单向关注')
@@ -153,35 +153,37 @@ def start():
         logger.error('有效账号列表为空,请检查是否正确配置了[accounts.json].')
         return(False)
 
-def cliwait():
+def wait():
     if os.name=='nt':
         os.system('pause')
     elif os.name=='posix':
-        input("按回车键退出……")
+        sys.stdout.write(msg)
+        sys.stdout.flush()
     else:
-        input("按回车键退出……")
+        pass
 
 if __name__ == '__main__':
     wait=True
     if len(sys.argv)>1:
         for args in sys.argv[1:]:
-            if args.upper()=='-N':
+            if args=='-n':
                 wait=False
                 break
-            elif args.upper()=='-H':
-                print('参数说明: [忽略大小写]\n'
-                       '-N : 结束时不要求输入,适合全自动运行\n'
-                       '-H 显示帮助')
-            else: 
-                print('\n[ERROR][main]未知的参数,使用-H显示帮助\n')
-
+            elif args=='-N':
+                wait=False
+                break
+            elif args=='-y':
+                wait=False
+                break
+            elif args=='-Y':
+                wait=False
+                break
     
     try:
         start()
-    except KeyboardInterrupt as e:
-        print(f'[ERROR][main]被用户终止')
     except Exception as e:
         print(f'[ERROR][main]哎呀,又出错了[{e}]')
+        print(f'[ERROR][main]{traceback.print_stack()}')
     finally:
         if wait:
-            cliwait()
+            wait()
