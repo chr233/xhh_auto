@@ -58,7 +58,7 @@ class HeyboxClient():
         self.logger = get_logger(str(tag))
         self.logger.debug(f'初始化完成{f" @ [{heybox_id}]" if heybox_id else ""}')
 
-    #NT
+    
     def sample_do_daily_tasks(self) -> bool:
         '''
         完成每日任务示例
@@ -76,7 +76,7 @@ class HeyboxClient():
         finish,total = self.get_daily_task_stats()
         return(finish == total)
 
-    #NT
+    
     def sample_like_follow_posts(self,value:int=100) -> bool:
         '''
         动态点赞示例
@@ -87,7 +87,7 @@ class HeyboxClient():
         self.batch_like_followposts(postlist)
         return(True)
 
-    #NT
+    
     def tools_follow_followers(self) -> bool:
         '''
         关注关注你的人
@@ -110,7 +110,7 @@ class HeyboxClient():
             self.logger.error(f'关注粉丝遇到错误[{e}]')
             return(False)
 
-    #NT
+    
     def tools_unfollow_singlefollowers(self,value:int=100) -> bool:
         '''
         清理单向关注示例
@@ -133,7 +133,7 @@ class HeyboxClient():
             self.logger.error(f'清理单向关注遇到错误[{e}]')
             return(False)
 
-    #NT
+    
     def tools_follow_recommand(self,count:int=10,value:int=100) -> bool:
         '''
         关注推荐关注的人
@@ -155,7 +155,7 @@ class HeyboxClient():
             self.logger.error(f'清理单向关注遇到错误[{e}]')
             return(False)
 
-    #NT
+    
     def batch_newslist_operate(self,idsetlist:list,operatetype:int=1,indexstart:int=1):
         '''
         批量操作文章列表
@@ -214,7 +214,7 @@ class HeyboxClient():
             self.logger.error(f'参数错误[{idsetlist}]')
             return(False)  
 
-    #NT
+    
     def batch_like_followposts(self,idsetlist:list):
         '''
         批量点赞动态
@@ -250,7 +250,7 @@ class HeyboxClient():
             self.logger.error(f'参数错误[{idsetlist}]')
             return(False)  
 
-    #NT
+    
     def batch_like_commentlist(self,commentlist:list):
         '''
         批量点赞评论
@@ -281,7 +281,7 @@ class HeyboxClient():
             self.logger.error(f'参数错误[{commentlist}]')
             return(False) 
 
-    #NT
+    
     def batch_userlist_operate(self,useridlist:list,operatetype:int=1):
         '''
         批量关注/取关粉丝
@@ -376,7 +376,7 @@ class HeyboxClient():
             self.logger.error(f'参数错误[{useridlist}]')
             return(False)
 
-    #NT
+    
     def get_news_list(self,value:int=30):
         '''
         拉取首页文章列表
@@ -417,7 +417,7 @@ class HeyboxClient():
                         newslist.append((linkid,newsid)) 
                     except KeyError:
                         self.logger.debug(f'提取新闻列表出错[{newsitem}]')
-                elif news_type == NewsContentType.MultipleNews or news_type==NewsContentType.TypeRecommand:
+                elif news_type == NewsContentType.MultipleNews or news_type == NewsContentType.TypeRecommand:
                     continue
                 else:
                     self.logger.debug(f'未知的文章类型[{news_type}]')
@@ -461,7 +461,7 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，新闻列表为空，可能遇到错误')
         return(newsidlist)
     
-    #NT
+    
     def get_follow_post(self,value:int=30,ignoreliked:bool=True):
         '''
         拉取动态列表
@@ -559,7 +559,7 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，动态列表为空，可能遇到错误')
         return(eventslist)
     
-    #NT
+    
     def get_news_links(self,linkid:int,newsid:int,index:int=1):
         '''   
         拉取文章附加信息
@@ -607,7 +607,7 @@ class HeyboxClient():
             self.logger.error(f'拉取文章附加信息出错[{e}]')
             return(False)  
         
-    #NT
+    
     def get_news_links_ex(self,linkid:int,newsid:int,index:int=1):
         '''   
         拉取文章更多附加信息
@@ -661,7 +661,7 @@ class HeyboxClient():
             self.logger.error(f'拉取文章附加信息出错[{e}]')
             return(False) 
 
-    #NT
+    
     def get_user_follow_post_list(self,userid:int,value:int=30,ignoreliked:bool=True):
         '''
         拉取用户动态列表
@@ -760,7 +760,7 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
         return(eventslist)
     
-    #NT
+    
     def get_user_post_list(self,userid:int,value:int=30,ignoreliked:bool=True):
         '''
         拉取用户发帖列表
@@ -845,7 +845,7 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，发帖列表为空，可能遇到错误')
         return(eventslist)
 
-    #NT
+    
     def get_user_comment_list(self,userid:int,value:int=30):
         '''
         拉取用户评论列表
@@ -928,7 +928,7 @@ class HeyboxClient():
         return(commentslist)
 
 
-    #NT
+    
     def get_active_roll_room(self,value:int=30):
         '''
         拉取可参与的ROLL房列表
@@ -1012,7 +1012,7 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，ROLL房列表为空，可能没有可参与的ROLL房')
         return(rollroomlist)
 
-    #NT
+    
     def get_recommend_follow_list(self,value:int=30):
         '''
         拉取推荐关注列表
@@ -1097,11 +1097,24 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，推荐关注列表为空，可能遇到错误')
         return(recfollowlist)
 
-    #NT
+    #OLD
     def get_follower_list(self,value:int=30):
+        '''
+        【不推荐】,请使用get_follower_list_by_userid
+        拉取粉丝列表
+        参数:
+            value:要拉取的数量
+        成功返回:
+            followerlist:[(id,关系)……] 关系释义参见:RelationType
+        '''
+        return(self.get_follower_list_by_userid(self.heybox_id,value))
+
+    #NEW
+    def get_follower_list_by_userid(self,user_id:int=-1,value:int=30):
         '''
         拉取粉丝列表
         参数:
+            user_id:要拉取的用户的id,不填代入自己的id
             value:要拉取的数量
         成功返回:
             followerlist:[(id,关系)……] 关系释义参见:RelationType
@@ -1117,7 +1130,7 @@ class HeyboxClient():
             url = URLS.GET_FOLLOWER_LIST
             self.__flush_params()
             params = {
-                'userid':self.heybox_id,
+                'userid':user_id,
                 'offset':offset,
                 'limit':30,
                 **self._params
@@ -1138,6 +1151,8 @@ class HeyboxClient():
             self.logger.debug(f'拉取[{len(userlist)}]个用户')
             return(userlist)
         #==========================================
+        if user_id <= 0:
+            user_id == self.heybox_id
         followerlist = []
         max = (value // 30) + 3 #最大拉取次数
         i = 1
@@ -1174,15 +1189,28 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，粉丝列表为空，可能遇到错误')
         return(followerlist)
 
-    #NT
+    #OLD
     def get_following_list(self,value:int=30):
         '''
+        【不推荐】请使用get_following_list_by_userid
         拉取关注列表
         参数:
             value:要拉取的数量
         成功返回:
             followinglist:[(id,关系)……] 关系释义参见:RelationType
-            '''
+        '''
+        return(get_following_list_by_userid(self.heybox_id,value))
+
+    #NEW
+    def get_following_list_by_userid(self,user_id:int=-1,value:int=30):
+        '''
+        拉取关注列表
+        参数:
+            user_id:要拉取的用户的id,不填代入自己的id
+            value:要拉取的数量
+        成功返回:
+            followinglist:[(id,关系)……] 关系释义参见:RelationType
+        '''
         def _get_following_list(offset:int=0):
             '''
             拉取关注列表
@@ -1216,6 +1244,8 @@ class HeyboxClient():
             self.logger.debug(f'拉取[{len(userlist)}]个用户')
             return(userlist)
         #==========================================
+        if user_id <= 0:
+            user_id == self.heybox_id
         followinglist = []
         max = (value // 30) + 3 #最大拉取次数
         i = 1
@@ -1252,7 +1282,7 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，关注列表为空，可能遇到错误')
         return(followinglist)
 
-    #NT
+    
     def get_ads_info(self):
         '''
         拉取广告信息
@@ -1275,7 +1305,7 @@ class HeyboxClient():
             self.logger.error(f'拉取广告信息出错[{e}]')
             return(False)
 
-    #NT
+    
     def like_news(self,linkid:int,newsid:int,index:int=1):
         '''
         给新闻点赞
@@ -1324,7 +1354,7 @@ class HeyboxClient():
             self.logger.error(f'点赞出错[{e}]')
             return(False)
     
-    #NT
+    
     def like_follow_post(self,linkid:int,followtype:int=0): 
         '''
         给好友动态点赞
@@ -1364,7 +1394,7 @@ class HeyboxClient():
             self.logger.error(f'动态点赞出错[{e}]')
             return(False)
     
-    #NT
+    
     def like_comment(self,linkid:int,commenttype:int=2): 
         '''
         给评论点赞
@@ -1405,7 +1435,7 @@ class HeyboxClient():
             return(False)
 
 
-    #NT
+    
     def userlist_simplify(self,userlist:list):
         '''
         简化userlist,只保留userid
@@ -1429,7 +1459,7 @@ class HeyboxClient():
             suserlist = userlist
         return(suserlist)
           
-    #NT
+    
     def filte_userlist(self,userlist:list,filtersetting:dict):
         '''
         用户列表过滤
@@ -1541,7 +1571,7 @@ class HeyboxClient():
         self.logger.debug(f'过滤后共有[{len(fuserlist)}]个用户')
         return(fuserlist)
 
-    #NT
+    
     def share(self,newsid:int,index:int=1):
         '''
         分享新闻
@@ -1626,7 +1656,7 @@ class HeyboxClient():
         op2 = check_share_task_qq()
         return(op1 and op2)
     
-    #NT
+    
     def sign(self):
         '''
         签到
@@ -1663,7 +1693,7 @@ class HeyboxClient():
             self.logger.error(f'签到出错[{e}]')
             return(False)
 
-    #NT
+    
     def send_message(self,userid:int,message:str):
         '''
         发送消息
@@ -1699,7 +1729,7 @@ class HeyboxClient():
             self.logger.error(f'发送私信出错[{e}]')
             return(False)
 
-    #NT
+    
     def get_game_detail(self,appid:int):
         '''
         读取游戏信息
@@ -1787,7 +1817,7 @@ class HeyboxClient():
             self.logger.error(f'拉取游戏详情出错[{e}]')
             return(False)
 
-    #NT
+    
     def get_game_detail_ex(self,appid:int):
         '''
         读取游戏更多信息
@@ -1852,7 +1882,7 @@ class HeyboxClient():
             self.logger.error(f'拉取游戏详情出错[{e}]')
             return(False)
 
-    #NT
+    
     def do_communitu_surver(self):
         '''
         完成社区答题
@@ -1938,7 +1968,7 @@ class HeyboxClient():
             self.logger.debug('答题出错')
             return(False)
 
-    #NT
+    
     def get_news_body(self,newsid:int,index:int=1):
         '''
         拉取文章正文内容
@@ -1994,7 +2024,7 @@ class HeyboxClient():
             self.logger.error(f'拉取文章出错[{e}]')
             return(False)    
 
-    #NT
+    
     def get_video_title(self,linkid:int,newsid:int,index:int=1):
         '''
         拉取视频标题
@@ -2049,7 +2079,7 @@ class HeyboxClient():
             self.logger.error(f'拉取视频信息出错[{e}]')
             return(False)
 
-    #NT
+    
     def check_achieve_alert(self):
         '''
         查询有无新成就
@@ -2085,7 +2115,7 @@ class HeyboxClient():
             self.logger.error(f'查询新成就出错[{e}]')
             return(False)    
 
-    #NT
+    
     def get_daily_task_stats(self):
         '''
         获取每日任务状态
@@ -2111,7 +2141,7 @@ class HeyboxClient():
             self.logger.error(f'获取任务状态出错[{e}]')
             return(False)
 
-    #NT
+    
     def get_daily_task_detail(self):
         '''
         获取每日任务详情
@@ -2139,7 +2169,7 @@ class HeyboxClient():
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-    #NT
+    
     def get_ex_task_detail(self):
         '''
         获取更多任务详情
@@ -2183,7 +2213,7 @@ class HeyboxClient():
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-    #NT
+    
     def get_my_data(self):
         '''
         获取我的任务数据
@@ -2219,7 +2249,7 @@ class HeyboxClient():
             self.logger.error(f'获取我的任务数据详情出错[{e}]')
             return(False)
 
-    #NT
+    
     def get_user_profile(self,userid:int=-1):
         '''
         获取个人资料
@@ -2262,7 +2292,7 @@ class HeyboxClient():
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-    #NT
+    
     def get_auth_info(self):
         '''
         获取自己的认证信息
@@ -2291,7 +2321,7 @@ class HeyboxClient():
             self.logger.error(f'获取安全信息出错[{e}]')
             return(False)
 
-    #NT
+    
     def check_heybox_version(self):
         '''
         检查小黑盒最新版本
@@ -2337,7 +2367,7 @@ class HeyboxClient():
     #    raise NotImplementedError
     #    return(False)
 
-    #NT
+    
     def __check_status(self,jsondict:dict):
         '''
         检查返回值
@@ -2381,7 +2411,7 @@ class HeyboxClient():
                     raise LocalTimeError
                 elif msg == '该用户已注销':
                     raise UseridNotExists
-                elif msg=='用户名或密码错误或者登录过于频繁':
+                elif msg == '用户名或密码错误或者登录过于频繁':
                     raise TokenError
                 elif msg == '':
                     raise ShareError
@@ -2398,7 +2428,7 @@ class HeyboxClient():
             self.logger.error(f'{traceback.print_stack()}')
             raise JsonAnalyzeError
 
-    #NT
+    
     def __flush_params(self):
         '''
         刷新_params里的time_和hkey键

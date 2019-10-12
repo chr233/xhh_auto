@@ -41,6 +41,8 @@ def start():
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
                 if is_debug_mode():               
                     #调试模式
+                    li=hbc.get_users_follower_list(13081382,30)
+                    print(li)
 
                     if i == len(accountlist):
                         pass
