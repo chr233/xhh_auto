@@ -20,7 +20,13 @@ from heybox_static import *
 from heybox_errors import *
 
 #小黑盒版本号,会自动设置为最新版
-HEYBOX_VERSION = '1.2.80'
+HEYBOX_VERSION = '1.2.88'
+
+#遇到空结果继续请求的次数
+Empty_Retry_times = 0
+
+#遇到错误继续请求的次数
+Error_Retry_times = 0
 
 #Python版小黑盒客户端
 class HeyboxClient():
@@ -195,7 +201,8 @@ class HeyboxClient():
                     if like and not is_liked:
                         self.like_news(linkid,newsid,index)
                     if share:
-                        self.share(newsid,index)
+                        self.share_news(newsid,index)
+                        self.share_comment()
                     operatecount+=1
                 except LikeLimitedError as e:
                     self.logger.debug(f'达到每日点赞上限,停止点赞操作[{e}]')
@@ -240,7 +247,7 @@ class HeyboxClient():
                     return(False)
                 except (JSONDecodeError,ValueError,TypeError,ClientException) as e:
                     self.logger.debug(f'批量点赞遇到错误[{e}]')
-                    errorcount+=1
+                    errorcount += 1
                     if errorcount >= 5:
                         self.logger.error('批量点赞遇到大量错误,停止操作')
                         return(False)
@@ -461,7 +468,6 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，新闻列表为空，可能遇到错误')
         return(newsidlist)
     
-    
     def get_follow_post(self,value:int=30,ignoreliked:bool=True):
         '''
         拉取动态列表
@@ -559,6 +565,101 @@ class HeyboxClient():
             self.logger.debug('拉取完毕，动态列表为空，可能遇到错误')
         return(eventslist)
     
+    #NEW
+    def get_news_comments(self,linkid:int,newsid:int,index:int=1,value:int=30):
+        '''   
+        拉取文章的评论
+        参数:
+            linkid:链接id
+            newsid:新闻id
+            index:索引
+        成功返回:
+            commentslist:[(commentid,userid,text)]
+        失败返回:
+            False
+        '''
+        def _get_news_comments(page:int=1):
+            url = URLS.GET_LINK_TREE
+            self.__flush_params()
+            params = {
+                'h_src':'LTE=',
+                'link_id':linkid,
+                'page':page,
+                'limit':30,
+                'is_first':1,
+                'owner_only':0,
+                'sort_filter':'hot',
+                'newsid':newsid,
+                'rec_mark':'timeline',
+                'pos':index + 1,
+                'index':index,
+                'page_tab':1,
+                'from_recommend_list':9,
+                **self._params
+            }
+            if page != 1:
+                params['is_first'] = 0
+                params.pop('sort_filter')
+
+            resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            commentlist = []
+            for commentobj in jsondict['result']['comments']:
+                try:
+                    comment = commentobj['comment'][0]
+                    #child_num = comment['child_num'] #回复数
+                    commentid = comment['commentid'] #评论ID
+                    text = comment['text'] #评论内容
+                    user = comment['user']
+                    username = user['username']
+                    userid = user['userid']
+                    #level = comment['level_info']['level'] #等级
+                    self.logger.debug(f'[{username}][{userid}]：[{commentid}][{text}]')
+                    commentlist.append((commentid,userid,text))
+                except KeyError :
+                    self.logger.error(f'拉取文章评论出错[{commentobj}]')
+            self.logger.debug(f'拉取[{len(commentlist)}]条评论')
+            return(commentlist)
+        #==========================================
+        commentslist = []
+        emptycount = 0 
+        errorcount = 0
+        i = 1
+        while True:
+            try:
+                templist = _get_news_comments(i)
+                if templist:
+                    self.logger.debug(f'拉取第[{i}]页评论')
+                    commentslist.extend(templist)
+                    sortedlist = list(set(commentslist))
+                    sortedlist.sort(key=commentslist.index)
+                    commentslist = sortedlist
+                else:
+                    self.logger.debug('评论列表为空，可能遇到错误')
+                    emptycount+=1
+                    if emptycount > Empty_Retry_times:
+                        self.logger.debug('空结果达到上限,停止操作')
+                        break
+                if len(commentslist) >= value :
+                    break
+            except (JSONDecodeError,ClientException) as e:
+                self.logger.debug(f'拉取评论列表出错[{e}]')
+                errorcount+=1
+                if errorcount > Error_Retry_times:
+                    self.logger.debug('错误次数达到上限,停止操作')
+                    break
+            finally:
+                i+=1
+            
+        if len(commentslist) > value:
+            commentslist = commentslist[:value]
+        if len(commentslist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(commentslist)}]条评论')
+        else:
+            self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
+        return(commentslist)
+
     
     def get_news_links(self,linkid:int,newsid:int,index:int=1):
         '''   
@@ -570,7 +671,7 @@ class HeyboxClient():
         成功返回:
             has_video:是视频?
             is_liked:已点赞?
-        失败返回:    
+        失败返回:
             False
         '''
         url = URLS.GET_LINK_TREE
@@ -1571,8 +1672,21 @@ class HeyboxClient():
         self.logger.debug(f'过滤后共有[{len(fuserlist)}]个用户')
         return(fuserlist)
 
-    
     def share(self,newsid:int,index:int=1):
+        '''
+        分享新闻【不推荐，请使用[share_news]】
+        参数:
+            newsid:新闻id
+            index:索引
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        self.logger.warning('该函数已更名为[share_news],并将于不久后删除')
+        return(self.share_news(newsid,index))
+
+    def share_news(self,newsid:int,index:int=1):
         '''
         分享新闻
         参数:
@@ -1656,6 +1770,32 @@ class HeyboxClient():
         op2 = check_share_task_qq()
         return(op1 and op2)
     
+    def share_comment(self):
+        '''
+        分享评论
+        参数:
+            不需要??
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+
+        url = URLS.SHARE_CHECK
+        self.__flush_params()
+        params = {
+            'shared_type':'BBSComment',
+            **self._params
+        }
+        resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
+        try:
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug('分享成功')
+            return(True)
+        except (JSONDecodeError,ShareError,ClientException) as e:
+            self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
+            return(True) #貌似也能完成任务，所以返回True
     
     def sign(self):
         '''
@@ -2141,13 +2281,14 @@ class HeyboxClient():
             self.logger.error(f'获取任务状态出错[{e}]')
             return(False)
 
-    
+    #NEW
     def get_daily_task_detail(self):
         '''
         获取每日任务详情
         成功返回:
-            is_sign:签到?
-            is_share:分享?
+            is_sign: 签到?
+            is_share_news: 分享新闻?
+            is_share_comment: 分享评论?
             is_like:点赞?
         失败返回:
             False
@@ -2161,10 +2302,11 @@ class HeyboxClient():
             
             task_list = jsondict['result']['task_list'][0]['tasks']
             is_sign = BoolenString(task_list[0]['state'] == 'finish')
-            is_share = BoolenString(task_list[1]['state'] == 'finish')
-            is_like = BoolenString(task_list[2]['state'] == 'finish')
-            self.logger.debug(f"签到{is_sign}|分享{is_share}|点赞{is_like}")
-            return((is_sign,is_share,is_like))
+            is_share_news = BoolenString(task_list[1]['state'] == 'finish')
+            is_share_comment = BoolenString(task_list[2]['state'] == 'finish')
+            is_like = BoolenString(task_list[3]['state'] == 'finish')
+            self.logger.debug(f"签到{is_sign}|分享{is_share_news}|{is_share_comment}|点赞{is_like}")
+            return((is_sign,is_share_news,is_share_comment,is_like))
         except (JSONDecodeError,ClientException) as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
