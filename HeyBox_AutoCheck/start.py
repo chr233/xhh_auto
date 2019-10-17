@@ -53,7 +53,7 @@ def start():
                     if finish < total:
                         result = hbc.get_daily_task_detail() #读取任务详情
                         qd,fxxw,fxpl,dz = result if result else (False,False,False)
-                        logger.info(f'任务[签到{qd}|分享{fxxw} {fxpl}|点赞{dz}]')
+                        logger.info(f'任务[签到{qd}|分享{fxxw}{fxpl}|点赞{dz}]')
                         if not qd:
                             logger.info('签到')
                             hbc.sign()
@@ -105,13 +105,13 @@ def start():
 
                     result = hbc.get_daily_task_detail()
                     qd,fxxw,fxpl,dz = result if result else (0,0,0)
-                    logger.info(f'签到[{qd}]分享[{fxxw}][{fxpl}]点赞[{dz}]')
+                    logger.info(f'签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]')
 
                     data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
                                 f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
                                 f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                                 f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
-                                f'##### 签到[{qd}]分享[{fxxw}][{fxpl}]点赞[{dz}]\n'
+                                f'##### 签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]\n'
                                 f'##### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]')
 
             except AccountException as e:

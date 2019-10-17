@@ -14,7 +14,7 @@
     <InterpreterId>Global|PythonCore|3.7</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <Environment>DEBUG=T aRUE</Environment>
+    <Environment>DEBUG=TRUE</Environment>
     <IsWindowsApplication>False</IsWindowsApplication>
     <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
   </PropertyGroup>
