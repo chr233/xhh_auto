@@ -19,8 +19,6 @@ import traceback
 import os
 import sys
 #import termios
-
-
 def start():
     '''
     示例程序,可以根据需要自行修改
@@ -41,32 +39,39 @@ def start():
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
                 if is_debug_mode():               
                     #调试模式
-                    li=hbc.get_users_follower_list(13081382,30)
-                    print(li)
-
+                    #list1 = hbc.get_news_list(10)
+                    #id1,id2=list1[0]
+                    #list2=hbc.get_news_comments(id1,id2,10)
+                    #print(list2)
+                    hbc.share_comment()
                     if i == len(accountlist):
                         pass
                 else:
                     #正常逻辑
-                    result = hbc.get_daily_task_detail() #读取任务详情
-                    qd,fx,dz = result if result else (False,False,False)
-                    logger.info(f'任务[签到{qd}|分享{fx}|点赞{dz}]')
-                    if not qd:
-                        logger.info('签到')
-                        hbc.sign()
-                    if not dz or not fx:
-                        logger.info('获取新闻列表……')
-                        newslist = hbc.get_news_list(10)
-                        logger.info(f'获取[{len(newslist)}]条内容')
-                        if not fx:
-                            logger.info('浏览点赞分享新闻')
-                            hbc.batch_newslist_operate(newslist[:1],OperateType.ViewLikeShare)
-                        if not dz:  
-                            logger.info('浏览点赞新闻')
-                            hbc.batch_newslist_operate(newslist[1:],OperateType.ViewLike)
+                    result = hbc.get_daily_task_stats()#读取任务完成度
+                    finish,total = result if result else (0,0)
+                    if finish < total:
+                        result = hbc.get_daily_task_detail() #读取任务详情
+                        qd,fxxw,fxpl,dz = result if result else (False,False,False)
+                        logger.info(f'任务[签到{qd}|分享{fxxw} {fxpl}|点赞{dz}]')
+                        if not qd:
+                            logger.info('签到')
+                            hbc.sign()
+                        if not dz or not fxxw or not fxpl:
+                            logger.info('获取新闻列表……')
+                            newslist = hbc.get_news_list(10)
+                            logger.info(f'获取[{len(newslist)}]条内容')
+                            if not fxxw or not fxpl:
+                                logger.info('浏览点赞分享新闻')
+                                hbc.batch_newslist_operate(newslist[:1],OperateType.ViewLikeShare)
+                            if not dz:  
+                                logger.info('浏览点赞新闻')
+                                hbc.batch_newslist_operate(newslist[1:],OperateType.ViewLike)
+                        else:
+                            logger.info('已完成点赞和分享任务,跳过')
                     else:
-                        logger.info('已完成点赞和分享任务,跳过')
-                    
+                        logger.info('已完成每日任务,跳过')
+
                     logger.info('获取动态列表……')
                     postlist = hbc.get_follow_post(50)
                     logger.info(f'获取[{len(postlist)}]条内容')
@@ -99,15 +104,15 @@ def start():
                     finish,task = result if result else (-1,0)
 
                     result = hbc.get_daily_task_detail()
-                    qd,fx,dz = result if result else (0,0,0)
-                    logger.info(f'签到[{qd}]分享[{fx}]点赞[{dz}]')
+                    qd,fxxw,fxpl,dz = result if result else (0,0,0)
+                    logger.info(f'签到[{qd}]分享[{fxxw}][{fxpl}]点赞[{dz}]')
 
                     data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
                                 f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
                                 f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                                 f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
-                                f'##### 签到[{qd}]分享[{fx}]点赞[{dz}]\n'
-                                f'##### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]'                                )
+                                f'##### 签到[{qd}]分享[{fxxw}][{fxpl}]点赞[{dz}]\n'
+                                f'##### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]')
 
             except AccountException as e:
                 logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')
@@ -118,7 +123,7 @@ def start():
                 data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
                             f'#### 遇到了未知错误:[{e}]')
         logger.info('=' * 40)
-        logger.info(f'##### 脚本版本:[{get_script_version()}]')
+        logger.info(f'脚本版本:[{get_script_version()}]')
         data.append(f'##### {"=" * 35 }\n'
                     f'##### 脚本版本:[{get_script_version()}]')
 
@@ -156,21 +161,21 @@ def start():
         return(False)
 
 def cliwait():
-    if os.name=='nt':
+    if os.name == 'nt':
         os.system('pause')
-    elif os.name=='posix':
+    elif os.name == 'posix':
         input("按回车键退出……")
     else:
         input("按回车键退出……")
 
 if __name__ == '__main__':
-    wait=True
-    if len(sys.argv)>1:
+    wait = True
+    if len(sys.argv) > 1:
         for args in sys.argv[1:]:
-            if args.upper()=='-N':
-                wait=False
+            if args.upper() == '-N':
+                wait = False
                 break
-            elif args.upper()=='-H':
+            elif args.upper() == '-H':
                 print('参数说明: [忽略大小写]\n'
                        '-N : 结束时不要求输入,适合全自动运行\n'
                        '-H 显示帮助')

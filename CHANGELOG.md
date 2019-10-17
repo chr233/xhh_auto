@@ -39,3 +39,12 @@
 * 修复了直接运行脚本时读取配置文件的路径不正确的问题
 * 增加了运行结束后的提示,使用参数-N禁用
 * 修复了几个bug
+
+## 2019-10-18 v0.60
+* 新增get_news_comments函数，可以批量拉取文章评论
+* 新增share_comment函数，用于分享文章评论
+* 函数修改get_daily_task_detail，现在能正确检测4项每日任务是否完成
+* 函数更名share -> share_news，原函数将被删除
+* 函数更名get_follower_list -> get_follower_list_by_userid，原函数将被删除，新函数支持获取他人的粉丝列表
+* 函数更名get_following_list -> get_following_list_by_userid，原函数将被删除，新函数支持获取他人的关注列表
+* 现在可以完成小黑盒新的每日任务了(分享评论)，每日经验+10
