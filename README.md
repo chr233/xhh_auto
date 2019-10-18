@@ -45,13 +45,8 @@ settings.json:
 ```
 
 ## 凭据获取方法
-1. 抓包环境要求
- * 安卓版本在6.0以下，可以使用最新版小黑盒，可以使用`HttpCanary`直接抓包(需要安装SSL证书)
- * 安卓版本大于6.0，使用小黑盒`1.2.6x`的版本用`HttpCanary`可以直接抓包，最新版不信任用户证书抓不了包
- * 安卓版本大于6.0，也可以使用`HttpCanary`和它自带的平行空间抓包（把小黑盒安装进平行空间，再对平行空间抓包）
- * 手机已root，可以使用最新版小黑盒，安装`xposed`+`justTrust`插件或者[手动将用户证书偷渡成系统证书](https://blog.chrxw.com/archives/2019/07/08/270.html)，然后使用任意抓包软件抓包即可
-2. 凭据位置
- 抓取小黑盒请求后，pkey位于cookies中，heybox_id和imei在web表单中，请填入accounts.json即可使用本脚本。
+* **[图文教程](https://blog.chrxw.com/archives/2019/10/19/390.html)**
+* 抓取小黑盒数据后，填入accounts.json即可使用本脚本。
 
 ## TODO LIST
 - [ ] 简单好用的账户管理器
