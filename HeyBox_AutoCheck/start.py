@@ -43,7 +43,8 @@ def start():
                     #id1,id2=list1[0]
                     #list2=hbc.get_news_comments(id1,id2,10)
                     #print(list2)
-                    hbc.share_comment()
+                    hbc.get_store_user_info()
+                    #hbc.share_comment()
                     if i == len(accountlist):
                         pass
                 else:

@@ -41,6 +41,7 @@ class URLS():
     GET_USER_FOLLOW_POST = 'https://api.xiaoheihe.cn/bbs/app/profile/events'#拉取用户动态
     GET_USER_POST = 'https://api.xiaoheihe.cn/bbs/app/profile/user/link/list'#拉取用户发帖
     GET_USER_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/profile/news/comment/list'#拉取用户评论
+    GET_STORE_GAME_LIST='https://api.xiaoheihe.cn/mall/list/'#获取商店的游戏列表
 
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
