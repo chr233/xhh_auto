@@ -47,6 +47,7 @@ def __init_settings() -> bool:
                 'UpdateCheck': bool(jsondict.get("UpdateCheck", True)),
                 'EnableFtqq':bool(jsondict.get("EnableFtqq", True)),
                 'FtqqSKEY': jsondict.get("FtqqSKEY", None),
+                'DefaultArgv':jsondict.get("DefaultArgv",None)
             }
         except json.decoder.JSONDecodeError:
             print('[WARNING][basic][settings.json]格式有误,正在生成默认配置……')
@@ -56,6 +57,7 @@ def __init_settings() -> bool:
                 "UpdateCheck": True,
                 "EnableFtqq": True,
                 "FtqqSKEY": None,
+                "DefaultArgv":None
             }
         except FileNotFoundError:
             print('[WARNING][basic][settings.json]不存在,正在生成默认配置……')
@@ -64,7 +66,8 @@ def __init_settings() -> bool:
                 "Debug": False,
                 "UpdateCheck": True,
                 "EnableFtqq": True,
-                "FtqqSKEY": None
+                "FtqqSKEY": None,
+                "DefaultArgv":None
             }
 
         try:
