@@ -19,7 +19,7 @@ import traceback
 import os
 import sys
 #import termios
-def start():
+def start(fastmode:bool=True,quitemode:bool=False):
     '''
     示例程序,可以根据需要自行修改
     '''
@@ -37,13 +37,13 @@ def start():
                 logger.info('=' * 40)
                 logger.info(f'账号[{i}/{len(accountlist)}]')
                 hbc = HeyboxClient(*account) #创建小黑盒客户端实例
-                if is_debug_mode():               
+                if not is_debug_mode():               
                     #调试模式
                     #list1 = hbc.get_news_list(10)
                     #id1,id2=list1[0]
                     #list2=hbc.get_news_comments(id1,id2,10)
                     #print(list2)
-                    hbc.get_store_user_info()
+                    
                     #hbc.share_comment()
                     if i == len(accountlist):
                         pass
@@ -74,7 +74,7 @@ def start():
                         logger.info('已完成每日任务,跳过')
 
                     logger.info('获取动态列表……')
-                    postlist = hbc.get_follow_post(50)
+                    postlist = hbc.get_follow_post_list(50)
                     logger.info(f'获取[{len(postlist)}]条内容')
                     if postlist:
                         logger.info('点赞动态……')
@@ -94,7 +94,8 @@ def start():
                     logger.info('生成统计数据')
                     result = hbc.get_my_data()
                     uname,coin,level,sign = result if result else ('读取信息出错',0,(0,0,0),0)
-                    logger.info(f'昵称[{uname}]盒币[{coin}]签到[{sign}]天')
+                    logger.info(f'昵称[{uname}]')
+                    logger.info(f'盒币[{coin}]签到[{sign}]天')
                     logger.info(f'等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]')
 
                     result = hbc.get_user_profile()
@@ -109,7 +110,8 @@ def start():
                     logger.info(f'签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]')
 
                     data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
-                                f'#### 昵称[{uname}]盒币[{coin}]签到[{sign}]天\n'
+                                f'#### 昵称[{uname}]\n'
+                                f'##### 盒币[{coin}]签到[{sign}]天\n'
                                 f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                                 f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
                                 f'##### 签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]\n'
@@ -171,21 +173,32 @@ def cliwait():
 
 if __name__ == '__main__':
     wait = True
+    fastmode=True
+    
+    quitemode=True
     if len(sys.argv) > 1:
+        hasVilidArgvs=False
         for args in sys.argv[1:]:
             if args.upper() == '-N':
                 wait = False
-                break
+                hasVilidArgvs=True
+            elif args.upper()=='-F':
+                fastmode=True
+                hasVilidArgvs=True
+            elif args.upper()=='-Q':
+                quitemode=True
+                hasVilidArgvs=True
             elif args.upper() == '-H':
                 print('参数说明: [忽略大小写]\n'
-                       '-N : 结束时不要求输入,适合全自动运行\n'
+                       '-N 结束时不要求输入,适合全自动运行\n'
                        '-H 显示帮助')
-            else: 
-                print('\n[ERROR][main]未知的参数,使用-H显示帮助\n')
+                hasVilidArgvs=True
+        if not hashasVilidArgvs: 
+            print('[ERROR][main]未知的参数,使用-H显示帮助\n')
 
     
     try:
-        start()
+        start(fastmode)
     except KeyboardInterrupt as e:
         print(f'[ERROR][main]被用户终止')
     except Exception as e:

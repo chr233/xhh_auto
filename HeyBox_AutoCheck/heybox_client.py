@@ -15,6 +15,7 @@ import hashlib
 from bs4 import BeautifulSoup
 import urllib
 import traceback
+import random
 from heybox_basic import get_logger
 from heybox_static import *
 from heybox_errors import *
@@ -23,7 +24,7 @@ from heybox_errors import *
 HEYBOX_VERSION = '1.2.88'
 
 #遇到空结果继续请求的次数
-EMPTY_RETRY_TIMES = 0
+EMPTY_RETRY_TIMES = 10
 
 #遇到错误继续请求的次数
 ERROR_RETRY_TIMES = 0
@@ -88,7 +89,7 @@ class HeyboxClient():
         self.batch_newslist_operate(newslist[:1],OperateType.ViewLikeShare)
         self.batch_newslist_operate(newslist[1:],OperateType.ViewLike)
 
-        postlist = self.get_follow_post(100)
+        postlist = self.get_follow_post_list(100)
         self.batch_like_followposts(postlist)
 
         finish,total = self.get_daily_task_stats()
@@ -100,7 +101,7 @@ class HeyboxClient():
         返回:
             True
         '''
-        postlist = self.get_follow_post(60,True)
+        postlist = self.get_follow_post_list(60,True)
         self.batch_like_followposts(postlist)
         return(True)
 
@@ -169,13 +170,14 @@ class HeyboxClient():
             self.logger.error(f'清理单向关注遇到错误[{e}]')
             return(False)
 
-    def batch_newslist_operate(self,idsetlist:list,operatetype:int=1,indexstart:int=1):
+    def batch_newslist_operate(self,idsetlist:list,operatetype:int=1,indexstart:int=1,fastmode:bool=True):
         '''
         批量操作文章列表
         参数:
             idsetlist:[(linkid,newsid),…]
             operatetype:操作码  操作码参见OperateType,1:浏览,2:浏览分享,3:浏览点赞,4:浏览点赞分享
             indexstart:初始索引
+            fastmode:快速模式,为True时不解析文章内容，直接返回True
         成功返回:
             True
         失败返回:
@@ -202,9 +204,9 @@ class HeyboxClient():
                     if view:
                         has_viedo,is_liked = self.get_news_links(linkid,newsid,index)
                         if not has_viedo:
-                            self.get_news_body(newsid,index)
+                            self.get_news_body(newsid,index,fastmode)
                         else:
-                            self.get_video_title(linkid,newsid,index)
+                            self.get_video_title(linkid,newsid,index,fastmode)
                     if like and not is_liked:
                         self.like_news(linkid,newsid,index)
                     if share:
@@ -476,6 +478,18 @@ class HeyboxClient():
     
     def get_follow_post(self,value:int=30,ignoreliked:bool=True):
         '''
+        拉取动态列表【不推荐】
+        参数:
+            value:要拉取的数量
+            ignoreliked:忽略已点赞的动态?
+        成功返回:
+            eventslist:[(linkid,posttype,已点赞?),……] posttype释义参见:FollowPostType
+        '''
+        self.logger.warning('get_follow_post已经更名为get_follow_post_list，请使用新的名字')
+        return(self.get_follow_post_list(value=30,ignoreliked=True))
+
+    def get_follow_post_list(self,value:int=30,ignoreliked:bool=True):
+        '''
         拉取动态列表
         参数:
             value:要拉取的数量
@@ -483,7 +497,7 @@ class HeyboxClient():
         成功返回:
             eventslist:[(linkid,posttype,已点赞?),……] posttype释义参见:FollowPostType
         '''
-        def _get_follow_post(offset:int=0):
+        def _get_follow_post(offset:int=0,lastval:float=0):
             '''     
             拉取动态列表
             参数:
@@ -496,9 +510,13 @@ class HeyboxClient():
             params = {
                 'offset': offset,
                 'limit': 30,
+                'lastval':f'{lastval}+{random.randint(29900000,30900000)}',
                 'filters': 'post_link|follow_game|game_purchase|game_achieve|game_comment|roll_room',
                 **self._params
             }
+            if not lastval:
+                params.pop('lastval')
+
             resp = self.Session.get(url=url,params=params,headers=self._headers,cookies=self._cookies)
             jsondict = resp.json()
             self.__check_status(jsondict)
@@ -510,6 +528,7 @@ class HeyboxClient():
                     is_liked = BoolenString(link['is_award_link'] == 1)
                     userid_ = int(moment['user']['userid'])
                     posttype = moment['content_type']
+                    timestamp = moment['timestamp']
                     if posttype == 'post_link':#发帖
                         posttype = FollowPostType.PostLink
                     elif posttype == 'follow_game':#关注游戏
@@ -533,15 +552,16 @@ class HeyboxClient():
                     self.logger.debug(f'提取动态列表出错[{moments}]')
                     continue
             self.logger.debug(f'拉取了[{len(postlist)}]条动态')
-            return(postlist)
+            return(postlist,timestamp)
         #==========================================
         eventslist = []
         i = 1
         errorcount = 0
         emptycount = 0
+        timestamp = 0
         while True:
             try:
-                templist = _get_follow_post((i - 1) * 30)
+                templist,timestamp = _get_follow_post((i - 1) * 30,timestamp)
                 if templist:
                     self.logger.debug(f'拉取第[{i}]批动态')
                     eventslist.extend(templist)
@@ -2149,13 +2169,14 @@ class HeyboxClient():
             self.logger.debug('答题出错')
             return(False)
 
-    
-    def get_news_body(self,newsid:int,index:int=1):
+    #NEW
+    def get_news_body(self,newsid:int,index:int=1,fastmode:bool=False):
         '''
         拉取文章正文内容
         参数:
             newsid:新闻id
             index:索引
+            fastmode:快速模式,为True时不解析文章内容，直接返回True
         成功返回:
             文章正文
         失败返回:
@@ -2193,26 +2214,31 @@ class HeyboxClient():
             params['al'] = 'set_top'
         resp = self.Session.get(url=url,params=params,headers=headers,cookies=cookies)
         try:
-            html = resp.text
-            soup = BeautifulSoup(html,'lxml')
-            wz = soup.find(name='div',attrs={'class':'article-content','id':'post-content'}).get_text()
-            if wz:
-                self.logger.debug(f'拉取完成，共[{len(wz)}]字')
+            if not fastmode:
+                html = resp.text
+                soup = BeautifulSoup(html,'lxml')
+                wz = soup.find(name='div',attrs={'class':'article-content','id':'post-content'}).get_text()
+                if wz:
+                    self.logger.debug(f'拉取完成，共[{len(wz)}]字')
+                else:
+                    self.logger.error('拉取内容为空，可能遇到错误')
             else:
-                self.logger.error('拉取内容为空，可能遇到错误')
+                self.logger.debug(f'快速模式')
+                wz = True
             return(wz) 
         except (JSONDecodeError,ValueError,AttributeError) as e:
             self.logger.error(f'拉取文章出错[{e}]')
             return(False)    
 
-    
-    def get_video_title(self,linkid:int,newsid:int,index:int=1):
+    #NEW
+    def get_video_title(self,linkid:int,newsid:int,index:int=1,fastmode:bool=False):
         '''
         拉取视频标题
         参数:
             linkid:链接id
             newsid:新闻id
             index:索引
+            fastmode:快速模式,为True时不解析文章内容，直接返回True
         成功返回:
             视频标题
         失败返回:
@@ -2251,10 +2277,13 @@ class HeyboxClient():
             params['al'] = 'set_top'
         resp = self.Session.get(url=url,params=params,headers=headers,cookies=cookies)
         try:
-            html = resp.text
-            soup = BeautifulSoup(html,'lxml')
-            wz = soup.title
-            self.logger.debug('**暂不支持视频文章的处理**')
+            if not fastmode:
+                html = resp.text
+                soup = BeautifulSoup(html,'lxml')
+                wz = soup.title
+                #self.logger.debug('**暂不支持视频文章的处理**')
+            else:
+                wz = True
             return(wz)
         except (JSONDecodeError,ValueError,AttributeError) as e:
             self.logger.error(f'拉取视频信息出错[{e}]')
