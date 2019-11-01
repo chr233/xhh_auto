@@ -13,7 +13,7 @@ import logging
 import requests
 
 #脚本版本
-SCRIPT_VERSION = 'v0.60'
+SCRIPT_VERSION = 'v0.50'
 
 initialized = False
 settings = {}
@@ -47,7 +47,6 @@ def __init_settings() -> bool:
                 'UpdateCheck': bool(jsondict.get("UpdateCheck", True)),
                 'EnableFtqq':bool(jsondict.get("EnableFtqq", True)),
                 'FtqqSKEY': jsondict.get("FtqqSKEY", None),
-                'DefaultArgv':jsondict.get("DefaultArgv",None)
             }
         except json.decoder.JSONDecodeError:
             print('[WARNING][basic][settings.json]格式有误,正在生成默认配置……')
@@ -57,7 +56,6 @@ def __init_settings() -> bool:
                 "UpdateCheck": True,
                 "EnableFtqq": True,
                 "FtqqSKEY": None,
-                "DefaultArgv":None
             }
         except FileNotFoundError:
             print('[WARNING][basic][settings.json]不存在,正在生成默认配置……')
@@ -66,8 +64,7 @@ def __init_settings() -> bool:
                 "Debug": False,
                 "UpdateCheck": True,
                 "EnableFtqq": True,
-                "FtqqSKEY": None,
-                "DefaultArgv":None
+                "FtqqSKEY": None
             }
 
         try:
@@ -98,26 +95,6 @@ def is_debug_mode() -> bool:
     if not initialized:
         __init_settings()
     return(bool(settings.get('Debug',False)))
-
-def is_fast_mode() -> bool:
-    '''
-    是否开启快速模式
-    返回:
-        快速模式?
-    '''
-    if not initialized:
-        __init_settings()
-    return(bool(settings.get('Debug',False)))
-
-def is_quite_mode() -> bool:
-    '''
-    是否处于静默模式
-    返回:
-        静默模式?
-    '''
-    if not initialized:
-        __init_settings()
-    return(bool(settings.get('Quite',False)))
 
 
 def get_script_version() -> str:
@@ -267,7 +244,6 @@ def load_accounts(filepath:str=''):
             try:
                 pkey = item['pkey']
                 imei = item['imei']
-                fans = item.get('fans',0)
                 heybox_id = int(item['heybox_id'])
                 vaccountlist.append((heybox_id,imei,pkey,i))
             except (KeyError,ValueError) :
