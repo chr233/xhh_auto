@@ -155,7 +155,7 @@ def start(fastmode:bool=True,quitemode:bool=False):
         elif result == True:
             logger.info(f'脚本已是最新')
         else:
-            logger.waring(f'检查脚本更新出错')
+            logger.warning(f'检查脚本更新出错')
         logger.info('脚本执行完毕')
         return(True)
     else:
