@@ -1907,7 +1907,9 @@ class HeyboxClient():
             self.logger.error(f'发送私信出错[{e}]')
             return(False)
 
-    
+    def get_store_list(self,sort_type:int):
+        pass
+
     def get_game_detail(self,appid:int):
         '''
         读取游戏信息

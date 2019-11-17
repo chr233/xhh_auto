@@ -43,6 +43,7 @@ class URLS():
     GET_USER_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/profile/news/comment/list'#拉取用户评论
     GET_STORE_GAME_LIST='https://api.xiaoheihe.cn/mall/list/'#获取商店的游戏列表
 
+
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'#一般点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'#评测点赞
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'#评论点赞
@@ -55,6 +56,14 @@ class URLS():
     UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'#修改个人资料
     SEND_MESSAGE = 'https://api.xiaoheihe.cn/chat/send_message/'#发送私信
     pass
+
+class SoreType():
+    '''
+    商店列表排序方式
+    '''
+    NoneSort=0 # 不排序
+    Price=1 #价格排序
+
 
 class RecTagType():
     '''
