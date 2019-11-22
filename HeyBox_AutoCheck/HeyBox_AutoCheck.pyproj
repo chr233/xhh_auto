@@ -30,6 +30,7 @@
     <Compile Include="heybox_basic.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="heybox_errors.py" />
     <Compile Include="heybox_static.py">
       <SubType>Code</SubType>
     </Compile>

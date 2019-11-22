@@ -105,20 +105,32 @@ class HeyboxClient():
         self.batch_like_followposts(postlist)
         return(True)
 
-    def tools_follow_followers(self) -> bool:
+    def tools_follow_followers(self,fastmode:bool=True) -> bool:
         '''
         关注关注你的人
+        参数：
+            快速模式:为True时只在第一页粉丝页有单向粉时才会完整扫描粉丝列表
         成功返回:
             True
         失败返回:
             False
         '''
         try:
+            if fastmode:
+                fanlist = self.get_follower_list(30)
+                fliteredlist = self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
+                if not fliteredlist:
+                    self.logger.info('没有新粉丝')
+                    return(True)
+
             follow,fan,adward = self.get_user_profile(self.heybox_id)
             fanlist = self.get_follower_list(fan)
             fliteredlist = self.filte_userlist(fanlist,{'RelationType':RelationType.HeFollowedMe})
             if fliteredlist:
                 self.batch_userlist_operate(fliteredlist,OperateType.FollowUser)
+                self.logger.info(f'尝试关注了[{len(fliteredlist)}]个粉丝')
+            else:
+                self.logger.info('没有新粉丝')
             return(True)
         except FollowLimitedError as e:
             self.logger.error(f'当日关注次数用尽或者关注数达到上限,停止操作[{e}]')
@@ -865,7 +877,7 @@ class HeyboxClient():
                     sortedlist.sort(key=eventslist.index)
                     eventslist = sortedlist
                 else:
-                    self.logger.error('拉取完毕，动态列表为空，可能遇到错误')
+                    self.logger.debug('拉取完毕，动态列表为空，可能遇到错误')
                     emptycount+=1
                     if emptycount > EMPTY_RETRY_TIMES:
                         self.logger.debug('空结果达到上限,停止操作')
@@ -953,7 +965,7 @@ class HeyboxClient():
                     sortedlist.sort(key=eventslist.index)
                     eventslist = sortedlist
                 else:
-                    self.logger.error('拉取完毕，发帖列表为空，可能遇到错误')
+                    self.logger.debug('拉取完毕，发帖列表为空，可能遇到错误')
                     emptycount+=1
                     if emptycount > EMPTY_RETRY_TIMES:
                         self.logger.debug('空结果达到上限,停止操作')
@@ -1036,7 +1048,7 @@ class HeyboxClient():
                     sortedlist.sort(key=commentslist.index)
                     commentslist = sortedlist
                 else:
-                    self.logger.error('拉取完毕，评论列表为空，可能遇到错误')
+                    self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
                     emptycount+=1
                     if emptycount > EMPTY_RETRY_TIMES:
                         self.logger.debug('空结果达到上限,停止操作')
@@ -1396,7 +1408,7 @@ class HeyboxClient():
                     sortedlist.sort(key=followinglist.index)
                     followinglist = sortedlist
                 else:
-                    self.logger.error('拉取完毕，关注列表为空，可能遇到错误')
+                    self.logger.debug('拉取完毕，关注列表为空，可能遇到错误')
                     emptycount+=1
                     if emptycount > EMPTY_RETRY_TIMES:
                         self.logger.debug('空结果达到上限,停止操作')
@@ -2223,7 +2235,7 @@ class HeyboxClient():
                 if wz:
                     self.logger.debug(f'拉取完成，共[{len(wz)}]字')
                 else:
-                    self.logger.error('拉取内容为空，可能遇到错误')
+                    self.logger.debug('拉取内容为空，可能遇到错误')
             else:
                 self.logger.debug(f'快速模式')
                 wz = True
@@ -2625,6 +2637,10 @@ class HeyboxClient():
                     raise TokenError
                 elif msg == '':
                     raise ShareError
+                elif msg=='出现了一些问题，请稍后再试':
+                    self.logger.error(f'返回值:{jsondict}')
+                    self.logger.error('出现这个错误的原因未知，请过一会再重新运行脚本')
+                    raise UnknownError
                 self.logger.error(f'未知的返回值[{msg}]')
                 self.logger.error('请将以下内容发送到chr@chrxw.com')
                 self.logger.error(f'{jsondict}')

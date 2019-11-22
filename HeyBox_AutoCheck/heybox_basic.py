@@ -79,7 +79,7 @@ def __init_settings() -> bool:
 
         debugmode = settings.get('Debug') or str(os.environ.get('DEBUG','FALSE')).upper() == 'TRUE'
         settings['Debug'] = debugmode
-        log_level = logging.DEBUG if debugmode else logging.INFO
+        log_level = logging.INFO if debugmode else logging.INFO
         log_format = "[%(levelname)s][%(name)s]%(message)s"
         logging.basicConfig(level=log_level,format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
         initialized = True
