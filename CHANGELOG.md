@@ -50,7 +50,7 @@
 * 函数更名get_following_list -> get_following_list_by_userid，原函数将被删除，新函数支持获取他人的关注列表
 * 现在可以完成小黑盒新的每日任务了(分享评论)，每日经验+10
 
-## 2019-11-23 v0.69
+## 2019-11-23 v0.70
 * 新增get_user_comment_list函数，可以拉取用户评论，**暂不能判断是否已赞**
 * 新增batch_like_commentlist函数，可以批量点赞评论列表
 * 默认不解析HTML，手机端执行不会因为缺少lxml报错
