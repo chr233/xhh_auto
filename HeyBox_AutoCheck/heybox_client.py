@@ -2677,5 +2677,6 @@ class HeyboxClient():
 if __name__ == '__main__':
     get_logger('client').error('本模块不支持直接运行,请导入本模块使用')
 else:
-    HeyboxClient(0,'','','client').check_heybox_version()
+    #HeyboxClient(0,'','','client').check_heybox_version()
+    pass
                  
