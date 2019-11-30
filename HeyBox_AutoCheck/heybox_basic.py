@@ -78,8 +78,10 @@ def __init_settings() -> bool:
             print('[ERROR][basic][settings.json]保存失败,请检查是否拥有目录写权限')                
 
         debugmode = settings.get('Debug') or str(os.environ.get('DEBUG','FALSE')).upper() == 'TRUE'
+        if debugmode:
+            print('[DEBUG][basic]**调试模式开启**')
         settings['Debug'] = debugmode
-        log_level = logging.INFO if debugmode else logging.INFO
+        log_level = logging.DEBUG if debugmode else logging.INFO
         log_format = "[%(levelname)s][%(name)s]%(message)s"
         logging.basicConfig(level=log_level,format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
         initialized = True
