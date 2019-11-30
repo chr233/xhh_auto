@@ -540,7 +540,7 @@ class HeyboxClient():
                     is_liked = BoolenString(link['is_award_link'] == 1)
                     userid_ = int(moment['user']['userid'])
                     posttype = moment['content_type']
-                    timestamp = moment['timestamp']
+                    #timestamp = moment['timestamp']
                     if posttype == 'post_link':#发帖
                         posttype = FollowPostType.PostLink
                     elif posttype == 'follow_game':#关注游戏
@@ -564,16 +564,16 @@ class HeyboxClient():
                     self.logger.debug(f'提取动态列表出错[{moments}]')
                     continue
             self.logger.debug(f'拉取了[{len(postlist)}]条动态')
-            return(postlist,timestamp)
+            return(postlist)
         #==========================================
         eventslist = []
         i = 1
         errorcount = 0
         emptycount = 0
-        timestamp = 0
+        lastcount = 0
         while True:
             try:
-                templist,timestamp = _get_follow_post((i - 1) * 30,timestamp)
+                templist = _get_follow_post((i - 1) * 30)
                 if templist:
                     self.logger.debug(f'拉取第[{i}]批动态')
                     eventslist.extend(templist)
@@ -588,6 +588,11 @@ class HeyboxClient():
                         break
                 if len(eventslist) >= value :
                     break
+                if len(eventslist) == lastcount:
+                    self.logger.debug('没有更多动态,停止操作')
+                    break
+                else:
+                   lastcount=len(eventslist) 
             except (JSONDecodeError,ClientException) as e:
                 self.logger.debug(f'拉取动态列表出错[{e}]')
                 errorcount+=1
@@ -1543,6 +1548,7 @@ class HeyboxClient():
             return(True)
         except (JSONDecodeError,ClientException,KeyError,NameError) as e:
             self.logger.error(f'动态点赞出错[{e}]')
+            raise e
             return(False)
     
     
@@ -2637,7 +2643,7 @@ class HeyboxClient():
                     raise TokenError
                 elif msg == '':
                     raise ShareError
-                elif msg=='出现了一些问题，请稍后再试':
+                elif msg == '出现了一些问题，请稍后再试':
                     self.logger.error(f'返回值:{jsondict}')
                     self.logger.error('出现这个错误的原因未知，请过一会再重新运行脚本')
                     raise UnknownError

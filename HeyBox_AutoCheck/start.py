@@ -206,8 +206,9 @@ if __name__ == '__main__':
         start(fastmode=fastmode,quitemode=quitemode)
     except KeyboardInterrupt as e:
         print(f'[ERROR][main]被用户终止')
-    #except Exception as e:
+    except Exception as e:
         print(f'[ERROR][main]哎呀,又出错了[{e}]')
+        print(f'[ERROR][main]{traceback.print_stack()}')
     finally:
         if wait:
             cliwait()
