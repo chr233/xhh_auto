@@ -1,4 +1,4 @@
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/3f0ddf7f4b9546a68a8f0105e249a96f)](https://www.codacy.com/manual/chr233/xhh_auto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chr233/xhh_auto&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/dfb3196838bf4431a8914736f103afeb)](https://www.codacy.com/manual/chr233/xhh_auto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chr233/xhh_auto&amp;utm_campaign=Badge_Grade)
 
 
 # 旧版已失效，新版开发中
@@ -9,10 +9,6 @@
 
 ### 本项目仅供学习使用，并遵循GPL v3.0协议
 
-## **小黑盒使用JNI加密了Hkey的计算方法，本脚本暂未适配**
-## 如果脚本提示"[参数错误]"，请将`heybox_client.py`最后一行改成`pass`临时解决
-
-#### 当前最新版本`v0.69`
 #### 欢迎加入官方群: `916945024`
 
 ## 安装方法
