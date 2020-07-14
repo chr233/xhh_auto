@@ -2104,6 +2104,31 @@ class HeyboxClient():
         resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
 
 
+
+    def get_store_game_list(self):
+        '''
+        获取
+        '''
+        raise NotImplemented
+
+        url = URLS.GET_STORE_GAME_LIST
+        self.__flush_params()
+        params = {
+            'src': '',
+            'newsid': newsid,
+            'rec_mark': 'timeline',
+            'pos': index + 1,
+            'index': index,
+            'page_tab': 1,
+            'al': 'set_top',
+            'from_recommend_list': 3,
+            **self._params
+        }
+
+
+        resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
+
+
     def do_communitu_surver(self):
         '''
         完成社区答题
