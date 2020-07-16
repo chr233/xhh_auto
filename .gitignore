@@ -8,7 +8,6 @@
 *.sln.docstates
 accounts.json
 settings.json
-config.json
 
 
 
@@ -265,4 +264,3 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-test.py
