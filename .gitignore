@@ -8,7 +8,7 @@
 *.sln.docstates
 accounts.json
 settings.json
-
+config.toml
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
