@@ -23,8 +23,6 @@ def __init_settings() -> bool:
             False
         '''
 
-    global initialized
-    global settings
 
     filepath = f'{get_script_path()}{os.sep}settings.json'
 
