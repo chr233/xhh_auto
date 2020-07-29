@@ -44,11 +44,11 @@ def start(fastmode:bool=True,quitemode:bool=False):
                     #continue
 
                 #正常逻辑
-                result = hbc.get_daily_task_stats()#读取任务完成度
-                finish,total = result if result else (0,0)
-                if finish < total:
+                # result = hbc.get_daily_task_stats()#读取任务完成度
+                # finish,total = result if result else (0,0)
+                if True:#finish < total:
                     result = hbc.get_daily_task_detail() #读取任务详情
-                    qd,fxxw,fxpl,dz = result if result else (False,False,False)
+                    qd,fxxw,fxpl,dz = result if result else (False,False,False,False)
                     logger.info(f'任务[签到{qd}|分享{fxxw}{fxpl}|点赞{dz}]')
                     if not qd:
                         logger.info('签到')
@@ -107,11 +107,11 @@ def start(fastmode:bool=True,quitemode:bool=False):
                 follow,fan,awd = result if result else (0,0,0)
                 logger.info(f'关注[{follow}]粉丝[{fan}]获赞[{awd}]')
 
-                result = hbc.get_daily_task_stats()
-                finish,task = result if result else (-1,0)
-
                 result = hbc.get_daily_task_detail()
                 qd,fxxw,fxpl,dz = result if result else (0,0,0)
+                
+                finish = qd and fxxw and fxpl and dz
+
                 logger.info(f'签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]')
 
                 data.append(f'##### ==[{str(i).rjust(strl,"0")}/{len(accountlist)}]{"="*(35-2*strl)}\n'
@@ -120,7 +120,7 @@ def start(fastmode:bool=True,quitemode:bool=False):
                             f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                             f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
                             f'##### 签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]\n'
-                            f'##### 状态[{"全部完成" if finish == task else "**有任务未完成**"}]')
+                            f'##### 状态[{"全部完成" if finish else "**有任务未完成**"}]')
 
             except AccountException as e:
                 logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')
@@ -206,9 +206,9 @@ if __name__ == '__main__':
         start(fastmode=fastmode,quitemode=quitemode)
     except KeyboardInterrupt as e:
         print(f'[ERROR][main]被用户终止')
-    except Exception as e:
+    except IOError as e:
         print(f'[ERROR][main]哎呀,又出错了[{e}]')
         print(f'[ERROR][main]{traceback.print_stack()}')
     finally:
-        if wait:
-            cliwait()
+        cliwait()
+        

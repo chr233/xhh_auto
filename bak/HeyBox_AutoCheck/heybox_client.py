@@ -19,9 +19,11 @@ import random
 from heybox_basic import get_logger
 from heybox_static import *
 from heybox_errors import *
+from urllib.parse import urlparse
+
 
 #小黑盒版本号,会自动设置为最新版
-HEYBOX_VERSION = '1.2.88'
+HEYBOX_VERSION = '1.3.118'
 
 #遇到空结果继续请求的次数
 EMPTY_RETRY_TIMES = 0
@@ -69,10 +71,12 @@ class HeyboxClient():
             'heybox_id': heybox_id,
             'imei': imei,
             'os_type': 'Android',
-            'os_version': '8.1.0',
+            'os_version': '9',
             'version': HEYBOX_VERSION,
             '_time': '',
-            'hkey': ''
+            'hkey': '',
+            'channel':'heybox_yingyongbao'
+
         }
         self.heybox_id = heybox_id
         self.logger = get_logger(str(tag))
@@ -222,7 +226,7 @@ class HeyboxClient():
                     if like and not is_liked:
                         self.like_news(linkid,newsid,index)
                     if share:
-                        self.share_news(newsid,index)
+                        self.share_news(linkid,index)
                         self.share_comment()
                     operatecount+=1
                 except LikeLimitedError as e:
@@ -337,7 +341,8 @@ class HeyboxClient():
             data = {
                 'following_id': userid,
             }
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)        
             resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
             jsondict = resp.json()
             self.__check_status(jsondict)
@@ -362,7 +367,8 @@ class HeyboxClient():
             data = {
                 'following_id': userid,
             }
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
             jsondict = resp.json()
             self.__check_status(jsondict)
@@ -419,7 +425,8 @@ class HeyboxClient():
                 newslist:[(linkid,newsid),……]
             '''
             url = URLS.GET_NEWS_LIST
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'tag': -1,
                 'offset': offset,
@@ -518,7 +525,8 @@ class HeyboxClient():
                 postlist:[(linkid,posttype,已点赞?),……]  posttype释义参见FollowPostType
             '''
             url = URLS.GET_SUBSCRIBED_EVENTS
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'offset': offset,
                 'limit': 30,
@@ -624,7 +632,8 @@ class HeyboxClient():
         '''
         def _get_news_comments(page:int=1):
             url = URLS.GET_LINK_TREE
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'h_src':'LTE=',
                 'link_id':linkid,
@@ -719,7 +728,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_LINK_TREE
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'h_src':'LTE=',
             'link_id':linkid,
@@ -768,7 +778,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_LINK_TREE
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'h_src':'LTE=',
             'link_id':linkid,
@@ -826,7 +837,8 @@ class HeyboxClient():
                 userlist:[(id,类型,已点赞?)……] 类型释义参见:FollowPostType
             '''
             url = URLS.GET_USER_FOLLOW_POST
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'userid':userid,
                 'offset':offset,
@@ -928,7 +940,8 @@ class HeyboxClient():
                 userlist:[(id,已点赞?)……]
             '''
             url = URLS.GET_USER_POST
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'userid':userid,
                 'offset':offset,
@@ -1013,7 +1026,8 @@ class HeyboxClient():
                 userlist:[(id,类型)……] 类型释义参见:CommentType
             '''
             url = URLS.GET_USER_COMMENT
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'userid':userid,
                 'offset':offset,
@@ -1096,7 +1110,8 @@ class HeyboxClient():
                 rollroomlist:[(link_id,room_id,人数,价格),……]
             '''
             url = URLS.GET_ACTIVE_ROLL_ROOM
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'filter_passwd':'1',
                 'sort_types':'price',
@@ -1180,8 +1195,8 @@ class HeyboxClient():
             成功返回:
                 userlist:[(id,关系,类型)……] 关系释义参见:RelationType
             '''
-            url = URLS.GET_RECOMMEND_FOLLOWING
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'offset':offset,
                 'limit':'30',
@@ -1280,7 +1295,8 @@ class HeyboxClient():
                 userlist:[(id,关系)……] 关系释义参见:RelationType
             '''
             url = URLS.GET_FOLLOWER_LIST
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'userid':user_id,
                 'offset':offset,
@@ -1374,7 +1390,8 @@ class HeyboxClient():
                 userlist:[(id,关系)……] 关系释义参见:RelationType
             '''
             url = URLS.GET_FOLLOWING_LIST
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
                 'userid':self.heybox_id,
                 'offset':offset,
@@ -1448,7 +1465,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_ADS_INFO
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
 
         try:
@@ -1483,7 +1501,8 @@ class HeyboxClient():
             'link_id': linkid,
             'award_type': 1
         }
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'h_src': 'LTE=',
             'newsid': newsid,
@@ -1535,7 +1554,8 @@ class HeyboxClient():
         else:
             url = URLS.LIKE_LINK
             data['award_type'] = 1
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
 
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
         try:
@@ -1576,7 +1596,8 @@ class HeyboxClient():
             'comment_id':linkid,
             'support_type': 1,
         }
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
 
         resp = self.Session.post(url=url,data=data,params=self._params,headers=headers,cookies=self._cookies)
         try:
@@ -1742,7 +1763,7 @@ class HeyboxClient():
         self.logger.warning('该函数已更名为[share_news],并将于不久后删除')
         return(self.share_news(newsid,index))
 
-    def share_news(self,newsid:int,index:int=1):
+    def share_news(self,linkid:int,index:int=1):
         '''
         分享新闻
         参数:
@@ -1762,35 +1783,15 @@ class HeyboxClient():
                 False
             '''
             url = URLS.SHARE_CLICK
-            self.__flush_params()
-            referer = {
-                'from_tag':-1,
-                'newsid':newsid,
-                'rec_mark':'timeline',
-                'pos':index + 1,
+            path=self.__get_path(url)
+            self.__flush_params(path)
+            params={
+                'h_src':'bmV3c19mZWVkc18tMQ==',
+                'link_id':linkid,
                 'index':index,
-                'page_tab':1,
-                'from_recommend_list':9,
-                'h_src':'LTE=',
                 **self._params
             }
-            if index == 0:
-                referer['al'] = 'set_top'
-            headers = {
-                'Host': 'api.xiaoheihe.cn',
-                'Connection': 'keep-alive',
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36',
-                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
-                'Accept-Encoding': 'gzip, deflate',
-                'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-                'X-Requested-With': 'com.max.xiaoheihe',   
-                'Referer':URLS.GET_NEWS_DETAIL + str(newsid) + '?' + urllib.parse.urlencode(query=referer)
-            }
-            cookies = { 
-                'user_pkey' : self._cookies['pkey'],
-                'user_heybox_id' : str(self.heybox_id)
-            }
-            resp = self.Session.get(url=url,headers=headers,cookies=cookies)
+            resp = self.Session.get(url=url,headers=self._headers,cookies=self._cookies,params=params)
             try:
                 jsondict = resp.json()
                 self.__check_status(jsondict)
@@ -1806,10 +1807,11 @@ class HeyboxClient():
                 True
             '''
             url = URLS.SHARE_CHECK
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             params = {
+                'h_src':'bmV3c19mZWVkc18tMQ==',
                 'shared_type':'normal',
-                'share_plat':'shareQQFriend',
                 **self._params
             }
             resp = self.Session.get(url=url,headers=self._headers,params=params,cookies=self._cookies)
@@ -1838,7 +1840,8 @@ class HeyboxClient():
         '''
 
         url = URLS.SHARE_CHECK
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'shared_type':'BBSComment',
             **self._params
@@ -1862,7 +1865,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.SIGN
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             jsondict = resp.json()
@@ -1902,7 +1906,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.SEND_MESSAGE
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'userid':userid,
             **self._params
@@ -1943,7 +1948,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_GAME_DETAIL
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'appid':appid,
             **self._params
@@ -2030,7 +2036,10 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_GAME_DETAIL
-        self.__flush_params()
+
+        path=self.__get_path(url)
+
+        self.__flush_params(path)
         params = {
             'appid':appid,
             **self._params
@@ -2087,7 +2096,11 @@ class HeyboxClient():
         raise NotImplemented
 
         url = URLS.GET_STORE_GAME_LIST
-        self.__flush_params()
+
+        path=self.__get_path(url)
+
+        self.__flush_params(path)
+
         params = {
             'src': '',
             'newsid': newsid,
@@ -2111,8 +2124,11 @@ class HeyboxClient():
         '''
         raise NotImplemented
 
-        url = URLS.GET_STORE_GAME_LIST
-        self.__flush_params()
+        url = URLS.GET_STORE_GAME_LIST      
+        
+        path=self.__get_path(url)
+
+        self.__flush_params(path)
         params = {
             'src': '',
             'newsid': newsid,
@@ -2161,7 +2177,8 @@ class HeyboxClient():
                 'user_pkey' : self._cookies['pkey'],
                 'user_heybox_id' : str(self.heybox_id)
             }
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             resp = self.Session.get(url=url,headers=headers,params=self._params,cookies=cookies)
             html = resp.text
             self.logger.debug(f'题库共[{len(html)}]字')
@@ -2175,7 +2192,8 @@ class HeyboxClient():
                 False
             '''
             url = URLS.BBS_QA_STATE
-            self.__flush_params()
+            path=self.__get_path(url)
+            self.__flush_params(path)
             headers = {
                 'Host': 'api.xiaoheihe.cn',
                 'Connection': 'keep-alive',
@@ -2243,7 +2261,8 @@ class HeyboxClient():
             'user_pkey' : self._cookies['pkey'],
             'user_heybox_id' : str(self.heybox_id)
         }
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'from_recommend_list':9,
             'from_tag':-1,
@@ -2305,7 +2324,8 @@ class HeyboxClient():
             'user_pkey' : self._cookies['pkey'],
             'user_heybox_id' : str(self.heybox_id)
         }
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'from_recommend_list':9,
             'from_tag':-1,
@@ -2347,7 +2367,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_ACHIEVE_LIST
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'userid':self.heybox_id,
             'only_event':1,
@@ -2371,30 +2392,31 @@ class HeyboxClient():
             return(False)    
 
     
-    def get_daily_task_stats(self):
-        '''
-        获取每日任务状态
-        成功返回:
-            finish_count:完成数
-            task_count:任务总数
-        失败返回:
-            False
-        '''
-        url = URLS.GET_TASK_STATS
-        self.__flush_params()
-        resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
-        try:
-            jsondict = resp.json()
-            self.__check_status(jsondict)
-            result = jsondict['result']
-            wait_count = result['wait']
-            task_count = result['task']
-            finish_count = task_count - wait_count
-            self.logger.debug(f'任务完成度[{finish_count}/{task_count}]')
-            return((finish_count,task_count))
-        except (JSONDecodeError,ClientException,KeyError,NameError) as e:
-            self.logger.error(f'获取任务状态出错[{e}]')
-            return(False)
+    # def get_daily_task_stats(self):
+    #     '''
+    #     获取每日任务状态
+    #     成功返回:
+    #         finish_count:完成数
+    #         task_count:任务总数
+    #     失败返回:
+    #         False
+    #     '''
+    #     url = URLS.GET_TASK_STATS
+    #     path=self.__get_path(url)
+    #     self.__flush_params(path)
+    #     resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
+    #     try:
+    #         jsondict = resp.json()
+    #         self.__check_status(jsondict)
+    #         result = jsondict['result']
+    #         wait_count = result['wait']
+    #         task_count = result['task']
+    #         finish_count = task_count - wait_count
+    #         self.logger.debug(f'任务完成度[{finish_count}/{task_count}]')
+    #         return((finish_count,task_count))
+    #     except (JSONDecodeError,ClientException,KeyError,NameError) as e:
+    #         self.logger.error(f'获取任务状态出错[{e}]')
+    #         return(False)
 
     
     def get_daily_task_detail(self):
@@ -2408,8 +2430,12 @@ class HeyboxClient():
         失败返回:
             False
         '''
+
+
         url = URLS.GET_TASK_LIST
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
+
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             jsondict = resp.json()
@@ -2441,7 +2467,8 @@ class HeyboxClient():
         False
         '''
         url = URLS.GET_TASK_LIST
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             jsondict = resp.json()
@@ -2481,7 +2508,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_TASK_LIST
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             jsondict = resp.json()
@@ -2520,7 +2548,8 @@ class HeyboxClient():
         if userid < 0:
             userid = self.heybox_id
 
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         params = {
             'userid':userid,
             **self._params
@@ -2556,7 +2585,8 @@ class HeyboxClient():
             False
         '''
         url = URLS.GET_AUTH_INFO
-        self.__flush_params()
+        path=self.__get_path(url)
+        self.__flush_params(path)
         resp = self.Session.get(url=url,params=self._params,headers=self._headers,cookies=self._cookies)
         try:
             jsondict = resp.json()
@@ -2684,22 +2714,28 @@ class HeyboxClient():
             self.logger.debug(f'{jsondict}')
             self.logger.error(f'{traceback.print_stack()}')
             raise JsonAnalyzeError
-
     
-    def __flush_params(self):
+    def __get_path(self,url:str):
+        path=urlparse(url).path
+        if path[-1] =='/':
+            path=path[:-1]
+        return(path)
+    
+    def __flush_params(self,path:str):
         '''
         刷新_params里的time_和hkey键
         '''
         def gen_hkey(time:int):
-            strhash = 'xiaoheihe/_time=' + str(time)
+            string = f'{path}/bfhdkud_time={time}'
             md5 = hashlib.md5()
-            md5.update(str(strhash).encode('utf-8'))
-            hash = md5.hexdigest()
-            hash = hash.replace('a','app')
-            hash = hash.replace('0','app')
+            md5.update(string.encode('utf-8'))
+            string = md5.hexdigest()
+            string = string.replace('a','app')
+            string = string.replace('0','app')
             md5 = hashlib.md5()
-            md5.update(hash.encode('utf-8'))
-            hkey = md5.hexdigest()
+            md5.update(string.encode('utf-8'))
+            string = md5.hexdigest()
+            hkey=string[:10]
             return(hkey)
         asctime = int(time.time())
         self._params['hkey'] = gen_hkey(asctime)    

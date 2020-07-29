@@ -269,7 +269,6 @@ def load_accounts(filepath:str=''):
             try:
                 pkey = item['pkey']
                 imei = item['imei']
-                fans = item.get('fans',0)
                 heybox_id = int(item['heybox_id'])
                 vaccountlist.append((heybox_id,imei,pkey,i))
             except (KeyError,ValueError) :
