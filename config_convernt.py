@@ -2,9 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:09:15
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-29 14:21:29
+# @LastEditTime : 2020-07-29 20:02:56
 # @Description  : 配置文件转换
 '''
+import toml
+import json
+import logging
 
 
 def __init_settings() -> bool:
