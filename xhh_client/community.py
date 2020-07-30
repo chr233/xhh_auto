@@ -2,8 +2,8 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 22:21:56
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 22:27:25
-# @Description  : 社区模块,负责与社区有关的内容
+# @LastEditTime : 2020-07-30 22:32:31
+# @Description  : 社区模块,负责[社区]TAB下的内容
 '''
 
 from .network import Network
