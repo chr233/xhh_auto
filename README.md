@@ -4,6 +4,8 @@
 
 ## 新版开发中
 
+### 新版开发进度 [###_______] 30%
+
 * 新版重构中，可用的旧版魔改版本：[链接](https://github.com/chr233/xhh_auto/raw/new/bak/HeyBox_AutoCheck/xhh_auto_v0.79.7z)
 
 > 以下为旧版信息，仅作存档
@@ -23,19 +25,21 @@
   * Linux用户记得先赋予脚本执行权限`chmod 755 *.py`
 
 ## 凭据获取方法
+
 * **[安卓手机端抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)**【推荐】
 * **[Fiddler抓取教程](https://blog.chrxw.com/archives/2019/10/20/437.html)**
 
 * 抓取小黑盒数据后，填入accounts.json即可使用本脚本。
 
 ## 使用方法
+
 1. Linux用户按`Ctrl+Alt+T`打开终端,Windows用户按住`Shift`在目录背景按右键->`在此打开命令行`
 1. 执行`python3 ./start.py`
-
 
 PS:本脚本支持多账户,将json配置成下面这样即可(请注意格式)
 
 account.json:
+
 ```json
 {
   "accounts": [
@@ -56,6 +60,7 @@ account.json:
 PS:settings.json注释
 
 settings.json:
+
 ```json
 {
   "CfgVer": "1",//配置版本,无需关心
@@ -65,10 +70,3 @@ settings.json:
   "FtqqSKEY": null//方糖的SKEY[获取地址](http://sc.ftqq.com/),填写的时候记得在Skey外侧加双引号("FtqqSKEY": "你的SKEY")
 }
 ```
-
-## TODO LIST
-- [ ] 简单好用的账户管理器
-- [ ] 支持直接登陆小黑盒账号
-- [ ] 实现小黑盒客户端的大部分功能
-- [ ] ~~自动参加ROLL房~~
- * 受steam影响，小黑盒貌似开始转卖点卡了。对2和4的支持计划延后
