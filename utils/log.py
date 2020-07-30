@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:24:11
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 13:25:45
+# @LastEditTime : 2020-07-30 15:57:19
 # @Description  : 控制日志输出
 '''
 
@@ -21,7 +21,7 @@ def init_logger(level: int = DEFAULT_LEVEL):
     logging.basicConfig(level=level,
                         format=DEFAULT_FORMAT,
                         datefmt=DEFAULT_TIME)
-    logger.debug(f'logger初始化完成,日志等级为{level}')
+    logger.debug(f'logger初始化完成,日志等级 - {level}')
 
 
 def get_logger(tag: str = 'null') -> logging.Logger:

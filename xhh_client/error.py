@@ -2,15 +2,13 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:07:28
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-29 14:07:51
+# @LastEditTime : 2020-07-30 16:03:08
 # @Description  : 异常模块
 '''
 
 
 class HeyboxException(Exception):
-    '''
-    异常基类
-    '''
+    '异常基类'''
 
     def __init__(self, ErrorInfo):
         super().__init__()
@@ -21,13 +19,11 @@ class HeyboxException(Exception):
 # ====================================
 
 
-class NotImplemented(HeyboxException):
-    '''
-    函数未完成
-    '''
+class ConfigError(HeyboxException):
+    '配置文件有问题'
 
     def __init__(self):
-        super().__init__('函数未完成')
+        super().__init__('配置文件有问题,请检查config.toml')
 
 
 class UnknownError(HeyboxException):
@@ -181,8 +177,3 @@ class ObjectError(ClientException):
 
     def __init__(self):
         super().__init__('对象不存在或者已被删除')
-
-
-# ------------------------------------
-if __name__ == '__main__':
-    get_logger('errors').error('本模块不支持直接运行,请导入本模块使用')
