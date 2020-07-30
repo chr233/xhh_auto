@@ -13,3 +13,6 @@ class Community(Network):
 
     def __init__(self, account: dict, hbxcfg: dict, tag: str):
         super().__init__(account, hbxcfg, tag)
+
+    def debug(self):
+        super().debug()

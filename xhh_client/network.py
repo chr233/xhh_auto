@@ -2,18 +2,19 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 22:26:57
+# @LastEditTime : 2020-07-30 23:06:03
 # @Description  : 网络模块,负责网络请求
 '''
 
 import time
 import hashlib
 from requests import Session, Response
-
+from json import JSONDecodeError
 from urllib.parse import urlparse
+from utils.log import get_logger
 
 from .static import HEYBOX_VERSION, URLS
-from utils.log import get_logger
+from .error import *
 
 
 class Network():
@@ -44,8 +45,10 @@ class Network():
                         'channel': hbxcfg.get('channel')}
         self.logger = get_logger(str(tag))
         self._heybox_id = account.get('heybox_id')
-        self.__flush_token(URLS.GET_ACHIEVE_LIST)
         self.logger.debug('网络模块初始化完毕')
+
+    def debug(self):
+        pass
 
     def __flush_token(self, url: str):
         '''根据当前时间生成time_和hkey,并存入self._parames中
@@ -68,10 +71,24 @@ class Network():
         md5.update(h.encode('utf-8'))
         h = md5.hexdigest()[:10]
         p = self._params
-        p['time_'] = t
+        p['_time'] = t
         p['hkey'] = h
 
-    def __get(self, url: str, params: dict = None,  headers: dict = None) -> Response:
+    def __get_json(self, resp: Response) -> dict:
+        '''把Response对象转成json字典,出错返回空字典
+        参数:
+            resp: Response对象
+        返回:
+            dict: json字典
+        '''
+        try:
+            jd = resp.json()
+            return(jd)
+        except JSONDecodeError as e:
+            self.logger.debug(f'JSON解析失败 - {resp.text}')
+            return({})
+
+    def _get(self, url: str, params: dict = None,  headers: dict = None) -> dict:
         '''GET方法发送请求
         参数:
             url: URL
@@ -80,13 +97,14 @@ class Network():
         返回:
             Response: 请求结果
         '''
-        self.__flush_token()
+        self.__flush_token(url)
         h = headers or self._headers
         p = {**(params or {}), **self._params}
         resp = self._session.get(url=url, params=p, headers=h)
-        return(resp)
+        jd = self.__get_json(resp)
+        return(jd)
 
-    def __post(self, url: str, params: dict = None, data: dict = None, headers: dict = None) -> Response:
+    def _post(self, url: str, params: dict = None, data: dict = None, headers: dict = None) -> dict:
         '''POST方法发送请求
         参数:
             url: URL
@@ -96,9 +114,72 @@ class Network():
         返回:
             Response: 请求结果
         '''
-        self.__flush_token()
+        self.__flush_token(url)
         h = headers or self._headers
         p = {**(params or {}), **self._params}
         d = data or {}
-        resp = self._session.post(url=url, params=p, data=d, headers=h)
-        return(resp)
+        jd = self.__get_json(resp)
+        return(jd)
+
+    def _check_status(self, jd: dict):
+        '''检查返回值
+        参数:
+            jd:json字典
+        成功返回:
+            True
+        失败抛出异常
+        '''
+        try:
+            status = jd['status']
+            if status == 'ok':
+                return (True)
+            elif status == 'ignore':
+                raise Ignore
+            elif status == 'failed':
+                msg = jd['msg']
+                if msg == '操作已经完成':
+                    raise Ignore
+                elif msg == '不能进行重复的操作哦':
+                    raise Ignore
+                elif msg == '不能重复赞哦':
+                    raise Ignore
+                elif msg == '帖子已被删除':
+                    raise ObjectError
+                elif msg == '不能给自己的评价点赞哟':
+                    raise SupportMyselfError
+                elif msg == '自己不能粉自己哦':
+                    raise FollowMyselfError
+                elif msg == '您今日的关注次数已用完':
+                    raise FollowLimitedError('今日的关注次数已用尽')
+                elif msg == '您的关注已经到上限了':
+                    raise FollowLimitedError('关注数已经到上限')
+                elif msg == '您今日的赞赏次数已用完':
+                    raise LikeLimitedError
+                elif msg == 'invalid userid':
+                    raise UseridError
+                elif msg == '参数错误':
+                    raise ParamsError
+                elif msg == '系统时间不正确':
+                    raise LocalTimeError
+                elif msg == '该用户已注销':
+                    raise UseridNotExists
+                elif msg == '用户名或密码错误或者登录过于频繁':
+                    raise TokenError
+                elif msg == '':
+                    raise ShareError
+                elif msg == '出现了一些问题，请稍后再试':
+                    self.logger.error(f'返回值:{jsondict}')
+                    self.logger.error('出现这个错误的原因未知，请过一会再重新运行脚本')
+                    raise UnknownError
+                self.logger.error(f'未知的返回值[{msg}]')
+                self.logger.error('请将以下内容发送到chr@chrxw.com')
+                self.logger.error(f'{jsondict}')
+                self.logger.error(f'{traceback.print_stack()}')
+                raise UnknownError
+            elif status == 'relogin':
+                raise TokenError
+        except (ValueError, NameError):
+            self.logger.debug('JSON格式错误，请提交到chr@chrxw.com')
+            self.logger.debug(f'{jsondict}')
+            self.logger.error(f'{traceback.print_stack()}')
+            raise JsonAnalyzeError
