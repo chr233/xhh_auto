@@ -2,8 +2,8 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 20:56:14
-# @Description  : 网络模块,负责封装请求
+# @LastEditTime : 2020-07-30 20:59:34
+# @Description  : 网络模块,负责网络请求
 '''
 
 import time
@@ -12,7 +12,7 @@ import requests
 
 from urllib.parse import urlparse
 
-from .static import HEYBOX_VERSION,URLS
+from .static import HEYBOX_VERSION, URLS
 from utils.log import get_logger
 
 
@@ -27,9 +27,7 @@ class network():
     logger = get_logger()
 
     def __init__(self, heybox_id: int, imei: str, pkey: str, hbxcfg: dict, tag: str = '未指定'):
-        '''初始化网络类
-        参数
-        '''
+
         super().__init__()
         self._headers = {'Referer': 'http://api.maxjia.com/',
                          'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
@@ -50,8 +48,10 @@ class network():
         self.__flush_token(URLS.GET_ACHIEVE_LIST)
         self.logger.debug('网络模块初始化完毕')
 
-    def __flush_token(self,url:str) -> dict:
+    def __flush_token(self, url: str):
         '''根据当前时间生成time_和hkey,并存入self._parames中
+        参数:
+            url: url路径
         '''
         def url_to_path(url: str) -> str:
             path = urlparse(url).path
@@ -72,5 +72,5 @@ class network():
         p['time_'] = t
         p['hkey'] = h
 
-    def __post(self, url: str, params: dict,):
+    def __post(self, url: str, params: dict, headers: dict = None):
         pass
