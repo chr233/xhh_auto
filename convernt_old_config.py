@@ -2,9 +2,10 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:09:15
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 11:39:48
+# @LastEditTime : 2020-07-30 22:01:26
 # @Description  : 旧版配置文件转换
 '''
+
 import toml
 import json
 import os
