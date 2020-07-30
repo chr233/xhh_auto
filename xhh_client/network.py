@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 21:56:21
+# @LastEditTime : 2020-07-30 22:12:20
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -26,17 +26,16 @@ class network():
     _heybox_id = 0
     logger = get_logger()
 
-    def __init__(self, heybox_id: int, imei: str, pkey: str, hbxcfg: dict, tag: str = '未指定'):
-
+    def __init__(self, account: dict, hbxcfg: dict, tag: str = '未指定'):
         super().__init__()
         self._headers = {'Referer': 'http://api.maxjia.com/',
                          'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
                          'Host': 'api.xiaoheihe.cn',
                          'Connection': 'Keep-Alive',
                          'Accept-Encoding': 'gzip'}
-        self._cookies = {'pkey': pkey}
-        self._params = {'heybox_id': heybox_id,
-                        'imei': imei,
+        self._cookies = {'pkey': account.get('pkey')}
+        self._params = {'heybox_id': account.get('heybox_id'),
+                        'imei': account.get('imei'),
                         'os_type': hbxcfg.get('os_type'),
                         'os_version': hbxcfg.get('os_version'),
                         'version': HEYBOX_VERSION,
@@ -44,7 +43,7 @@ class network():
                         'hkey': '',
                         'channel': hbxcfg.get('channel')}
         self.logger = get_logger(str(tag))
-        self._heybox_id = heybox_id
+        self._heybox_id = account.get('heybox_id')
         self.__flush_token(URLS.GET_ACHIEVE_LIST)
         self.logger.debug('网络模块初始化完毕')
 
@@ -72,6 +71,21 @@ class network():
         p['time_'] = t
         p['hkey'] = h
 
+    def __get(self, url: str, params: dict = None,  headers: dict = None) -> Response:
+        '''GET方法发送请求
+        参数:
+            url: URL
+            [params]: 请求参数,会添加到self._params前面
+            [headers]: 请求头,会替换self._headers
+        返回:
+            Response: 请求结果
+        '''
+        self.__flush_token()
+        h = headers or self._headers
+        p = {**(params or {}), **self._params}
+        resp = self._session.get(url=url, params=p, headers=h)
+        return(resp)
+
     def __post(self, url: str, params: dict = None, data: dict = None, headers: dict = None) -> Response:
         '''POST方法发送请求
         参数:
@@ -86,7 +100,5 @@ class network():
         h = headers or self._headers
         p = {**(params or {}), **self._params}
         d = data or {}
-
         resp = self._session.post(url=url, params=p, data=d, headers=h)
-
         return(resp)
