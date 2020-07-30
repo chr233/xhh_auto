@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 23:25:25
+# @LastEditTime : 2020-07-30 23:30:36
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -52,6 +52,7 @@ class Network():
 
     def __flush_token(self, url: str):
         '''根据当前时间生成time_和hkey,并存入self._parames中
+
         参数:
             url: url路径
         '''
@@ -75,7 +76,8 @@ class Network():
         p['hkey'] = h
 
     def __get_json(self, resp: Response) -> dict:
-        '''把Response对象转成json字典,出错返回空字典
+        '''把Response对象转成json字典,出错返回{}
+
         参数:
             resp: Response对象
         返回:
@@ -91,6 +93,7 @@ class Network():
     def _get(self, url: str, params: dict = None,  headers: dict = None,
              cookies: dict = None) -> dict:
         '''GET方法发送请求
+
         参数:
             url: URL
             [params]: 请求参数,会添加到self._params前面
@@ -112,6 +115,7 @@ class Network():
     def _post(self, url: str, params: dict = None, data: dict = None,
               headers: dict = None, cookies: dict = None) -> dict:
         '''POST方法发送请求
+        
         参数:
             url: URL
             [params]: 请求参数,会添加到self._params前面
@@ -132,12 +136,10 @@ class Network():
         return(jd)
 
     def _check_status(self, jd: dict):
-        '''检查返回值
+        '''检查json字典,检测到问题抛出异常
+
         参数:
             jd:json字典
-        成功返回:
-            True
-        失败抛出异常
         '''
         try:
             status = jd['status']

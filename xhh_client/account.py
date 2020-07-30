@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 23:25:46
+# @LastEditTime : 2020-07-30 23:29:33
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -23,6 +23,7 @@ class Account(Network):
 
     def get_heybox_latest_version(self) -> str:
         '''获取小黑盒最新版本号,失败返回False
+
         返回:
             str: 小黑盒版本号
         '''
@@ -41,9 +42,10 @@ class Account(Network):
 
     def get_user_profile(self, userid: int = 0)->(int,int,int):
         '''获取个人资料,失败返回False
+        
         参数:
             userid: 用户id,不填代入自己的id
-        成功返回:
+        返回:
             follow_num:关注数
             fan_num:粉丝数
             awd_num:获赞数
@@ -76,6 +78,7 @@ class Account(Network):
 
     def get_daily_task_detail(self):
         '''获取每日任务详情,失败返回False
+        
         返回:
             is_sign: 签到?
             is_share_news: 分享新闻?
