@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 22:12:20
+# @LastEditTime : 2020-07-30 22:26:57
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -16,7 +16,7 @@ from .static import HEYBOX_VERSION, URLS
 from utils.log import get_logger
 
 
-class network():
+class Network():
     _session = Session()
     _session.headers = {}
     _headers = {}
@@ -26,7 +26,7 @@ class network():
     _heybox_id = 0
     logger = get_logger()
 
-    def __init__(self, account: dict, hbxcfg: dict, tag: str = '未指定'):
+    def __init__(self, account: dict, hbxcfg: dict, tag: str):
         super().__init__()
         self._headers = {'Referer': 'http://api.maxjia.com/',
                          'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',

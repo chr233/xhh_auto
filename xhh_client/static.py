@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 17:29:57
+# @LastEditTime : 2020-07-30 22:16:47
 # @Description  : 静态资源
 '''
 
@@ -20,8 +20,7 @@ ERROR_OPERATE_TIMES = 3
 
 
 class URLS():
-    '''URL常量
-    '''
+    'URL常量'
     HEYBOX_VERSION_CHECK = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'  # 检查更新
     SCRIPT_UPDATE_CHECK = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'  # 脚本更新检查
 
@@ -66,15 +65,13 @@ class URLS():
 
 
 class SoreType():
-    '''商店列表排序方式
-    '''
+    '商店列表排序方式'
     NoneSort = 0  # 不排序
     Price = 1  # 价格排序
 
 
 class RecTagType():
-    '''推荐关注列表用户类型分类
-    '''
+    '推荐关注列表用户类型分类'
     UnknownType = 0  # 未知
     SteamFriend = 1  # Steam好友
     HasFriend = 2  # 多位共同好友
@@ -82,8 +79,7 @@ class RecTagType():
 
 
 class RelationType():
-    '''好友关系分类
-    '''
+    '好友关系分类'
     NoRelation = 0  # 没有关系
     IFollowedHim = 1  # 我关注他
     HeFollowedMe = 2  # 他关注我
@@ -91,8 +87,7 @@ class RelationType():
 
 
 class NewsContentType():
-    '''首页新闻类型
-    '''
+    '首页新闻类型'
     UnknownType = 0  # 未知
     CommunityArticle = 1  # 社区帖子
     TextNews = 2  # 普通新闻
@@ -101,8 +96,7 @@ class NewsContentType():
 
 
 class FollowPostType():
-    '''动态文章类型
-    '''
+    '动态文章类型'
     UnknownType = 0  # 未知
     PostLink = 1  # 发帖
     FollowGame = 2  # 关注游戏
@@ -113,16 +107,14 @@ class FollowPostType():
 
 
 class GamePlatformType():
-    '''游戏平台类型
-    '''
+    '游戏平台类型'
     UnknownType = 0  # 未知
     PCGame = 1  # PC游戏
     ConsoleGame = 2  # 主机游戏
 
 
 class GameReviewSummaryType():
-    '''游戏评价类型
-    '''
+    '游戏评价类型'
     UnknownType = 0  # 未知
     No = 1  # 无总体评价
     PPPP = 2  # 好评如潮
@@ -136,8 +128,7 @@ class GameReviewSummaryType():
 
 
 class OperateType():
-    '''操作码类型
-    '''
+    '操作码类型'
     # 批量操作用户列表的操作码
     FollowUser = 1  # 关注用户
     UnFollowUser = 2  # 取关用户
@@ -149,30 +140,27 @@ class OperateType():
 
 
 class StateType():
-    '''答题结果
-    '''
+    '答题结果'
     Complete = 1  # 答题完成
     AlreadyDone = 2  # 已经答过了,无法重复作答
 
 
 class CommentType():
-    '''评论类型
-    '''
+    '评论类型'
     UnknownType = 0  # 未知
     SubRComment = 1  # 楼中楼,无法点赞
     Comment = 2  # 一般回复
 
 
 class BoolenString():
-    '''逻辑型字符串,可以打印出×和√,不影响逻辑判断。
-    '''
+    '逻辑型字符串,可以打印出×和√,不影响逻辑判断'
     __boolen = False
     __string = '×'
 
     def __init__(self, boolen):
         super().__init__()
         self.__boolen = bool(boolen)
-        self.__string = '√'if boolen else '×'
+        self.__string = '√' if boolen else '×'
 
     def __eq__(self, value):
         if isinstance(value, BoolenString):
