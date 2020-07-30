@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-29 14:40:09
+# @LastEditTime : 2020-07-30 13:39:37
 # @Description  : 检查脚本更新
 '''
 
@@ -11,13 +11,19 @@ from .log import getlogger
 SCRIPT_VERSION = "v0.80"
 
 
+def get_script_version() -> str:
+    '''获取脚本版本
+    返回:
+        str: 脚本版本号
+    '''
+    return(SCRIPT_VERSION)
+
+
 def check_update() -> tuple:
     '''检查脚本更新
-    返回：
+    返回:
+        ()
     '''
-    if not initialized:
-        __init_settings()
-
     logger = get_logger('basic')
     if bool(settings.get('UpdateCheck', True)):
         url = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'

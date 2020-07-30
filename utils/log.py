@@ -2,32 +2,39 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:24:11
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-29 20:08:03
-# @Description  : 获取logger
+# @LastEditTime : 2020-07-30 13:25:45
+# @Description  : 控制日志输出
 '''
+
 import logging
-import os
+
+DEFAULT_LEVEL = logging.INFO
+DEFAULT_FORMAT = '%(asctime)s [%(levelname)s][%(name)s]%(message)s'
+DEFAULT_TIME = '%H:%M:%S'  # '%m-%d %H:%M:%S'
 
 
-log_level = logging.DEBUG if debug else logging.INFO
-log_format = '%(asctime)s [%(levelname)s][%(name)s]%(message)s'
-log_data = '%H:%M:%S'  # '%m-%d %H:%M:%S'
+def init_logger(level: int = DEFAULT_LEVEL):
+    '''初始化logger
+    参数:
+        [level]: 日志等级,默认为DEBUG
+    '''
+    logging.basicConfig(level=level,
+                        format=DEFAULT_FORMAT,
+                        datefmt=DEFAULT_TIME)
+    logger.debug(f'logger初始化完成,日志等级为{level}')
 
 
-def init_logger(loglevel, log_format):
-    '''初始化logger'''
-    logging.basicConfig(
-        level=log_level,
-        format=log_format,
-        datefmt=log_data)
-
-
-def get_logger(tag: str = 'null'):
+def get_logger(tag: str = 'null') -> logging.Logger:
+    '''获取logger
+    参数:
+        tag: logger的标签
+    返回:
+        Logger: Logger对象
+    '''
     return(logging.getLogger(tag))
 
 
 logger = get_logger('Log')
-
 
 if __name__ != '__main__':
     logger.debug('Log模块载入')

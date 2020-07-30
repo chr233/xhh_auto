@@ -3,26 +3,44 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-29 16:32:38
+# @LastEditTime : 2020-07-30 14:08:01
 # @Description  : 读取并验证配置
 '''
 
 import toml
 import os
-# from . import log
+# from . import base
+from .log import get_logger
 
-# logger = log.get_logger('Setting')
+logger = get_logger('Setting')
 
-Default_Path = 'config.toml'
+DEFAULT_PATH = 'config.toml'
+
+CFG = {}
 
 
-def get_config(path: str = Default_Path) -> dict:
+def get_config(key: str):
+    '''获取某一项配置
+    参数:
+        key: 要获取的设置键名
+    返回:
+        Obj: 配置信息
+    '''
+    return(CFG.get(key))
+
+
+def get_script_path() -> str:
+    return(os.path.split(os.path.realpath(__file__))[0])
+
+
+def load_config(path: str = Default_Path) -> dict:
     '''读取并验证配置
     参数:
-        [path]:配置文件路径，默认为config.toml
+        [path]: 配置文件路径，默认为config.toml
     返回:
-        dict:验证过的配置字典，如果读取出错则返回None
+        dict: 验证过的配置字典，如果读取出错则返回None
     '''
+    global CFG
     try:
         # logger.debug('开始读取配置')
         raw_cfg = dict(toml.load(path))
@@ -39,9 +57,9 @@ def get_config(path: str = Default_Path) -> dict:
 def verify_config(cfg: dict) -> dict:
     '''验证配置
     参数:
-        cfg:配置字典
+        cfg: 配置字典
     返回:
-        dict:验证过的配置字典，剔除错误的和不必要的项目
+        dict: 验证过的配置字典，剔除错误的和不必要的项目
     '''
     vcfg = {
         'main': {},
@@ -127,4 +145,4 @@ def verify_config(cfg: dict) -> dict:
     return(vcfg)
 
 
-get_config()
+load_config()
