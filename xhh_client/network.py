@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 23:06:03
+# @LastEditTime : 2020-07-30 23:25:25
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,7 +13,7 @@ from json import JSONDecodeError
 from urllib.parse import urlparse
 from utils.log import get_logger
 
-from .static import HEYBOX_VERSION, URLS
+from .static import HEYBOX_VERSION, URLS,BoolenString
 from .error import *
 
 
@@ -88,23 +88,29 @@ class Network():
             self.logger.debug(f'JSON解析失败 - {resp.text}')
             return({})
 
-    def _get(self, url: str, params: dict = None,  headers: dict = None) -> dict:
+    def _get(self, url: str, params: dict = None,  headers: dict = None,
+             cookies: dict = None) -> dict:
         '''GET方法发送请求
         参数:
             url: URL
             [params]: 请求参数,会添加到self._params前面
             [headers]: 请求头,会替换self._headers
+            [cookies]: 请求头,会替换self._cookies
         返回:
             Response: 请求结果
         '''
         self.__flush_token(url)
-        h = headers or self._headers
         p = {**(params or {}), **self._params}
-        resp = self._session.get(url=url, params=p, headers=h)
+        h = headers or self._headers
+        c = cookies or self._cookies
+        resp = self._session.get(
+            url=url, params=p, headers=h, cookies=c
+        )
         jd = self.__get_json(resp)
         return(jd)
 
-    def _post(self, url: str, params: dict = None, data: dict = None, headers: dict = None) -> dict:
+    def _post(self, url: str, params: dict = None, data: dict = None,
+              headers: dict = None, cookies: dict = None) -> dict:
         '''POST方法发送请求
         参数:
             url: URL
@@ -115,9 +121,13 @@ class Network():
             Response: 请求结果
         '''
         self.__flush_token(url)
-        h = headers or self._headers
         p = {**(params or {}), **self._params}
         d = data or {}
+        h = headers or self._headers
+        c = cookies or self._cookies
+        resp = self._session.post(
+            url=url, params=p, data=data, headers=h, cookies=c
+        )
         jd = self.__get_json(resp)
         return(jd)
 
