@@ -2,9 +2,21 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-16 15:56:29
+# @LastEditTime : 2020-07-30 17:29:57
 # @Description  : 静态资源
 '''
+
+# 小黑盒客户端版本号
+HEYBOX_VERSION = '1.3.118'
+
+# 遇到空结果继续请求的次数
+EMPTY_RETRY_TIMES = 0
+
+# 遇到错误继续请求的次数
+ERROR_RETRY_TIMES = 0
+
+# 批量操作时遇到错误继续操作的次数
+ERROR_OPERATE_TIMES = 3
 
 
 class URLS():
@@ -51,7 +63,6 @@ class URLS():
     BBS_QA_STATE = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'  # 社区答题提交
     UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'  # 修改个人资料
     SEND_MESSAGE = 'https://api.xiaoheihe.cn/chat/send_message/'  # 发送私信
-    
 
 
 class SoreType():
