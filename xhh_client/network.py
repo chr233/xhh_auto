@@ -2,13 +2,13 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 20:59:34
+# @LastEditTime : 2020-07-30 21:27:29
 # @Description  : 网络模块,负责网络请求
 '''
 
 import time
 import hashlib
-import requests
+from requests import Session, Response
 
 from urllib.parse import urlparse
 
@@ -17,8 +17,8 @@ from utils.log import get_logger
 
 
 class network():
-    Session = requests.session()
-    Session.headers = {}
+    _session = Session()
+    _session.headers = {}
     _headers = {}
     _cookies = {}
     _params = {}
@@ -72,5 +72,15 @@ class network():
         p['time_'] = t
         p['hkey'] = h
 
-    def __post(self, url: str, params: dict, headers: dict = None):
-        pass
+    def __post(self, url: str, headers: dict = {}, params: dict = None, data: dict = None) -> Response:
+        '''POST方法发送请求
+        参数:
+            url: URL
+            params: 请求参数,会添加到self._params前面
+            [headers]: 请求头,会替换self._headers
+        返回:
+            Response: 请求结果
+        '''
+        p = {
+            
+        }
