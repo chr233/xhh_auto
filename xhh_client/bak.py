@@ -1,16 +1,9 @@
-'''
-# @Author       : Chr_
-# @Date         : 2020-07-30 17:56:28
-# @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 17:56:29
-# @Description  : 
-'''
 
 '''
 # @Author       : Chr_
 # @Date         : 2020-07-29 13:55:20
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 17:54:58
+# @LastEditTime : 2020-07-30 20:14:15
 # @Description  : 封装小黑盒API
 '''
 
@@ -35,10 +28,7 @@ from heybox_static import *
 from heybox_errors import *
 from .network import network
 from .static import HEYBOX_VERSION, URLS
-class client(network):
 
-    def __init__(self):
-        super().__init__()
 
 # Python版小黑盒客户端
 
