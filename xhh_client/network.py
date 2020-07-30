@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 21:27:29
+# @LastEditTime : 2020-07-30 21:56:21
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -72,15 +72,21 @@ class network():
         p['time_'] = t
         p['hkey'] = h
 
-    def __post(self, url: str, headers: dict = {}, params: dict = None, data: dict = None) -> Response:
+    def __post(self, url: str, params: dict = None, data: dict = None, headers: dict = None) -> Response:
         '''POST方法发送请求
         参数:
             url: URL
-            params: 请求参数,会添加到self._params前面
+            [params]: 请求参数,会添加到self._params前面
+            [data]: 请求体
             [headers]: 请求头,会替换self._headers
         返回:
             Response: 请求结果
         '''
-        p = {
-            
-        }
+        self.__flush_token()
+        h = headers or self._headers
+        p = {**(params or {}), **self._params}
+        d = data or {}
+
+        resp = self._session.post(url=url, params=p, data=d, headers=h)
+
+        return(resp)
