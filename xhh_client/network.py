@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 23:30:36
+# @LastEditTime : 2020-07-30 23:31:11
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,7 +13,7 @@ from json import JSONDecodeError
 from urllib.parse import urlparse
 from utils.log import get_logger
 
-from .static import HEYBOX_VERSION, URLS,BoolenString
+from .static import HEYBOX_VERSION,BoolenString
 from .error import *
 
 
