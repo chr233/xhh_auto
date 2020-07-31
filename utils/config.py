@@ -3,14 +3,13 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 16:02:31
+# @LastEditTime : 2020-07-31 22:47:06
 # @Description  : 读取并验证配置
 '''
 
 import toml
 import os
 from .log import get_logger, init_logger
-from xhh_client.error import ConfigError
 
 logger = get_logger('Setting')
 
@@ -143,6 +142,6 @@ def verify_config(cfg: dict) -> dict:
                 logger.debug(f'[*] 配置项为{account}')
 
     if not vcfg['accounts']:
-        logger.warning('[*] 不存在有效的账号信息')
-        raise ConfigError
+        logger.error('[*] 不存在有效的账号信息,请检查config.toml')
+        raise ValueError('[*] 不存在有效的账号信息,请检查config.toml')
     return(vcfg)

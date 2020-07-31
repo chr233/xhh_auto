@@ -2,14 +2,15 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 23:29:33
+# @LastEditTime : 2020-07-31 23:21:40
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
 
 from .network import Network
-from .static import HEYBOX_VERSION, URLS,BoolenString
+from .static import HEYBOX_VERSION, URLS, BString
 from .error import *
+
 
 class Account(Network):
     '账号模块,负责[我]TAB下的内容'
@@ -19,7 +20,6 @@ class Account(Network):
 
     def debug(self):
         super().debug()
-        self.get_daily_task_detail()
 
     def get_heybox_latest_version(self) -> str:
         '''获取小黑盒最新版本号,失败返回False
@@ -40,9 +40,9 @@ class Account(Network):
             self.logger.error(f'获取小黑盒最新版本出错[{e}]')
             return(False)
 
-    def get_user_profile(self, userid: int = 0)->(int,int,int):
+    def get_user_profile(self, userid: int = 0) -> (int, int, int):
         '''获取个人资料,失败返回False
-        
+
         参数:
             userid: 用户id,不填代入自己的id
         返回:
@@ -76,28 +76,38 @@ class Account(Network):
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)
 
-    def get_daily_task_detail(self):
-        '''获取每日任务详情,失败返回False
-        
+    def __get_task_json(self) -> dict:
+        '''获取任务详情json,出错返回False
+
         返回:
-            is_sign: 签到?
-            is_share_news: 分享新闻?
-            is_share_comment: 分享评论?
-            is_like:点赞?
+            dict: json字典
         '''
         url = URLS.GET_TASK_LIST
         jd = self._get(url=url)
+        self._check_status(jd)
+        return(jd)
+
+    def get_daily_task(self) -> (BString, BString, BString, BString):
+        '''获取每日任务详情,失败返回False
+
+        返回:
+            sign: 签到?
+            share_news: 分享新闻?
+            share_comment: 分享评论?
+            like:点赞?
+        '''
         try:
-            self._check_status(jd)
-            
+            jd = self.__get_task_json()
+
             tl = jd['result']['task_list'][0]['tasks']
-            is_sign = BoolenString(tl[0]['state'] == 'finish')
-            is_share_news = BoolenString(tl[1]['state'] == 'finish')
-            is_share_comment = BoolenString(tl[2]['state'] == 'finish')
-            is_like = BoolenString(tl[3]['state'] == 'finish')
-            
-            self.logger.debug(f"签到{is_sign}|分享{is_share_news}|{is_share_comment}|点赞{is_like}")
-            return((is_sign,is_share_news,is_share_comment,is_like))
+            sign = BString(tl[0]['state'] == 'finish')
+            share_news = BString(tl[1]['state'] == 'finish')
+            share_comment = BString(tl[2]['state'] == 'finish')
+            like = BString(tl[3]['state'] == 'finish')
+
+            self.logger.debug(
+                f"签到{sign}|分享{share_news}|{share_comment}|点赞{like}")
+            return((sign, share_news, share_comment, like))
         except (ClientException) as e:
             self.logger.error(f'获取任务详情出错[{e}]')
             return(False)

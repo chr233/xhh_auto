@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 22:16:47
+# @LastEditTime : 2020-07-31 22:20:29
 # @Description  : 静态资源
 '''
 
@@ -152,7 +152,7 @@ class CommentType():
     Comment = 2  # 一般回复
 
 
-class BoolenString():
+class BString():
     '逻辑型字符串,可以打印出×和√,不影响逻辑判断'
     __boolen = False
     __string = '×'
@@ -163,7 +163,7 @@ class BoolenString():
         self.__string = '√' if boolen else '×'
 
     def __eq__(self, value):
-        if isinstance(value, BoolenString):
+        if isinstance(value, BString):
             return self.__boolen == value.__boolen
         elif isinstance(value, bool):
             return (self.__boolen == value)

@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 23:31:11
+# @LastEditTime : 2020-07-31 23:31:41
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,7 +13,7 @@ from json import JSONDecodeError
 from urllib.parse import urlparse
 from utils.log import get_logger
 
-from .static import HEYBOX_VERSION,BoolenString
+from .static import HEYBOX_VERSION, BString
 from .error import *
 
 
@@ -115,7 +115,7 @@ class Network():
     def _post(self, url: str, params: dict = None, data: dict = None,
               headers: dict = None, cookies: dict = None) -> dict:
         '''POST方法发送请求
-        
+
         参数:
             url: URL
             [params]: 请求参数,会添加到self._params前面
@@ -149,11 +149,10 @@ class Network():
                 raise Ignore
             elif status == 'failed':
                 msg = jd['msg']
-                if msg == '操作已经完成':
-                    raise Ignore
-                elif msg == '不能进行重复的操作哦':
-                    raise Ignore
-                elif msg == '不能重复赞哦':
+                if msg in ('操作已经完成',
+                           '不能进行重复的操作哦',
+                           '不能重复赞哦'
+                           ):
                     raise Ignore
                 elif msg == '帖子已被删除':
                     raise ObjectError
