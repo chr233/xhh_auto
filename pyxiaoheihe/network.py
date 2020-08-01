@@ -39,12 +39,12 @@ class Network():
         self._cookies = {'pkey': account.get('pkey')}
         self._params = {'heybox_id': account.get('heybox_id'),
                         'imei': account.get('imei'),
-                        'os_type': hbxcfg.get('os_type','Android'),
-                        'os_version': hbxcfg.get('os_version','9'),
+                        'os_type': hbxcfg.get('os_type', 'Android'),
+                        'os_version': hbxcfg.get('os_version', '9'),
                         'version': HEYBOX_VERSION,
                         '_time': '',
                         'hkey': '',
-                        'channel': hbxcfg.get('channel','heybox_yingyongbao')}
+                        'channel': hbxcfg.get('channel', 'heybox_yingyongbao')}
         self.logger = Logger(str(tag))
         self._heybox_id = account.get('heybox_id')
         self.logger.debug('网络模块初始化完毕')
@@ -154,7 +154,7 @@ class Network():
                 msg = jd['msg']
                 print(msg)
                 if msg in ('操作已经完成', '不能进行重复的操作哦',
-                           '不能重复赞哦','不能给自己的评价点赞哟',
+                           '不能重复赞哦', '不能给自己的评价点赞哟',
                            ''):
                     raise Ignore
 

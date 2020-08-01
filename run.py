@@ -3,132 +3,112 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 23:06:29
+# @LastEditTime : 2020-08-01 23:37:45
 # @Description  : 启动入口
 '''
+import time
 
+from utils.config import load_config, get_all_config
+from utils.version import check_update
 from utils.log import get_logger
+from utils.ftqq import send_to_ftqq
+from utils.email import send_to_email
+
 from pyxiaoheihe import HeyBoxClient
 
-#import termios
+
+logger = get_logger('Run')
 
 
 def main():
-    '''示例程序,可以根据需要自行修改
-    '''
+    '示例程序,可以根据需要自行修改'
     start_time = time.time()
-    logger = get_logger('run')
-    logger.info('读取账号列表')
-    accountlist = load_accounts()
-    strl = len(str(len(accountlist)))
-    if accountlist:
-        logger.info(f'成功读取[{len(accountlist)}]个账号')
-        i = 0
-        data = []
-        for account in accountlist:
-            try:
-                i += 1
-                logger.info(
-                    f'==[{str(i).rjust(strl,"0")}/{len(accountlist)}]{"="*(35-2*strl)}')
-                # logger.info(f'账号[{i}/{len(accountlist)}]')
-                hbc = HeyboxClient(*account)  # 创建小黑盒客户端实例
-                if is_debug_mode():
-                    # 调试模式
-                    pass
-                    # continue
 
-                # 正常逻辑
-                # result = hbc.get_daily_task_stats()#读取任务完成度
-                # finish,total = result if result else (0,0)
-                if True:  # finish < total:
-                    result = hbc.get_daily_task_detail()  # 读取任务详情
-                    qd, fxxw, fxpl, dz = result if result else (
-                        False, False, False, False)
-                    logger.info(f'任务[签到{qd}|分享{fxxw}{fxpl}|点赞{dz}]')
-                    if not qd:
-                        logger.info('签到')
-                        hbc.sign()
-                    if not dz or not fxxw or not fxpl:
-                        logger.info('获取新闻列表……')
-                        newslist = hbc.get_news_list(5)
-                        logger.info(f'获取[{len(newslist)}]条内容')
-                        if not fxxw or not fxpl:
-                            logger.info('浏览点赞分享新闻')
-                            hbc.batch_newslist_operate(
-                                newslist[:1], OperateType.ViewLikeShare)
-                        if not dz:
-                            logger.info('浏览点赞新闻……')
-                            hbc.batch_newslist_operate(
-                                newslist[1:], OperateType.ViewLike)
-                    else:
-                        logger.info('已完成点赞和分享任务,跳过')
-                else:
-                    logger.info('已完成每日任务,跳过')
+    logger.info('载入配置文件')
+    load_config()
+    cfg = get_all_config()
+    accounts = cfg['accounts']
+    hbxcfg = cfg['heybox']
 
-                logger.info('获取动态列表……')
-                postlist = hbc.get_follow_post_list(50)
-                logger.info(f'获取[{len(postlist)}]条内容')
-                if postlist:
-                    logger.info('点赞动态……')
-                    hbc.batch_like_followposts(postlist)
-                else:
-                    logger.info('没有新动态,跳过')
+    ac = len(accounts)
+    logger.info(f'成功读取[{ac}]个账号')
+    data = []
+    for i, account in enumerate(accounts, 1):
+        try:
+            logger.info(str(f'==[{i}/{ac}]').ljust(40, '='))
 
-                # TODO 暂时无法获取评论点赞状态,可能会重复点赞,将在下一个版本完善
-                commentlist = hbc.get_user_comment_list(account[0], 1)
-                logger.info(f'获取[{len(commentlist)}]条评论')
-                if commentlist:
-                    logger.info('点赞评论……')
-                    hbc.batch_like_commentlist(commentlist)
-                else:
-                    logger.info('没有评论,跳过')
+            hbc = HeyboxClient(account, hbxcfg, i)
 
-                # logger.info('关注推荐关注')
-                # hbc.tools_follow_recommand(10,100) #关注推荐关注
-                logger.info('关注新粉丝……')
-                hbc.tools_follow_followers()  # 关注粉丝
+            # 读取每日任务详情
+            qd, fxxw, fxpl, dz = hbc.get_daily_task_detail()
 
-                # logger.info('取关单向关注')
-                # hbc.tools_unfollow_singlefollowers(100)
+            logger.info(f'任务[签到{qd}|分享{fxxw}{fxpl}|点赞{dz}]')
+            if not qd:
+                logger.info('签到……')
+                hbc.sign()
+            if not dz or not fxxw or not fxpl:
+                logger.info('获取首页新闻列表……')
+                idlist = hbc.get_news_id(6,-1)
+                logger.info(f'获取[{len(idlist)}]条内容')
+                if not fxxw or not fxpl:
+                    logger.info('分享新闻……')
+                    hbc.share_news(idlist[0],1)
+                    hbc.share_comment()
+                if not dz:
+                    logger.info('点赞新闻……')
+                    for i, id in enumerate(idlist,1) :
+                        hbc.like_news(id,i,True)
+            else:
+                logger.info('已完成点赞和分享任务,跳过')
 
-                logger.info('-' * 40)
+            logger.info('获取动态列表……')
+            eventlist = hbc.get_subscrib_events(60,True)
+            logger.info(f'获取[{len(eventlist)}]条内容')
+            if eventlist:
+                logger.info('点赞动态……')
+                for id,ftype,_ in eventlist:
+                    hbc.like_event(id,ftype,True)
+            else:
+                logger.info('没有新动态')
+                
+            logger.info('-' * 40)
 
-                logger.info('生成统计数据')
-                result = hbc.get_my_data()
-                uname, coin, level, sign = result if result else (
-                    '读取信息出错', 0, (0, 0, 0), 0)
-                logger.info(f'昵称[{uname}]')
-                logger.info(f'盒币[{coin}]签到[{sign}]天')
-                logger.info(
-                    f'等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]')
+            logger.info('生成统计数据')
+            result = hbc.get_my_data()
+            uname, coin, level, sign = result if result else (
+                '读取信息出错', 0, (0, 0, 0), 0)
+            logger.info(f'昵称[{uname}]')
+            logger.info(f'盒币[{coin}]签到[{sign}]天')
+            logger.info(
+                f'等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]')
 
-                result = hbc.get_user_profile()
-                follow, fan, awd = result if result else (0, 0, 0)
-                logger.info(f'关注[{follow}]粉丝[{fan}]获赞[{awd}]')
+            result = hbc.get_user_profile()
+            follow, fan, awd = result if result else (0, 0, 0)
+            logger.info(f'关注[{follow}]粉丝[{fan}]获赞[{awd}]')
 
-                result = hbc.get_daily_task_detail()
-                qd, fxxw, fxpl, dz = result if result else (0, 0, 0)
+            result = hbc.get_daily_task_detail()
+            qd, fxxw, fxpl, dz = result if result else (0, 0, 0)
 
-                finish = qd and fxxw and fxpl and dz
+            finish = qd and fxxw and fxpl and dz
 
-                logger.info(f'签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]')
+            logger.info(f'签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]')
 
-                data.append(f'##### ==[{str(i).rjust(strl,"0")}/{len(accountlist)}]{"="*(35-2*strl)}\n'
-                            f'#### 昵称[{uname}]\n'
-                            f'##### 盒币[{coin}]签到[{sign}]天\n'
-                            f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
-                            f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
-                            f'##### 签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]\n'
-                            f'##### 状态[{"全部完成" if finish else "**有任务未完成**"}]')
+            data.append(f'##### ==[{str(i).rjust(strl,"0")}/{ac}]{"="*(35-2*strl)}\n'
+                        f'#### 昵称[{uname}]\n'
+                        f'##### 盒币[{coin}]签到[{sign}]天\n'
+                        f'##### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
+                        f'##### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
+                        f'##### 签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]\n'
+                        f'##### 状态[{"全部完成" if finish else "**有任务未完成**"}]')
 
-            except AccountException as e:
-                logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')
-                data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
-                            f'#### 账号信息有问题,请检查:[{e}]')
-            except HeyboxException as e:
-                logger.error(f'第[{i}]个账号遇到了未知错误:[{e}]')
-                data.append(f'##### ==账号[{i}/{len(accountlist)}]{"=" * 30 }\n'
-                            f'#### 遇到了未知错误:[{e}]')
+        except AccountException as e:
+            logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')
+            data.append(f'##### ==账号[{i}/{ac}]{"=" * 30 }\n'
+                        f'#### 账号信息有问题,请检查:[{e}]')
+        except HeyboxException as e:
+            logger.error(f'第[{i}]个账号遇到了未知错误:[{e}]')
+            data.append(f'##### ==账号[{i}/{ac}]{"=" * 30 }\n'
+                        f'#### 遇到了未知错误:[{e}]')
         logger.info('=' * 40)
         logger.info(f'脚本版本:[{get_script_version()}]')
         data.append(f'##### {"=" * 35 }\n'
@@ -179,35 +159,11 @@ def cliwait():
 
 
 if __name__ == '__main__':
-    wait = True
-    fastmode = is_fast_mode()
-    quitemode = is_quite_mode()
-    if len(sys.argv) > 1:
-        hasVilidArgvs = False
-        for args in sys.argv[1:]:
-            if args.upper() == '-N':
-                wait = False
-                hasVilidArgvs = True
-            elif args.upper() == '-F':
-                fastmode = True
-                hasVilidArgvs = True
-            elif args.upper() == '-Q':
-                quitemode = True
-                hasVilidArgvs = True
-            elif args.upper() == '-H':
-                print('参数说明: [忽略大小写]\n'
-                      '-N 结束时不要求输入,适合全自动运行\n'
-                      '-H 显示本帮助')
-                hasVilidArgvs = True
-        if not hashasVilidArgvs:
-            print('[ERROR][main]未知的参数,使用-H显示帮助\n')
-
     try:
-        main(fastmode=fastmode, quitemode=quitemode)
+        main()
     except KeyboardInterrupt as e:
-        print(f'[ERROR][main]被用户终止')
+        logger.info('被用户终止')
     except IOError as e:
-        print(f'[ERROR][main]哎呀,又出错了[{e}]')
-        print(f'[ERROR][main]{traceback.print_stack()}')
+        logger.error(f'[ERROR][main]哎呀,又出错了 [{e}]', exc_info=True)
     finally:
         cliwait()

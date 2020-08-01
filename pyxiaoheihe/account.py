@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 22:25:28
+# @LastEditTime : 2020-08-01 23:27:51
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -110,7 +110,7 @@ class Account(Network):
         return(result)
 
     def get_daily_task(self) -> (BString, BString, BString, BString):
-        '''获取每日任务详情,失败返回False
+        '''获取每日任务详情,失败返回(False,False,False,False)
 
         返回:
             sign: 签到?
@@ -129,6 +129,6 @@ class Account(Network):
             self.logger.debug(
                 f"签到{sign}|分享{share_news}|{share_comment}|点赞{like}")
             return((sign, share_news, share_comment, like))
-        except (ClientException) as e:
+        except ClientException as e:
             self.logger.error(f'[*] 获取任务详情出错 [{e}]')
-            return(False)
+            return(False,False,False,False)
