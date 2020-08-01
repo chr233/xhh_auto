@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 15:34:30
+# @LastEditTime : 2020-08-01 15:56:03
 # @Description  : 静态资源
 '''
 
@@ -22,7 +22,7 @@ ERROR_OPERATES = 3
 class URLS():
     'URL常量'
     # 旧版遗留API接口,未必都能正常工作
-    HEYBOX_VERSION_CHECK = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'  # 检查更新
+    HEYBOX_VERSION_CHECK = 'https://api.xiaoheihe.cn/account/version_control_info/'  # 检查更新
     SCRIPT_UPDATE_CHECK = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'  # 脚本更新检查
 
     GET_TASK_STATS = 'https://api.xiaoheihe.cn/task/stats/'  # 任务状态
@@ -52,7 +52,6 @@ class URLS():
     GET_USER_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/profile/news/comment/list'  # 拉取用户评论
     GET_STORE_GAME_LIST = 'https://api.xiaoheihe.cn/mall/list/'  # 获取商店的游戏列表
 
-    LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'  # 评测点赞
     
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
@@ -69,6 +68,7 @@ class URLS():
     GET_TAG = 'https://api.xiaoheihe.cn/maxnews/app/tag/list'  # 获取文章标签
     GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
+    LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
 
 class TAGS():
     '标签转换工具类'

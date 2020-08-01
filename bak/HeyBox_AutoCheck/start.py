@@ -53,7 +53,7 @@ def start(fastmode:bool=True,quitemode:bool=False):
                     if not qd:
                         logger.info('签到')
                         hbc.sign()
-                    if not dz or not fxxw or not fxpl:
+                    if True or not dz or not fxxw or not fxpl:
                         logger.info('获取新闻列表……')
                         newslist = hbc.get_news_list(5)
                         logger.info(f'获取[{len(newslist)}]条内容')

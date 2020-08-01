@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 15:45:18
+# @LastEditTime : 2020-08-01 15:59:48
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -42,17 +42,14 @@ class Account(Network):
         '''获取个人资料,失败返回False
 
         参数:
-            userid: 用户id,不填代入自己的id
+            [userid]: 用户id,不填代入自己的id
         返回:
             follow_num:关注数
             fan_num:粉丝数
             awd_num:获赞数
         '''
         url = URLS.GET_USER_PROFILE
-        uid = userid or self._heybox_id
-
-        params = {'userid': uid}
-
+        params = {'userid': userid or self._heybox_id}
         try:
             result = self._get(url=url, params=params)
 

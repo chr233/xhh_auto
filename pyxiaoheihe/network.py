@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 15:49:25
+# @LastEditTime : 2020-08-01 16:59:43
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -60,7 +60,7 @@ class Network():
         '''
         def url_to_path(url: str) -> str:
             path = urlparse(url).path
-            if path[-1] == '/':
+            if path and path[-1] == '/':
                 path = path[:-1]
             return(path)
         t = int(time.time())
@@ -88,7 +88,7 @@ class Network():
         try:
             jd = resp.json()
             self.__check_status(jd)
-            return(jd['result'])
+            return(jd.get('result'))
         except JSONDecodeError as e:
             self.logger.warn(f'JSON解析失败 [{resp.text}]')
             return({})
@@ -152,14 +152,16 @@ class Network():
                 raise Ignore
             elif status == 'failed':
                 msg = jd['msg']
+                print(msg)
                 if msg in ('操作已经完成',
                            '不能进行重复的操作哦',
                            '不能重复赞哦'):
                     raise Ignore
 
                 elif msg in ('抱歉，没有找到你要的帖子',
-                             '操作失败'):
-                    raise ClientException
+                             '操作失败',
+                             'error link_id'):
+                    raise ClientException(f'客户端出错@{msg}')
 
                 elif msg == '系统时间不正确':
                     raise OSError('系统时间错误')
