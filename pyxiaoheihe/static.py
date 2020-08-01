@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-31 22:20:29
+# @LastEditTime : 2020-08-01 11:39:54
 # @Description  : 静态资源
 '''
 
@@ -10,17 +10,18 @@
 HEYBOX_VERSION = '1.3.118'
 
 # 遇到空结果继续请求的次数
-EMPTY_RETRY_TIMES = 0
+EMPTY_RETRYS = 0
 
 # 遇到错误继续请求的次数
-ERROR_RETRY_TIMES = 0
+ERROR_RETRYS = 1
 
 # 批量操作时遇到错误继续操作的次数
-ERROR_OPERATE_TIMES = 3
+ERROR_OPERATES = 3
 
 
 class URLS():
     'URL常量'
+    # 旧版遗留API接口,未必都能正常工作
     HEYBOX_VERSION_CHECK = 'https://api.xiaoheihe.cn/account/version_control_info/?os_type=Android'  # 检查更新
     SCRIPT_UPDATE_CHECK = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'  # 脚本更新检查
 
@@ -28,8 +29,8 @@ class URLS():
     GET_TASK_LIST = 'https://api.xiaoheihe.cn/task/list/'  # 任务列表
     GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'  # 关注更新提醒
     GET_SUBSCRIBED_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
-    GET_NEWS_LIST = 'https://api.xiaoheihe.cn/maxnews/app/list'  # 新闻列表
-    GET_LINK_TREE = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
+
+    
     GET_NEWS_DETAIL = 'https://api.xiaoheihe.cn/maxnews/app/detail/'  # 文章页
     GET_VIDEO_VIEW = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'  # 视频页框架
     GET_GAME_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/game/comments/'  # 游戏评价
@@ -54,7 +55,6 @@ class URLS():
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'  # 评测点赞
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
-    SIGN = 'https://api.xiaoheihe.cn/task/sign/'  # 签到
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
     FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'  # 加关注
@@ -63,11 +63,51 @@ class URLS():
     UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'  # 修改个人资料
     SEND_MESSAGE = 'https://api.xiaoheihe.cn/chat/send_message/'  # 发送私信
 
+    # 检验过的API
+    SIGN = 'https://api.xiaoheihe.cn/task/sign/'  # 签到
+    GET_NEWS_LIST = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'  # 新闻列表
+    GET_TAG = 'https://api.xiaoheihe.cn/maxnews/app/tag/list'  # 获取文章标签
+    GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
+
 
 class SoreType():
     '商店列表排序方式'
     NoneSort = 0  # 不排序
     Price = 1  # 价格排序
+
+
+class TAGS():
+    '标签转换工具类'
+    __name2key = {'PC游戏': 'evaluating', '宝可梦': 'Pokemon', '主机游戏': 'console', '桌游综合': 'boardgame',
+                  '荒野大镖客2': 'topic_53575', '云顶之弈': 'Teamfight', '逃离塔科夫': 'topic_74681',
+                  '死亡搁浅': 'topic_death', '荒野乱斗': 'huangyeluandou', 'Wallpaper': 'topic_11635',
+                  '超猎都市': 'topic_417725', '盗贼之海': 'topic_415163', '明日方舟': 'topic_23799',
+                  '战双帕弥什': 'ZSPMS', '和平精英': 'HPJY', '刀塔霸业': 'DotaUnderlords', '最后生还者系列': 'tloutwo',
+                  '对马之魂': 'topic_77355', '原神': 'Genshin', '手机游戏': 'Mobile', '盒友杂谈': 'HotSpots',
+                  '使命召唤': 'cod', '刺客信条系列': 'topic_50971', '绝地求生': 'PUBG', '数码硬件': 'event ',
+                  '命运2': 'Destiny', 'CS:GO': 'csgo', '彩虹六号': 'R6', '守望先锋': 'Blizzard', '英雄联盟': 'lol',
+                  '侠盗猎车手5': 'topic_2614', '怪物猎人': 'Mhw', '刀塔自走棋': 'DOTA_Piece', '炉石传说': 'hs',
+                  '公主连结': 'pcr', '王者荣耀': 'wzry', '骑马与砍杀2': 'dive', 'Valorant': 'topic_235709',
+                  '刀塔2': 'dota2', '魔兽世界': 'WOW', '动物森友会': 'animal'}
+    __key2name = {'evaluating': 'PC游戏', 'Pokemon': '宝可梦', 'console': '主机游戏', 'boardgame': '桌游综合',
+                  'topic_53575': '荒野大镖客2', 'Teamfight': '云顶之弈', 'topic_74681': '逃离塔科夫',
+                  'topic_death': '死亡搁浅', 'huangyeluandou': '荒野乱斗', 'topic_11635': 'Wallpaper',
+                  'topic_417725': '超猎都市', 'topic_415163': '盗贼之海', 'topic_23799': '明日方舟',
+                  'ZSPMS': '战双帕弥什', 'HPJY': '和平精英', 'DotaUnderlords': '刀塔霸业', 'tloutwo': '最后生还者系列',
+                  'topic_77355': '对马之魂', 'Genshin': '原神', 'Mobile': '手机游戏', 'HotSpots': '盒友杂谈',
+                  'cod': '使命召唤', 'topic_50971': '刺客信条系列', 'PUBG': '绝地求生', 'event ': '数码硬件',
+                  'Destiny': '命运2', 'csgo': 'CS: GO', 'R6': '彩虹六号', 'Blizzard': '守望先锋', 'lol': '英雄联盟',
+                  'topic_2614': '侠盗猎车手5', 'Mhw': '怪物猎人', 'DOTA_Piece': '刀塔自走棋', 'hs': '炉石传说',
+                  'pcr': '公主连结', 'wzry': '王者荣耀', 'dive': '骑马与砍杀2', 'topic_235709': 'Valorant',
+                  'dota2': '刀塔2', 'WOW': '魔兽世界', 'animal': '动物森友会'}
+
+    def name2key(self, name: str) -> str:
+        '标签name转成key'
+        return(self.__name2key.get(name))
+
+    def key2name(self, key: str) -> str:
+        '标签key转成name'
+        return(self.__key2name.get(key))
 
 
 class RecTagType():
@@ -88,11 +128,13 @@ class RelationType():
 
 class NewsContentType():
     '首页新闻类型'
-    UnknownType = 0  # 未知
-    CommunityArticle = 1  # 社区帖子
+    Unknown = 0  # 未知
+    VideoNews = 1  # 视频内容
     TextNews = 2  # 普通新闻
-    TypeRecommand = 5  # 您是否对XXX感兴趣?'
-    MultipleNews = 7  # 多条新闻
+    TextNewsEx = 4  # 普通新闻,但是有大占位
+    Recommand = 5  # 您是否对XXX感兴趣?'
+    MultipleNews = 7  # 新闻专题
+    Banner = 23  # 首页Banner
 
 
 class FollowPostType():

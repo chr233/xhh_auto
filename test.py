@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 19:25:48
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-31 21:39:07
+# @LastEditTime : 2020-08-01 11:21:19
 # @Description  : 测试专用
 '''
 
@@ -17,6 +17,6 @@ load_config()
 cfg=get_all_config()
 
 for c in cfg['accounts']:
-    a=HeyBoxClient(c,cfg['heybox'],123)
+    a=HeyBoxClient(c,cfg['heybox'],'test')
     a.debug()
 
