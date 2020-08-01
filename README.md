@@ -4,7 +4,7 @@
 
 ## 新版开发中
 
-### 新版开发进度 [###_______] 30%
+### 新版开发进度 [######____] 60%
 
 * 新版重构中，可用的旧版魔改版本：[链接](https://github.com/chr233/xhh_auto/raw/new/bak/HeyBox_AutoCheck/xhh_auto_v0.79.7z)
 
