@@ -3,21 +3,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 13:31:35
-# @Description  : 在做了在做了
+# @LastEditTime : 2020-08-01 23:06:29
+# @Description  : 启动入口
 '''
 
 from utils.log import get_logger
-
-# from heybox_basic import *
-# from heybox_errors import *
-# from heybox_static import *
-# from heybox_client import HeyboxClient
-
-import json
-import time
-import os
-import sys
+from pyxiaoheihe import HeyBoxClient
 
 #import termios
 

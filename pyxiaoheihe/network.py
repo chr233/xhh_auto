@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 22:37:14
+# @LastEditTime : 2020-08-01 23:10:06
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -39,12 +39,12 @@ class Network():
         self._cookies = {'pkey': account.get('pkey')}
         self._params = {'heybox_id': account.get('heybox_id'),
                         'imei': account.get('imei'),
-                        'os_type': hbxcfg.get('os_type'),
-                        'os_version': hbxcfg.get('os_version'),
+                        'os_type': hbxcfg.get('os_type','Android'),
+                        'os_version': hbxcfg.get('os_version','9'),
                         'version': HEYBOX_VERSION,
                         '_time': '',
                         'hkey': '',
-                        'channel': hbxcfg.get('channel')}
+                        'channel': hbxcfg.get('channel','heybox_yingyongbao')}
         self.logger = Logger(str(tag))
         self._heybox_id = account.get('heybox_id')
         self.logger.debug('网络模块初始化完毕')
