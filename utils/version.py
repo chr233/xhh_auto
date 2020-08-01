@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 17:26:30
+# @LastEditTime : 2020-08-02 00:27:54
 # @Description  : 检查脚本更新
 '''
 
@@ -12,7 +12,7 @@ from json import JSONDecodeError
 from .log import get_logger
 
 
-SCRIPT_VERSION = 0.80
+SCRIPT_VERSION = "0.80"
 
 logger = get_logger('Version')
 
@@ -32,21 +32,22 @@ def check_update():
         (str,str,str): 有更新,最新版本,更新信息,下载链接
     '''
     url = 'https://api.github.com/repos/chr233/xhh_auto/releases/latest'
-    resp = requests.get(url=url)
     try:
+        resp = requests.get(url=url)
         jd = resp.json()
+        current_version=float(SCRIPT_VERSION)
         latest_version = float(str(jd['tag_name'])[1:])
         update_info = jd['body']
         download_url = jd['assets'][0]['browser_download_url']
-        if (SCRIPT_VERSION == latest_version):
-            logger.debug(f'当前为最新版本,版本号{SCRIPT_VERSION}')
+        if (current_version == latest_version):
+            logger.debug(f'当前为最新版本,版本号{current_version}')
             return(False)
-        elif (SCRIPT_VERSION > latest_version):
-            logger.debug(f'当前版本号比发行版高,版本号[{SCRIPT_VERSION}<-{latest_version}]')
+        elif (current_version > latest_version):
+            logger.debug(f'当前版本号比发行版高,版本号[{current_version}<-{latest_version}]')
             return(False)
         else:
-            logger.debug(f'脚本有更新,版本号[{SCRIPT_VERSION}->{latest_version}]')
+            logger.debug(f'脚本有更新,版本号[{current_version}->{latest_version}]')
             return((latest_version, update_info, download_url))
-    except (KeyError, NameError, JSONDecodeError) as e:
+    except (ConnectionError,KeyError, NameError, JSONDecodeError) as e:
         logger.error(f'[*] 检测脚本更新出错 [{e}]')
         return(False)

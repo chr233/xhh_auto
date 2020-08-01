@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 22:58:24
+# @LastEditTime : 2020-08-02 00:11:11
 # @Description  : 读取并验证配置
 '''
 
@@ -99,7 +99,7 @@ def verify_config(cfg: dict) -> dict:
     if ftqq and type(ftqq) == dict:
         enable = ftqq.get('enable', False)
         skey = ftqq.get('skey', "")
-        only_on_error = ftqq.get('only_on_error', False)
+        only_on_error =  ftqq.get('only_on_error', False)
         if enable and not skey:
             raise ValueError('开启了FTQQ模块,但是未指定SKEY,请检查配置文件')
         vcfg['ftqq'] = {
@@ -123,9 +123,9 @@ def verify_config(cfg: dict) -> dict:
         user = email.get('user', '')
         recvaddr = email.get('recvaddr', '')
         sendaddr = email.get('sendaddr', '')
-        only_on_error = email.get('only_on_error', '')
+        only_on_error =  email.get('only_on_error', '')
         if enable and not (port and server
-             and password and user and recvaddr and sendaddr):
+                           and password and user and recvaddr and sendaddr):
             raise ValueError('开启了email模块,但是配置不完整,请检查配置文件')
         vcfg['email'] = {
             'enable': enable,

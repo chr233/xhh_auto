@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 23:10:06
+# @LastEditTime : 2020-08-01 23:52:34
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,7 +13,7 @@ from base64 import b64encode
 from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
-from logging import Logger
+from utils.log import get_logger
 
 from .static import HEYBOX_VERSION, BString
 from .error import *
@@ -27,7 +27,7 @@ class Network():
     _params = {}
 
     _heybox_id = 0
-    logger = Logger("-")
+    logger = get_logger("-")
 
     def __init__(self, account: dict, hbxcfg: dict, tag: str):
         super().__init__()
@@ -45,7 +45,7 @@ class Network():
                         '_time': '',
                         'hkey': '',
                         'channel': hbxcfg.get('channel', 'heybox_yingyongbao')}
-        self.logger = Logger(str(tag))
+        self.logger = get_logger(str(tag))
         self._heybox_id = account.get('heybox_id')
         self.logger.debug('网络模块初始化完毕')
 

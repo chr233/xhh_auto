@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 23:27:51
+# @LastEditTime : 2020-08-01 23:58:20
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -20,7 +20,7 @@ class Account(Network):
 
     def debug(self):
         super().debug()
-        self.get_daily_task()
+        self.get_my_data()
 
     def get_heybox_latest_version(self) -> str:
         '''获取小黑盒最新版本号,失败返回False
@@ -57,19 +57,19 @@ class Account(Network):
             ad = result['account_detail']
             bi = ad['bbs_info']
 
-            follow = bi['follow_num'] # 关注
-            fan = bi['fan_num'] # 粉丝
-            like = bi['awd_num'] # 获赞
-            level = ad['level_info']['level'] # 等级
-            userid = ad['userid'] #用户id
-            username = ad['username'] # 用户名
+            follow = bi['follow_num']  # 关注
+            fan = bi['fan_num']  # 粉丝
+            like = bi['awd_num']  # 获赞
+            level = ad['level_info']['level']  # 等级
+            userid = ad['userid']  # 用户id
+            username = ad['username']  # 用户名
 
             self.logger.debug(f'昵称:{username} >{userid}< [{level}级]')
             self.logger.debug(f'关注[{follow}] 粉丝[{fan}] 获赞[{like}]')
             return((follow, fan, like))
         except (ClientException, KeyError, NameError) as e:
             self.logger.error(f'[*] 获取用户详情出错 [{e}]')
-            return(False)
+            return((0,0,0))
 
     def get_unread_count(self) -> (int, int, int, int, int):
         '''获取未读通知计数,失败返回False
@@ -131,4 +131,36 @@ class Account(Network):
             return((sign, share_news, share_comment, like))
         except ClientException as e:
             self.logger.error(f'[*] 获取任务详情出错 [{e}]')
-            return(False,False,False,False)
+            return(False, False, False, False)
+
+    def get_my_data(self) -> (str, int, (int, int, int), int):
+        '''获取我的数据,出错返回False
+
+        返回:
+            username:昵称
+            userid: userid
+            coin:H币
+            (level,exp,max_exp):(等级,经验,下级经验)
+            sign_in_streak:连续签到天数
+        '''
+        url = URLS.GET_TASK_LIST
+        try:
+            result = self._get(url=url)
+            u = result['user']
+            li = result['level_info']
+
+            username = u['username']
+            userid = u['userid']
+            coin = int(li['coin'])
+            exp = int(li['exp'])
+            level = int(li['level'])
+            max_exp = int(li['max_exp'])
+            sign_in_streak = int(
+                result['task_list'][0]['tasks'][0]['sign_in_streak'])
+            self.logger.debug(f'昵称[{username}] @{userid} [{level}级]')
+            self.logger.debug(
+                f'盒币[{coin}]|经验[{exp}/{max_exp}]|连续签到[{sign_in_streak}]天')
+            return((username,userid, coin, (level, exp, max_exp), sign_in_streak))
+        except (ClientException, KeyError, NameError) as e:
+            self.logger.error(f'[*] 获取我的数据出错 [{e}]')
+            return(('读取信息出错',0, 0, (0, 0, 0), 0))
