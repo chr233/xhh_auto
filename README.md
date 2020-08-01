@@ -4,7 +4,9 @@
 
 ## 新版开发中
 
-### 新版开发进度 [######____] 60%
+### 新版开发进度 [#########_] 90%
+
+### 分享任务不知道为什么无法完成，明天修复后发布新版本
 
 * 新版重构中,可用的旧版魔改版本：[链接](https://github.com/chr233/xhh_auto/raw/new/bak/HeyBox_AutoCheck/xhh_auto_v0.79.7z)
 
@@ -16,7 +18,7 @@
 
 ## 安装方法
 
-1. 从[releases](https://github.com/chr233/xhh_auto/releases)下载最新的脚本
+1. ~~从[releases](https://github.com/chr233/xhh_auto/releases)下载最新的脚本~~
 1. 解压,并切换到脚本所在目录
 1. 打开`accounts_sample.json`,填入自己的账号凭据,保存为`accounts.json`
 1. 打开`settings_sample.json`,填入FtqqSKEY[获取地址](http://sc.ftqq.com/)(可选,用于发送统计信息到微信)
