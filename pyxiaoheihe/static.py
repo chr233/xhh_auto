@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 11:39:54
+# @LastEditTime : 2020-08-01 15:34:30
 # @Description  : 静态资源
 '''
 
@@ -54,7 +54,7 @@ class URLS():
 
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'  # 评测点赞
-    LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
+    
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
     FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'  # 加关注
@@ -68,13 +68,7 @@ class URLS():
     GET_NEWS_LIST = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'  # 新闻列表
     GET_TAG = 'https://api.xiaoheihe.cn/maxnews/app/tag/list'  # 获取文章标签
     GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
-
-
-class SoreType():
-    '商店列表排序方式'
-    NoneSort = 0  # 不排序
-    Price = 1  # 价格排序
-
+    LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
 
 class TAGS():
     '标签转换工具类'
@@ -185,13 +179,6 @@ class StateType():
     '答题结果'
     Complete = 1  # 答题完成
     AlreadyDone = 2  # 已经答过了,无法重复作答
-
-
-class CommentType():
-    '评论类型'
-    UnknownType = 0  # 未知
-    SubRComment = 1  # 楼中楼,无法点赞
-    Comment = 2  # 一般回复
 
 
 class BString():

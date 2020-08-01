@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-31 23:21:40
+# @LastEditTime : 2020-08-01 15:45:18
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -28,12 +28,10 @@ class Account(Network):
             str: 小黑盒版本号
         '''
         url = URLS.HEYBOX_VERSION_CHECK
-        jd = self._get(url=url)
         try:
-            self._check_status(jd)
-            r = jd['result']
-            version = r['version']
-            message = r['msg']
+            result = self._get(url=url)
+            version = result['version']
+            message = result['msg']
             self.logger.debug(f'小黑盒最新版本为[{version}] - [{message}]')
             return(version)
         except (ClientException, KeyError, NameError) as e:
@@ -53,15 +51,13 @@ class Account(Network):
         url = URLS.GET_USER_PROFILE
         uid = userid or self._heybox_id
 
-        p = {'userid': uid}
+        params = {'userid': uid}
 
-        jd = self._get(url=url, params=p)
         try:
-            self._check_status(jd)
+            result = self._get(url=url, params=params)
 
-            ad = jd['result']['account_detail']
+            ad = result['account_detail']
             bi = ad['bbs_info']
-
             follow_num = bi['follow_num']
             fan_num = bi['fan_num']
             awd_num = bi['awd_num']
@@ -83,9 +79,8 @@ class Account(Network):
             dict: json字典
         '''
         url = URLS.GET_TASK_LIST
-        jd = self._get(url=url)
-        self._check_status(jd)
-        return(jd)
+        result = self._get(url=url)
+        return(result)
 
     def get_daily_task(self) -> (BString, BString, BString, BString):
         '''获取每日任务详情,失败返回False
@@ -97,9 +92,8 @@ class Account(Network):
             like:点赞?
         '''
         try:
-            jd = self.__get_task_json()
-
-            tl = jd['result']['task_list'][0]['tasks']
+            result = self.__get_task_json()
+            tl = result['task_list'][0]['tasks']
             sign = BString(tl[0]['state'] == 'finish')
             share_news = BString(tl[1]['state'] == 'finish')
             share_comment = BString(tl[2]['state'] == 'finish')

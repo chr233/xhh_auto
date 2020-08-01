@@ -2,11 +2,11 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 14:25:01
+# @LastEditTime : 2020-08-01 15:49:25
 # @Description  : 网络模块,负责网络请求
 '''
 
-
+import traceback
 import time
 import hashlib
 from base64 import b64encode
@@ -51,16 +51,6 @@ class Network():
 
     def debug(self):
         pass
-
-    def _base64e(self, txt: str) -> str:
-        '''base64编码
-
-        参数:
-            txt: 待编码的文本
-        返回:
-            str: 编码后的文本
-        '''
-        return(b64encode(txt.encode('utf-8')))
 
     def __flush_token(self, url: str):
         '''根据当前时间生成time_和hkey,并存入self._parames中
@@ -168,7 +158,7 @@ class Network():
                     raise Ignore
 
                 elif msg in ('抱歉，没有找到你要的帖子',
-                             '1'):
+                             '操作失败'):
                     raise ClientException
 
                 elif msg == '系统时间不正确':
@@ -194,3 +184,7 @@ class Network():
             self.logger.debug(f'{jd}')
             self.logger.error(f'{traceback.print_stack()}')
             raise UnknownError
+
+
+
+

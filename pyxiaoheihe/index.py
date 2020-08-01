@@ -2,13 +2,14 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 14:27:21
+# @LastEditTime : 2020-08-01 15:52:42
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
 from .network import Network
 from .static import URLS, BString, EMPTY_RETRYS, ERROR_RETRYS
-from .error import ClientException
+from .error import ClientException, Ignore
+from .utils import base64encode
 
 
 class Index(Network):
@@ -18,7 +19,8 @@ class Index(Network):
 
     def debug(self):
         super().debug()
-        self.get_comments_id(43620821)
+        # self.get_comments_id(43620821)
+        self.like_comment(86615617, False)
 
     def get_news(self, amount: int = 30, tag: str = '-1') -> list:
         '''获取首页文章列表
@@ -28,7 +30,7 @@ class Index(Network):
             amount: 需要拉取的数量
             tag: 文章分区,可以参考static.TAGS类,-1代表首页
         成功返回:
-            list: 文章id列表,[(linkid,title),……]
+            list: 文章id列表,[(linkid,title,desc,userid),……]
         '''
         def get_offset(offset: int):
             params = {'offset': offset, 'limit': 30,
@@ -39,7 +41,8 @@ class Index(Network):
             for ni in l:
                 # 1,2,4 含义参见static.NewsContentType类
                 if ni['content_type'] in(1, 2, 4):
-                    tmp.append((ni['linkid'], ni['title']))
+                    tmp.append((ni['linkid'], ni['title'],
+                                ni['description'], ni.get('userid', 0)))
             self.logger.debug(f'拉取了{len(tmp)}条新闻')
             return(tmp)
         # ==========================================
@@ -53,7 +56,6 @@ class Index(Network):
                 if tmp:
                     self.logger.debug(f'拉取第[{i+1}]批新闻')
                     newslist.extend(tmp)
-                    newslist = list(set(newslist))
                 else:
                     self.logger.debug('[*] 新闻列表为,可能遇到错误')
                     empty += 1
@@ -90,8 +92,8 @@ class Index(Network):
         return(idlist)
 
     def get_comments(self, linkid: int, amount: int = 30,
-                     index: int = 1, author_only: bool = False):
-        '''拉取文章的评论,失败返回False
+                     index: int = 1, author_only: bool = False) -> list:
+        '''拉取文章的评论列表,不包含楼中楼,失败返回False
 
         参数:
             linkid: 文章id
@@ -99,10 +101,10 @@ class Index(Network):
             [index]: 可以理解为文章排在首页的位置,banner为0,从上往下依次递增
             [author_only]: 是否开启只看楼主
         返回:
-            list: [(commintid,text,userid)…],评论id列表
+            list: [(commintid,text,userid)…],评论列表
         '''
         def get_page(page: int = 1):
-            params = {'h_src': self._base64e('news_feeds_-1'),
+            params = {'h_src': base64encode('news_feeds_-1'),
                       'link_id': linkid, 'page': page, 'limit': 30,
                       'is_first': 1 if page == 1 else 0,
                       'owner_only': 1 if author_only else 0,
@@ -139,7 +141,6 @@ class Index(Network):
                 if tmp:
                     self.logger.debug(f'拉取第[{i}]页评论')
                     commentslist.extend(tmp)
-                    commentslist = list(set(commentslist))
                 else:
                     self.logger.debug('评论列表为空，可能遇到错误')
                     empty += 1
@@ -154,6 +155,7 @@ class Index(Network):
                 if error > ERROR_RETRYS:
                     self.logger.debug('错误次数达到上限,停止操作')
                     break
+
         commentslist = commentslist[:amount]
         if len(commentslist) > 0:
             self.logger.debug(f'操作完成，拉取了[{len(commentslist)}]条评论')
@@ -162,11 +164,21 @@ class Index(Network):
         return(commentslist)
 
     def get_comments_id(self, linkid: int, amount: int = 30,
-                       index: int = 1, author_only: bool = False):
-        commentslist=self.get_comments(linkid,amount,index,author_only)
-        idlist=[x[0] for x in commentslist]
+                        index: int = 1, author_only: bool = False) -> list:
+        '''拉取文章的评论id列表,失败返回False
+
+        参数:
+            linkid: 文章id
+            [amount]: 要拉取的数量
+            [index]: 可以理解为文章排在首页的位置,banner为0,从上往下依次递增
+            [author_only]: 是否开启只看楼主
+        返回:
+            list: [commintid…],评论id列表
+        '''
+        commentslist = self.get_comments(linkid, amount, index, author_only)
+        idlist = [x[0] for x in commentslist]
         return(idlist)
-        
+
     def get_tags(self) -> list:
         '''获取标签列表,可以用于获取指定分区的文章,出错返回False
 
@@ -174,11 +186,82 @@ class Index(Network):
             list: tag列表,[(name,key),…]
         '''
         url = URLS.GET_TAG
-        result = self._get(url)
         try:
-            self._check_status(result)
+            result = self._get(url)
             t = result['tags'][1:]
             tags = [(x['tag'], x['key']) for x in t]
             return(tags)
         except ClientException:
             self.logger.error('获取标签列表出错')
+
+    def like_comment(self, commentid: int, like: bool = True) -> bool:
+        '''给评论点赞
+
+        参数:
+            commentid: 评论id
+            like: True点赞/False取消赞
+        返回:
+            bool: 操作是否成功
+        '''
+        url = URLS.LIKE_COMMENT
+        data = {'comment_id': commentid, 'support_type': 1 if like else 2}
+        try:
+            result = self._post(url=url, data=data)
+            self.logger.debug('评论点赞/取消点赞成功')
+            return(True)
+        except Ignore:
+            self.logger.debug('已经点过赞了')
+            return(True)
+        except ClientException:
+            self.logger.error('评论点赞/取消点赞出错,也有可能是重复取消点赞')
+            return(False)
+
+def like_news(self, linkid: int, newsid: int, index: int = 1):
+        '''给新闻点赞
+        
+        参数:
+            linkid:链接id
+            newsid:新闻id
+            index:索引
+        成功返回:
+            True
+        失败返回:
+            False
+        '''
+        url = URLS.LIKE_LINK
+        headers = {
+            **self._headers,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        data = {
+            'link_id': linkid,
+            'award_type': 1
+        }
+        path = self.__get_path(url)
+        self.__flush_params(path)
+        params = {
+            'h_src': 'LTE=',
+            'newsid': newsid,
+            'rec_mark': 'timeline',
+            'pos': index + 1,
+            'index': index,
+            'page_tab': 1,
+            'al': 'set_top',
+            'from_recommend_list': 3,
+            **self._params
+        }
+        if index == 0:
+            params['al'] = 'set_top'
+        resp = self.Session.post(
+            url=url, data=data, params=params, headers=headers, cookies=self._cookies)
+        try:
+            jsondict = resp.json()
+            self.__check_status(jsondict)
+            self.logger.debug('文章点赞成功')
+            return(True)
+        except Ignore:
+            self.logger.debug('已经点过赞了')
+            return(True)
+        except (JSONDecodeError, ClientException, KeyError, NameError) as e:
+            self.logger.error(f'点赞出错[{e}]')
+            return(False)
