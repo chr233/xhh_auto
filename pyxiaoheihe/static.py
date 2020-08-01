@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 18:01:04
+# @LastEditTime : 2020-08-01 20:34:51
 # @Description  : 静态资源
 '''
 
@@ -139,17 +139,12 @@ class FollowPostType():
     FollowGame = 2  # 关注游戏
     PurchaseGame = 3  # 购买游戏
     AchieveGame = 4  # 获得成就【疑似被弃用】
-    CommentGame = 5  # 评价游戏
+    CommentGame = 5  # 评测游戏
     CreateRollRoom = 6  # 赠送游戏
-    __name2num = {'Unknown': 0, 'PostLink': 1,
+    name2num = {'Unknown': 0, 'PostLink': 1,
                   'FollowGame': 2, 'PurchaseGame': 3,
                   'AchieveGame': 4, 'CommentGame': 5,
                   'CreateRollRoom': 6}
-
-    def name2num(self, name: str):
-        '动态类型转数字分类'
-        num = self.__name2num.get(name) or 0
-        return(num)
 
 
 class GamePlatformType():
