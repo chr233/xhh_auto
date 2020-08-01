@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 16:59:43
+# @LastEditTime : 2020-08-01 17:29:59
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -186,7 +186,3 @@ class Network():
             self.logger.debug(f'{jd}')
             self.logger.error(f'{traceback.print_stack()}')
             raise UnknownError
-
-
-
-

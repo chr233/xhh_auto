@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 15:56:03
+# @LastEditTime : 2020-08-01 18:01:04
 # @Description  : 静态资源
 '''
 
@@ -28,9 +28,7 @@ class URLS():
     GET_TASK_STATS = 'https://api.xiaoheihe.cn/task/stats/'  # 任务状态
     GET_TASK_LIST = 'https://api.xiaoheihe.cn/task/list/'  # 任务列表
     GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'  # 关注更新提醒
-    GET_SUBSCRIBED_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
 
-    
     GET_NEWS_DETAIL = 'https://api.xiaoheihe.cn/maxnews/app/detail/'  # 文章页
     GET_VIDEO_VIEW = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'  # 视频页框架
     GET_GAME_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/game/comments/'  # 游戏评价
@@ -53,7 +51,7 @@ class URLS():
     GET_STORE_GAME_LIST = 'https://api.xiaoheihe.cn/mall/list/'  # 获取商店的游戏列表
 
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'  # 评测点赞
-    
+
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
     FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'  # 加关注
@@ -69,6 +67,9 @@ class URLS():
     GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
+
+    GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
+
 
 class TAGS():
     '标签转换工具类'
@@ -133,13 +134,22 @@ class NewsContentType():
 
 class FollowPostType():
     '动态文章类型'
-    UnknownType = 0  # 未知
+    Unknown = 0  # 未知
     PostLink = 1  # 发帖
     FollowGame = 2  # 关注游戏
     PurchaseGame = 3  # 购买游戏
-    AchieveGame = 4  # 获得成就
+    AchieveGame = 4  # 获得成就【疑似被弃用】
     CommentGame = 5  # 评价游戏
     CreateRollRoom = 6  # 赠送游戏
+    __name2num = {'Unknown': 0, 'PostLink': 1,
+                  'FollowGame': 2, 'PurchaseGame': 3,
+                  'AchieveGame': 4, 'CommentGame': 5,
+                  'CreateRollRoom': 6}
+
+    def name2num(self, name: str):
+        '动态类型转数字分类'
+        num = self.__name2num.get(name) or 0
+        return(num)
 
 
 class GamePlatformType():
@@ -163,7 +173,7 @@ class GameReviewSummaryType():
     NNNN = 8  # 差评如潮
 
 
-class OperateType():
+class OPCode():
     '操作码类型'
     # 批量操作用户列表的操作码
     FollowUser = 1  # 关注用户
