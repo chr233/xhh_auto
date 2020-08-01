@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 00:26:50
+# @LastEditTime : 2020-08-02 00:46:11
 # @Description  : 启动入口
 '''
 import time
@@ -21,6 +21,14 @@ from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError
 
 logger = get_logger('Run')
 
+print(r'''
+ _     _ __  __ __  __          .    .     .  _______   ___  
+ `.   /  |   |  |   |          /|    /     / '   /    .'   `.
+   \,'   |___|  |___|         /  \   |     |     |    |     |
+  ,'\    |   |  |   |        /---'\  |     |     |    |     |
+ /   \   /   /  /   /      ,'      \  `._.'      /     `.__.'
+
+''')
 
 def main():
     '示例程序,可以根据需要自行修改'
