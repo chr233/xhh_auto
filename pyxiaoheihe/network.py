@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 17:29:59
+# @LastEditTime : 2020-08-01 21:41:14
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -133,7 +133,7 @@ class Network():
         h = headers or self._headers
         c = cookies or self._cookies
         resp = self._session.post(
-            url=url, params=p, data=data, headers=h, cookies=c
+            url=url, params=p, data=d, headers=h, cookies=c
         )
         jd = self.__get_json(resp)
         return(jd)
@@ -153,14 +153,14 @@ class Network():
             elif status == 'failed':
                 msg = jd['msg']
                 print(msg)
-                if msg in ('操作已经完成',
-                           '不能进行重复的操作哦',
-                           '不能重复赞哦'):
+                if msg in ('操作已经完成', '不能进行重复的操作哦',
+                           '不能重复赞哦','不能给自己的评价点赞哟',
+                           ''):
                     raise Ignore
 
                 elif msg in ('抱歉，没有找到你要的帖子',
-                             '操作失败',
-                             'error link_id'):
+                             '操作失败', 'error link_id',
+                             '错误的帖子', '错误的用户'):
                     raise ClientException(f'客户端出错@{msg}')
 
                 elif msg == '系统时间不正确':
@@ -172,13 +172,13 @@ class Network():
                 elif msg == '出现了一些问题，请稍后再试':
                     self.logger.error(f'返回值:{jd}')
                     self.logger.error('出现这个错误的原因未知，请过一会再重新运行脚本')
-                    raise UnknownError
+                    raise UnknownError(f'返回值:{jd}')
 
                 self.logger.error(f'未知的返回值[{msg}]')
                 self.logger.error('请将以下内容发送到chr@chrxw.com')
                 self.logger.error(f'{jd}')
                 self.logger.error(f'{traceback.print_stack()}')
-                raise UnknownError
+                raise UnknownError(f'未知的返回值[{msg}]')
             elif status == 'relogin':
                 raise TokenError
         except (KeyError, ValueError, NameError, AttributeError):

@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 19:25:48
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 20:34:58
+# @LastEditTime : 2020-08-01 20:47:47
 # @Description  : 测试专用
 '''
 
@@ -11,8 +11,6 @@
 from utils.config import load_config, get_all_config
 from utils.version import check_update
 from pyxiaoheihe import HeyBoxClient
-from pyxiaoheihe.utils import ex_extend
-from pyxiaoheihe.static import FollowPostType
 
 load_config()
 

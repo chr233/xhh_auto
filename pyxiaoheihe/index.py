@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 20:41:55
+# @LastEditTime : 2020-08-01 21:42:35
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
 from .network import Network
-from .static import URLS, BString, EMPTY_RETRYS, ERROR_RETRYS, FollowPostType
+from .static import URLS, BString, EMPTY_RETRYS, ERROR_RETRYS, EventType
 from .error import ClientException, Ignore
 from .utils import base64encode, ex_extend
 
@@ -19,10 +19,7 @@ class Index(Network):
 
     def debug(self):
         super().debug()
-        s = self.get_follow_post_id(10)
-        for i in s:
-            self.like_follow_post(s)
-        print(1)
+        self.share_comment()
 
     def get_news(self, amount: int = 30, tag: str = '-1') -> list:
         '''获取首页文章列表
@@ -33,7 +30,7 @@ class Index(Network):
         成功返回:
             list: 文章id列表,[(linkid,title,desc,userid),……]
         '''
-        def get_offset(offset: int):
+        def get(offset: int):
             params = {'offset': offset, 'limit': 30,
                       'tag': tag, 'rec_mark': 'timeline'}
             result = self._get(url=url, params=params)
@@ -47,14 +44,14 @@ class Index(Network):
             self.logger.debug(f'拉取了{len(tmp)}条新闻')
             return(tmp)
         # ==========================================
-        url = URLS.GET_NEWS_LIST
+        url = URLS.GET_NEWS
         newslist = []
         empty = 0
         error = 0
         for i in range(0, amount//30 + 2):
             try:
                 self.logger.debug(f'拉取第[{i+1}]批新闻')
-                tmp = get_offset(i * 30)
+                tmp = get(i * 30)
                 if tmp:
                     newslist.extend(tmp)
                 else:
@@ -103,7 +100,7 @@ class Index(Network):
         返回:
             list: [(commintid,text,userid)…],评论列表
         '''
-        def get_page(page: int = 1):
+        def get(page: int):
             params = {'h_src': base64encode('news_feeds_-1'),
                       'link_id': linkid, 'page': page, 'limit': 30,
                       'is_first': 1 if page == 1 else 0,
@@ -138,7 +135,7 @@ class Index(Network):
         for i in range(0, amount//30 + 2):
             try:
                 self.logger.debug(f'拉取第[{i+1}]页评论')
-                tmp = get_page(i)
+                tmp = get(i)
                 if tmp:
                     commentslist.extend(tmp)
                 else:
@@ -179,45 +176,42 @@ class Index(Network):
         idlist = [x[0] for x in commentslist]
         return(idlist)
 
-    def get_follow_post(self, amount: int = 30, ignore_liked: bool = True) -> list:
+    def get_subscrib_events(self, amount: int = 30, ignore_liked: bool = True) -> list:
         '''拉取动态列表,失败返回False
 
         参数:
             value: 要拉取的数量
             [ignore_liked]: 忽略已点赞的动态?
         成功返回:
-            list: [(linkid,posttype,已点赞?),……] posttype释义参见:FollowPostType
+            list: [(linkid,ftype,已点赞?),……] ftype释义参见static.EventType
         '''
-        def get(offset: int = 0, lastval: str = ''):
+        def get(offset: int, lastval: str):
             params = {'offset': offset, 'limit': 30, 'lastval': lastval,
                       'filters': 'post_link|follow_game|game_purchase|game_comment|roll_room'}
             if not lastval:
                 params.pop('lastval')
-
             result = self._get(url=url, params=params)
             tmp = []
+            val = result.get('lastval')
             if result['moments']:
-                val = result['lastval']
                 for m in result['moments']:
                     try:
                         l = m['link']
                         linkid = int(l['linkid'])
                         liked = BString(l['is_award_link'] == 1)
                         userid = int(m['user']['userid'])
-                        posttype = FollowPostType.name2num.get(
+                        ftype = EventType.name2num.get(
                             m['content_type'], 0)
                         # 过滤自己的评测
-                        if posttype == FollowPostType.CommentGame and userid == self._heybox_id:
+                        if ftype == EventType.CommentGame and userid == self._heybox_id:
                             continue
                         # 忽略已点赞的动态
                         if liked == False or ignore_liked == False:
-                            tmp.append((linkid, posttype, liked))
+                            tmp.append((linkid, ftype, liked))
                     except KeyError:
                         self.logger.debug(f'[*] 提取动态列表出错 [{m}]')
-                        continue
                 self.logger.debug(f'拉取了[{len(tmp)}]条动态')
             else:
-                val = None
                 self.logger.debug(f'服务器未返回动态数据,跳过本轮')
             return((tmp, val))
         # ==========================================
@@ -250,7 +244,7 @@ class Index(Network):
                 else:
                     lastcount = len(eventslist)
             except ClientException as e:
-                self.logger.debug(f'[*] 拉取动态列表出错[{e}]')
+                self.logger.debug(f'[*] 拉取动态列表出错 [{e}]')
                 error += 1
                 if error > ERROR_RETRYS:
                     self.logger.debug('[*] 错误次数达到上限,停止操作')
@@ -263,121 +257,82 @@ class Index(Network):
             self.logger.debug('拉取完毕，动态列表为空，可能遇到错误')
         return(eventslist)
 
-    def get_follow_post_id(self, amount: int = 30, ignore_liked: bool = True) -> list:
-        '''拉取动态id列表,失败返回False
-
+    def get_user_enevts(self, userid: int, amount: int = 30, ignore_liked: bool = True):
+        '''拉取指定用户动态列表,失败返回False
         参数:
-            value: 要拉取的数量
-            [ignore_liked]: 忽略已点赞的动态?
-        成功返回:
-            list: [linkid,……],动态id列表
-        '''
-        eventslist = self.get_follow_post(amount, ignore_liked)
-        idlist = [x[0] for x in eventslist]
-        return(idlist)
+            userid: 用户id
+            amount: 要拉取的数量
+            ignoreliked: 忽略已点赞?
+        返回:
+            list: [(linkid,ftype,已点赞?),……] ftype释义参见static.EventType
+            '''
+        def get(offset: int, lastval: str):
+            '''
+            拉取用户动态列表
+            参数:
+                offset:偏移,以30为单位
+            成功返回:
+                userlist:[(id,类型,已点赞?)……] 类型释义参见:FollowPostType
+            '''
+            params = {'userid': userid, 'offset': offset,
+                      'limit': 30, 'lastval': lastval}
+            if not lastval:
+                params.pop('lastval')
+            result = self._get(url=url, params=params)
+            tmp = []
+            val = result.get('lastval')
+            for m in result['moments']:
+                try:
+                    link = m['link']
+                    linkid = int(link['linkid'])
+                    liked = BString(link['is_award_link'] == 1)
+                    ftype = EventType.name2num.get(
+                        m['content_type'], 0)
+                    # 过滤自己的评测
+                    if ftype == EventType.CommentGame and userid == self._heybox_id:
+                        continue
+                    # 忽略已点赞的动态
+                    if liked == False or ignore_liked == False:
+                        tmp.append((linkid, ftype, liked))
+                except KeyError as e:
+                    self.logger.debug(f'提取动态列表出错[{m}]')
+            self.logger.debug(f'拉取[{len(tmp)}]条动态')
+            return((tmp, val))
+        # ==========================================
+        url = URLS.GET_USER_EVENTS
+        eventslist = []
+        empty = 0
+        error = 0
+        lastval = None
+        for i in range(0, amount//30+4):
+            try:
+                self.logger.debug(f'拉取第[{i+1}]批动态列表')
+                tmp, lastval = get(i * 30, lastval)
+                if tmp:
+                    eventslist = ex_extend(eventslist, tmp)
+                else:
+                    self.logger.debug('[*] 动态列表为空，可能遇到错误')
+                    empty += 1
+                    if empty > EMPTY_RETRYS:
+                        self.logger.debug('[*] 空结果达到上限,停止操作')
+                        break
+                if len(eventslist) >= amount:
+                    break
+            except ClientException as e:
+                self.logger.debug(f'[*] 拉取动态列表出错 [{e}]')
+                error += 1
+                if error > ERROR_RETRYS:
+                    self.logger.error('[*] 错误次数达到上限,停止操作')
+                    break
+            finally:
+                i += 1
 
-    # def get_user_follow_post_list(self, userid: int, value: int = 30, ignoreliked: bool = True):
-    #     '''
-    #     拉取用户动态列表
-    #     参数:
-    #         userid:用户id
-    #         value:要拉取的数量
-    #         ignoreliked:忽略已点赞?
-    #     成功返回:
-    #         followinglist:[(id,类型,已点赞?)……] 类型释义参见:FollowPostType
-    #         '''
-    #     def get(offset: int = 0):
-    #         '''
-    #         拉取用户动态列表
-    #         参数:
-    #             offset:偏移,以30为单位
-    #         成功返回:
-    #             userlist:[(id,类型,已点赞?)……] 类型释义参见:FollowPostType
-    #         '''
-    #         url = URLS.GET_USER_FOLLOW_POST
-    #         path = self.__get_path(url)
-    #         self.__flush_params(path)
-    #         params = {
-    #             'userid': userid,
-    #             'offset': offset,
-    #             'limit': 30,
-    #             **self._params
-    #         }
-    #         resp = self.Session.get(
-    #             url=url, params=params, headers=self._headers, cookies=self._cookies)
-
-    #         jsondict = resp.json()
-    #         self.__check_status(jsondict)
-    #         postlist = []
-    #         for moment in jsondict['result']['moments']:
-    #             try:
-    #                 link = moment['link']
-    #                 linkid = int(link['linkid'])
-    #                 is_liked = BoolenString(link['is_award_link'] == 1)
-    #                 posttype = moment['content_type']
-    #                 if posttype == 'post_link':  # 发帖
-    #                     posttype = FollowPostType.PostLink
-    #                 elif posttype == 'follow_game':  # 关注游戏
-    #                     posttype = FollowPostType.FollowGame
-    #                 elif posttype == 'game_purchase':  # 购买游戏
-    #                     posttype = FollowPostType.PurchaseGame
-    #                 elif posttype == 'game_achieve':  # 获得成就
-    #                     posttype = FollowPostType.AchieveGame
-    #                 elif posttype == 'game_comment':  # 评价游戏
-    #                     posttype = FollowPostType.CommentGame
-    #                 elif posttype == 'roll_room':  # 赠送游戏
-    #                     posttype = FollowPostType.CreateRollRoom
-    #                 else:
-    #                     posttype = FollowPostType.UnknownType
-    #                 # self.logger.debug(f'ID[{linkid}] 点赞[{is_liked}]
-    #                 # 类型[{posttype}]')
-    #                 if is_liked == False or ignoreliked == False:
-    #                     postlist.append((linkid, posttype, is_liked))
-    #             except KeyError as e:
-    #                 self.logger.debug(f'提取动态列表出错[{moment}]')
-
-    #         self.logger.debug(f'拉取[{len(postlist)}]条动态')
-    #         return(postlist)
-    #     # ==========================================
-    #     eventslist = []
-    #     i = 1
-    #     emptycount = 0
-    #     errorcount = 0
-    #     while True:
-    #         try:
-    #             templist = _get_user_follow_post_list((i - 1) * 30)
-    #             if templist:
-    #                 self.logger.debug(f'拉取第[{i}]批动态列表')
-    #                 eventslist.extend(templist)
-    #                 sortedlist = list(set(eventslist))
-    #                 sortedlist.sort(key=eventslist.index)
-    #                 eventslist = sortedlist
-    #             else:
-    #                 self.logger.debug('拉取完毕，动态列表为空，可能遇到错误')
-    #                 emptycount += 1
-    #                 if emptycount > EMPTY_RETRY_TIMES:
-    #                     self.logger.debug('空结果达到上限,停止操作')
-    #                     break
-
-    #             if len(eventslist) >= value:
-    #                 break
-
-    #         except (JSONDecodeError, ClientException) as e:
-    #             self.logger.debug(f'拉取动态列表出错[{e}]')
-    #             errorcount += 1
-    #             if errorcount > ERROR_RETRY_TIMES:
-    #                 self.logger.error('错误次数达到上限,停止操作')
-    #                 break
-    #         finally:
-    #             i += 1
-
-    #     if len(eventslist) > value:
-    #         eventslist = eventslist[:value]
-    #     if len(eventslist) > 0:
-    #         self.logger.debug(f'操作完成，拉取了[{len(commentslist)}]条评论')
-    #     else:
-    #         self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
-    #     return(eventslist)
+        eventslist = eventslist[:amount]
+        if len(eventslist) > 0:
+            self.logger.debug(f'操作完成，拉取了[{len(eventslist)}]条评论')
+        else:
+            self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
+        return(eventslist)
 
     def get_tags(self) -> list:
         '''获取标签列表,可以用于获取指定分区的文章,出错返回False
@@ -385,7 +340,7 @@ class Index(Network):
         返回:
             list: tag列表,[(name,key),…]
         '''
-        url = URLS.GET_TAG
+        url = URLS.GET_TAGS
         try:
             result = self._get(url)
             t = result['tags'][1:]
@@ -443,8 +398,7 @@ class Index(Network):
             self.logger.error(f'[*] 文章点赞/取消点赞出错 [{e}]')
             return(False)
 
-    def like_follow_post(self, linkid: int, ftype: int = 0,
-                         like: bool = True) -> bool:
+    def like_event(self, linkid: int, ftype: int = 0, like: bool = True) -> bool:
         '''给好友动态点赞
 
         参数:
@@ -455,7 +409,7 @@ class Index(Network):
             bool: 操作是否成功
         '''
         data = {'link_id': linkid}
-        if ftype == FollowPostType.CommentGame:
+        if ftype == EventType.CommentGame:
             url = URLS.SUPPORT_COMMENT
             data['support_type'] = 1 if like else 0
         else:
@@ -470,4 +424,73 @@ class Index(Network):
             return(True)
         except ClientException as e:
             self.logger.error(f'动态点赞/取消点赞出错 [{e}]')
+            return(False)
+
+    def share_news(self, linkid: int, index: int = 1) -> bool:
+        '''分享首页文章
+
+        参数:
+            newsid: 文章id
+            [index]: 可以理解为文章排在首页的位置,banner为0,从上往下依次递增
+        返回:
+            bool: 是否成功
+        '''
+        url = URLS.SHARE_CHECK
+        params = {
+            'h_src': base64encode('news_feeds_-1'), 'shared_type': 'normal'}
+        try:
+            self._get(url=url)
+            self.logger.debug('分享成功')
+            return(True)
+        except ClientException as e:
+            self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
+            return(True)  # 貌似也能完成任务，所以返回True
+
+    def share_comment(self) -> bool:
+        '''分享文章评论
+
+        参数:
+            不需要??
+        返回:
+            bool: 是否成功
+        '''
+        url = URLS.SHARE_CHECK
+        params = {'shared_type': 'BBSComment'}
+        try:
+            self._get(url=url)
+            self.logger.debug('分享成功')
+            return(True)
+        except ClientException as e:
+            self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
+            return(True)  # 貌似也能完成任务，所以返回True
+
+    def sign(self)->bool:
+        '''进行签到
+        
+        返回:
+            bool: 是否成功
+        '''
+        url = URLS.SIGN
+        jd = self._get(url=url)
+        try:
+            self._check_status(jd)
+
+            r = jd['result']
+            # li = r['level_info']
+            # exp = li['exp']
+            # coin = li['coin']
+            # # max_exp = li['max_exp']
+            # level = li['level']
+            sign_coin = r['sign_in_coin']
+            sign_exp = r['sign_in_exp']
+            sign_days = r['sign_in_streak']
+
+            self.logger.debug(f'签到成功,连续[{sign_days}]天')
+            self.logger.debug(f'获得[{sign_coin}]盒币,[{sign_exp}]经验')
+            return(True)
+        except Ignore:
+            self.logger.debug('已经签过到了')
+            return(True)
+        except (ClientException,KeyError,NameError) as e:
+            self.logger.error(f'签到出错[{e}]')
             return(False)

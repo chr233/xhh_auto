@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 20:34:51
+# @LastEditTime : 2020-08-01 21:32:50
 # @Description  : 静态资源
 '''
 
@@ -45,7 +45,6 @@ class URLS():
     GET_COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'  # 拉取社区答题题目
     GET_ACHIEVE_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'  # 检查有没有解锁新成就
     GET_NOTIFY_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'  # 私信/通知提醒
-    GET_USER_FOLLOW_POST = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
     GET_USER_POST = 'https://api.xiaoheihe.cn/bbs/app/profile/user/link/list'  # 拉取用户发帖
     GET_USER_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/profile/news/comment/list'  # 拉取用户评论
     GET_STORE_GAME_LIST = 'https://api.xiaoheihe.cn/mall/list/'  # 获取商店的游戏列表
@@ -53,7 +52,6 @@ class URLS():
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'  # 评测点赞
 
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
-    SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
     FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'  # 加关注
     UNFOLLOW_USER = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'  # 取消关注
     BBS_QA_STATE = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'  # 社区答题提交
@@ -62,13 +60,15 @@ class URLS():
 
     # 检验过的API
     SIGN = 'https://api.xiaoheihe.cn/task/sign/'  # 签到
-    GET_NEWS_LIST = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'  # 新闻列表
-    GET_TAG = 'https://api.xiaoheihe.cn/maxnews/app/tag/list'  # 获取文章标签
+    GET_NEWS = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'  # 新闻列表
+    GET_TAGS = 'https://api.xiaoheihe.cn/maxnews/app/tag/list'  # 获取文章标签
     GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
-
+    SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
+    
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
+    GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
 
 
 class TAGS():
@@ -132,7 +132,7 @@ class NewsContentType():
     Banner = 23  # 首页Banner
 
 
-class FollowPostType():
+class EventType():
     '动态文章类型'
     Unknown = 0  # 未知
     PostLink = 1  # 发帖
@@ -141,10 +141,10 @@ class FollowPostType():
     AchieveGame = 4  # 获得成就【疑似被弃用】
     CommentGame = 5  # 评测游戏
     CreateRollRoom = 6  # 赠送游戏
-    name2num = {'Unknown': 0, 'PostLink': 1,
-                  'FollowGame': 2, 'PurchaseGame': 3,
-                  'AchieveGame': 4, 'CommentGame': 5,
-                  'CreateRollRoom': 6}
+    name2num = {'Unknown': 0, 'post_link': 1,
+                  'follow_game': 2, 'game_purchase': 3,
+                  'game_achieve': 4, 'game_comment': 5,
+                  'roll_room': 6}
 
 
 class GamePlatformType():
