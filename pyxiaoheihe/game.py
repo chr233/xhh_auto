@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 09:10:59
+# @LastEditTime : 2020-08-01 22:35:16
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
@@ -17,12 +17,12 @@ class Game(Network):
     def debug(self):
         super().debug()
 
-    def get_game_info(self,appids:set):
-        '''获取游戏信息
+    # def get_game_info(self,appids:set):
+    #     '''获取游戏信息
         
-        参数:
-            appid: 游戏id,小黑盒使用的id系统跟steam不同
-        返回:
+    #     参数:
+    #         appid: 游戏id,小黑盒使用的id系统跟steam不同
+    #     返回:
             
-        '''
-        pass
+    #     '''
+    #     pass

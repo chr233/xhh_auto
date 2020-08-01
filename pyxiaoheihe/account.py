@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 15:59:48
+# @LastEditTime : 2020-08-01 22:25:28
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -20,6 +20,7 @@ class Account(Network):
 
     def debug(self):
         super().debug()
+        self.get_daily_task()
 
     def get_heybox_latest_version(self) -> str:
         '''获取小黑盒最新版本号,失败返回False
@@ -55,18 +56,47 @@ class Account(Network):
 
             ad = result['account_detail']
             bi = ad['bbs_info']
-            follow_num = bi['follow_num']
-            fan_num = bi['fan_num']
-            awd_num = bi['awd_num']
-            level = ad['level_info']['level']
-            userid = ad['userid']
-            username = ad['username']
+
+            follow = bi['follow_num'] # 关注
+            fan = bi['fan_num'] # 粉丝
+            like = bi['awd_num'] # 获赞
+            level = ad['level_info']['level'] # 等级
+            userid = ad['userid'] #用户id
+            username = ad['username'] # 用户名
 
             self.logger.debug(f'昵称:{username} >{userid}< [{level}级]')
-            self.logger.debug(f'关注[{follow_num}] 粉丝[{fan_num}] 获赞[{awd_num}]')
-            return((follow_num, fan_num, awd_num))
+            self.logger.debug(f'关注[{follow}] 粉丝[{fan}] 获赞[{like}]')
+            return((follow, fan, like))
         except (ClientException, KeyError, NameError) as e:
-            self.logger.error(f'获取任务详情出错[{e}]')
+            self.logger.error(f'[*] 获取用户详情出错 [{e}]')
+            return(False)
+
+    def get_unread_count(self) -> (int, int, int, int, int):
+        '''获取未读通知计数,失败返回False
+
+        返回:
+            like: 新获赞
+            comment: 新评论
+            follow: 新粉丝
+            notify: 新通知
+            total: 总计
+        '''
+        url = URLS.GET_UNREAD_MESSAGE
+        params = {'list_type': 2, 'offset': 0}
+        try:
+            result = self._get(url=url, params=params)
+            muu = result['message_unread_num']
+            like = muu['award']  # 新获赞
+            comment = muu['comment']  # 新评论
+            # developer = muu['developer']
+            follow = muu['follow']  # 新粉丝
+            # friend = muu['friend']  # 大概是私信
+            notify = muu['notify']  # 优惠通知
+            total = muu['total']  # 总计
+            self.logger.debug(f'新获赞[{like}]新评论[{comment}]新粉丝[{follow}]')
+            return((like, comment, follow, notify, total))
+        except (ClientException, KeyError, NameError) as e:
+            self.logger.error(f'[*] 获取任务详情出错 [{e}]')
             return(False)
 
     def __get_task_json(self) -> dict:
@@ -100,5 +130,5 @@ class Account(Network):
                 f"签到{sign}|分享{share_news}|{share_comment}|点赞{like}")
             return((sign, share_news, share_comment, like))
         except (ClientException) as e:
-            self.logger.error(f'获取任务详情出错[{e}]')
+            self.logger.error(f'[*] 获取任务详情出错 [{e}]')
             return(False)

@@ -39,7 +39,6 @@ class URLS():
     GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'  # 关注列表更新提醒
     GET_AUTH_INFO = 'https://api.xiaoheihe.cn/account/get_auth_info/'  # 获取账户验证信息
     GET_ACTIVE_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'  # 拉取ROLL房列表
-    GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'  # 获取个人资料
     GET_FOLLOWER_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'  # 拉取粉丝列表
     GET_FOLLOWING_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'  # 拉取关注列表
     GET_COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'  # 拉取社区答题题目
@@ -66,6 +65,7 @@ class URLS():
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
+    GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'  # 获取个人资料
 
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态

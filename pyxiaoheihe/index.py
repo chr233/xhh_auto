@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 21:42:35
+# @LastEditTime : 2020-08-01 22:04:38
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -19,7 +19,6 @@ class Index(Network):
 
     def debug(self):
         super().debug()
-        self.share_comment()
 
     def get_news(self, amount: int = 30, tag: str = '-1') -> list:
         '''获取首页文章列表
@@ -348,36 +347,6 @@ class Index(Network):
             return(tags)
         except ClientException as e:
             self.logger.error(f'[*] 获取标签列表出错 [{e}]')
-
-    def get_unread_count(self)->(int,int,int,int):
-        '''获取未读通知计数,失败返回False
-
-        返回:
-            follow_num:关注数
-            fan_num:粉丝数
-            awd_num:获赞数
-        '''
-        url = URLS.GET_USER_PROFILE
-        params = {'userid': userid or self._heybox_id}
-        try:
-            result = self._get(url=url, params=params)
-
-            ad = result['account_detail']
-            bi = ad['bbs_info']
-            follow_num = bi['follow_num']
-            fan_num = bi['fan_num']
-            awd_num = bi['awd_num']
-            level = ad['level_info']['level']
-            userid = ad['userid']
-            username = ad['username']
-
-            self.logger.debug(f'昵称:{username} >{userid}< [{level}级]')
-            self.logger.debug(f'关注[{follow_num}] 粉丝[{fan_num}] 获赞[{awd_num}]')
-            return((follow_num, fan_num, awd_num))
-        except (ClientException, KeyError, NameError) as e:
-            self.logger.error(f'获取任务详情出错[{e}]')
-            return(False)
-
 
     def like_comment(self, commentid: int, like: bool = True) -> bool:
         '''给评论点赞

@@ -5,8 +5,8 @@
 * 使用全新的配置文件格式,可以使用`convernt_old_config.py`进行转换
 * 重构了原来的代码,更加简洁高效
 * 当前`pyxiaoheihe`只实现了完成每日任务所必须的API,待完成度比较高以后将成为独立的模块
-* `xhh_auto`这个项目将专注于自动化运行,`pyxiaoheihe`则将专注于复刻手机客户端的功能
-* 有问题欢迎提交issues,或者在[我的博客](https://blog.chrxw.com)留言
+* `xhh_auto`这个项目将专注于自动化运行,`pyxiaoheihe`将专注于完整实现手机客户端的功能
+* 有问题欢迎提交issues,或者在[我的博客](https://blog.chrxw.com)上留言
 
 ## 2020-07-29 v0.79
 

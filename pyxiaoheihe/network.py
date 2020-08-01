@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 21:41:14
+# @LastEditTime : 2020-08-01 22:37:14
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,7 +13,7 @@ from base64 import b64encode
 from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
-from utils.log import get_logger
+from logging import Logger
 
 from .static import HEYBOX_VERSION, BString
 from .error import *
@@ -27,7 +27,7 @@ class Network():
     _params = {}
 
     _heybox_id = 0
-    logger = get_logger()
+    logger = Logger("-")
 
     def __init__(self, account: dict, hbxcfg: dict, tag: str):
         super().__init__()
@@ -45,7 +45,7 @@ class Network():
                         '_time': '',
                         'hkey': '',
                         'channel': hbxcfg.get('channel')}
-        self.logger = get_logger(str(tag))
+        self.logger = Logger(str(tag))
         self._heybox_id = account.get('heybox_id')
         self.logger.debug('网络模块初始化完毕')
 
@@ -160,7 +160,8 @@ class Network():
 
                 elif msg in ('抱歉,没有找到你要的帖子',
                              '操作失败', 'error link_id',
-                             '错误的帖子', '错误的用户'):
+                             '错误的帖子', '错误的用户',
+                             '该用户已注销'):
                     raise ClientException(f'客户端出错@{msg}')
 
                 elif msg == '系统时间不正确':
