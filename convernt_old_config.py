@@ -61,7 +61,7 @@ def read_old_config(path: str) -> dict:
                                       'imei': imei,
                                       'pkey': pkey})
             except (KeyError, ValueError):
-                print(f'[*] 第[{i}]个账户实例配置出错，跳过该账户 [{ai}]')
+                print(f'[*] 第[{i}]个账户实例配置出错,跳过该账户 [{ai}]')
         if vaccounts:
             print(f'> 成功读取了[{len(vaccounts)}]个账号')
             cfg['accounts'] = vaccounts
@@ -102,7 +102,7 @@ def write_new_config(path: str, cfg: dict):
 
 
 if __name__ == '__main__':
-    answer = input(('[*] 即将进行配置文件转换，原配置将保留\n'
+    answer = input(('[*] 即将进行配置文件转换,原配置将保留\n'
                     '[*] 将使用【config.toml】代替原来的【accounts.json】和【settings.json】\n'
                     '[*] 确定要继续吗？【输入 y 继续】：')).strip().lower()
     if answer == 'y':

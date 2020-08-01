@@ -228,7 +228,7 @@ def check_script_version():
             download_url = jsondict['assets'][0]['browser_download_url']
             if (SCRIPT_VERSION[1:] != latest_version[1:]):
                 if (float(SCRIPT_VERSION[1:]) < float(latest_version[1:])):
-                    logger.debug(f'脚本有更新，当前版本{SCRIPT_VERSION}|最新版本{latest_version}')
+                    logger.debug(f'脚本有更新,当前版本{SCRIPT_VERSION}|最新版本{latest_version}')
                     logger.debug(f'更新内容[{detail}]')
                     logger.debug(f'下载地址[{download_url}]')
                     return((latest_version,detail,download_url))
@@ -272,7 +272,7 @@ def load_accounts(filepath:str=''):
                 heybox_id = int(item['heybox_id'])
                 vaccountlist.append((heybox_id,imei,pkey,i))
             except (KeyError,ValueError) :
-                logger.warning(f'第[{i}]个账户实例配置出错，跳过该账户 [{item}]')
+                logger.warning(f'第[{i}]个账户实例配置出错,跳过该账户 [{item}]')
                 continue
             finally:
                 i+=1

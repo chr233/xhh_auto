@@ -158,7 +158,7 @@ class Network():
                            ''):
                     raise Ignore
 
-                elif msg in ('抱歉，没有找到你要的帖子',
+                elif msg in ('抱歉,没有找到你要的帖子',
                              '操作失败', 'error link_id',
                              '错误的帖子', '错误的用户'):
                     raise ClientException(f'客户端出错@{msg}')
@@ -169,9 +169,9 @@ class Network():
                 elif msg == '用户名或密码错误或者登录过于频繁':
                     raise TokenError
 
-                elif msg == '出现了一些问题，请稍后再试':
+                elif msg == '出现了一些问题,请稍后再试':
                     self.logger.error(f'返回值:{jd}')
-                    self.logger.error('出现这个错误的原因未知，请过一会再重新运行脚本')
+                    self.logger.error('出现这个错误的原因未知,请过一会再重新运行脚本')
                     raise UnknownError(f'返回值:{jd}')
 
                 self.logger.error(f'未知的返回值[{msg}]')
@@ -182,7 +182,7 @@ class Network():
             elif status == 'relogin':
                 raise TokenError
         except (KeyError, ValueError, NameError, AttributeError):
-            self.logger.debug('JSON格式错误，请提交到chr@chrxw.com')
+            self.logger.debug('JSON格式错误,请提交到chr@chrxw.com')
             self.logger.debug(f'{jd}')
             self.logger.error(f'{traceback.print_stack()}')
             raise UnknownError

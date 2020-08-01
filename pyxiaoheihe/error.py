@@ -27,7 +27,7 @@ class ClientException(HeyboxException):
 class TokenError(HeyboxException):
     '凭据错误'
 
-    def __init__(self,info='凭据错误，请检查配置文件'):
+    def __init__(self,info='凭据错误,请检查配置文件'):
         super().__init__(info)
 
 

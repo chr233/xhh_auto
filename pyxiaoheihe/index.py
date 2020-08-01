@@ -139,7 +139,7 @@ class Index(Network):
                 if tmp:
                     commentslist.extend(tmp)
                 else:
-                    self.logger.debug('评论列表为空，可能遇到错误')
+                    self.logger.debug('评论列表为空,可能遇到错误')
                     empty += 1
                     if empty > EMPTY_RETRYS:
                         self.logger.debug('空结果达到上限,停止操作')
@@ -155,9 +155,9 @@ class Index(Network):
 
         commentslist = commentslist[:amount]
         if len(commentslist) > 0:
-            self.logger.debug(f'操作完成，拉取了[{len(commentslist)}]条评论')
+            self.logger.debug(f'操作完成,拉取了[{len(commentslist)}]条评论')
         else:
-            self.logger.debug('[*] 拉取完毕，评论列表为空，可能遇到错误')
+            self.logger.debug('[*] 拉取完毕,评论列表为空,可能遇到错误')
         return(commentslist)
 
     def get_comments_id(self, linkid: int, amount: int = 30,
@@ -230,7 +230,7 @@ class Index(Network):
                 if tmp:
                     eventslist = ex_extend(eventslist, tmp)
                 else:
-                    self.logger.debug('[*] 动态列表为空，可能遇到错误')
+                    self.logger.debug('[*] 动态列表为空,可能遇到错误')
                     empty += 1
                     if empty > EMPTY_RETRYS:
                         self.logger.debug('[*] 空结果达到上限,停止操作')
@@ -252,9 +252,9 @@ class Index(Network):
 
         eventslist = eventslist[:amount]
         if len(eventslist) > 0:
-            self.logger.debug(f'操作完成，拉取了[{len(eventslist)}]条动态')
+            self.logger.debug(f'操作完成,拉取了[{len(eventslist)}]条动态')
         else:
-            self.logger.debug('拉取完毕，动态列表为空，可能遇到错误')
+            self.logger.debug('拉取完毕,动态列表为空,可能遇到错误')
         return(eventslist)
 
     def get_user_enevts(self, userid: int, amount: int = 30, ignore_liked: bool = True):
@@ -311,7 +311,7 @@ class Index(Network):
                 if tmp:
                     eventslist = ex_extend(eventslist, tmp)
                 else:
-                    self.logger.debug('[*] 动态列表为空，可能遇到错误')
+                    self.logger.debug('[*] 动态列表为空,可能遇到错误')
                     empty += 1
                     if empty > EMPTY_RETRYS:
                         self.logger.debug('[*] 空结果达到上限,停止操作')
@@ -329,9 +329,9 @@ class Index(Network):
 
         eventslist = eventslist[:amount]
         if len(eventslist) > 0:
-            self.logger.debug(f'操作完成，拉取了[{len(eventslist)}]条评论')
+            self.logger.debug(f'操作完成,拉取了[{len(eventslist)}]条评论')
         else:
-            self.logger.debug('拉取完毕，评论列表为空，可能遇到错误')
+            self.logger.debug('拉取完毕,评论列表为空,可能遇到错误')
         return(eventslist)
 
     def get_tags(self) -> list:
@@ -348,6 +348,36 @@ class Index(Network):
             return(tags)
         except ClientException as e:
             self.logger.error(f'[*] 获取标签列表出错 [{e}]')
+
+    def get_unread_count(self)->(int,int,int,int):
+        '''获取未读通知计数,失败返回False
+
+        返回:
+            follow_num:关注数
+            fan_num:粉丝数
+            awd_num:获赞数
+        '''
+        url = URLS.GET_USER_PROFILE
+        params = {'userid': userid or self._heybox_id}
+        try:
+            result = self._get(url=url, params=params)
+
+            ad = result['account_detail']
+            bi = ad['bbs_info']
+            follow_num = bi['follow_num']
+            fan_num = bi['fan_num']
+            awd_num = bi['awd_num']
+            level = ad['level_info']['level']
+            userid = ad['userid']
+            username = ad['username']
+
+            self.logger.debug(f'昵称:{username} >{userid}< [{level}级]')
+            self.logger.debug(f'关注[{follow_num}] 粉丝[{fan_num}] 获赞[{awd_num}]')
+            return((follow_num, fan_num, awd_num))
+        except (ClientException, KeyError, NameError) as e:
+            self.logger.error(f'获取任务详情出错[{e}]')
+            return(False)
+
 
     def like_comment(self, commentid: int, like: bool = True) -> bool:
         '''给评论点赞
@@ -444,7 +474,7 @@ class Index(Network):
             return(True)
         except ClientException as e:
             self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
-            return(True)  # 貌似也能完成任务，所以返回True
+            return(True)  # 貌似也能完成任务,所以返回True
 
     def share_comment(self) -> bool:
         '''分享文章评论
@@ -462,7 +492,7 @@ class Index(Network):
             return(True)
         except ClientException as e:
             self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
-            return(True)  # 貌似也能完成任务，所以返回True
+            return(True)  # 貌似也能完成任务,所以返回True
 
     def sign(self)->bool:
         '''进行签到

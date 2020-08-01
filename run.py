@@ -83,7 +83,7 @@ def main():
                 else:
                     logger.info('没有新动态,跳过')
 
-                # TODO 暂时无法获取评论点赞状态，可能会重复点赞，将在下一个版本完善
+                # TODO 暂时无法获取评论点赞状态,可能会重复点赞,将在下一个版本完善
                 commentlist = hbc.get_user_comment_list(account[0], 1)
                 logger.info(f'获取[{len(commentlist)}]条评论')
                 if commentlist:
@@ -158,7 +158,7 @@ def main():
         result = check_script_version()
         if result and result != True:
             latest_version, detail, download_url = result
-            logger.info(f'脚本有更新，最新版本[{latest_version}]')
+            logger.info(f'脚本有更新,最新版本[{latest_version}]')
             logger.info(f'更新内容[{detail}]')
             logger.info(f'下载地址[{download_url}]')
             string = (f'- #### 脚本有更新,最新版本[{latest_version}]\n'

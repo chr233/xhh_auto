@@ -64,14 +64,14 @@ class TokenError(AccountException):
     凭据错误
     '''
     def __init__(self):
-        super().__init__('凭据错误，请检查配置文件')
+        super().__init__('凭据错误,请检查配置文件')
 
 class UseridError(AccountException):
     '''
     用户ID错误
     '''
     def __init__(self):
-        super().__init__('UserID不正确，请检查配置文件')
+        super().__init__('UserID不正确,请检查配置文件')
 #------------------------------------
 class Ignore(ClientException):
     '''

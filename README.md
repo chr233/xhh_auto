@@ -6,11 +6,11 @@
 
 ### 新版开发进度 [######____] 60%
 
-* 新版重构中，可用的旧版魔改版本：[链接](https://github.com/chr233/xhh_auto/raw/new/bak/HeyBox_AutoCheck/xhh_auto_v0.79.7z)
+* 新版重构中,可用的旧版魔改版本：[链接](https://github.com/chr233/xhh_auto/raw/new/bak/HeyBox_AutoCheck/xhh_auto_v0.79.7z)
 
-> 以下为旧版信息，仅作存档
+> 以下为旧版信息,仅作存档
 
-## 本项目仅供学习使用，并遵循GPL v3.0协议
+## 本项目仅供学习使用,并遵循GPL v3.0协议
 
 ### 欢迎加入官方群: `916945024`
 
@@ -30,7 +30,7 @@
 * **[Fiddler抓取教程](https://blog.chrxw.com/archives/2019/10/20/437.html)**
 * 
 
-* 抓取小黑盒数据后，填入accounts.json即可使用本脚本。
+* 抓取小黑盒数据后,填入accounts.json即可使用本脚本。
 
 ## 使用方法
 

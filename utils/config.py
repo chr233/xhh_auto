@@ -49,9 +49,9 @@ def get_all_config() -> dict:
 def load_config(path: str = DEFAULT_PATH):
     '''读取并验证配置
     参数:
-        [path]: 配置文件路径，默认为config.toml
+        [path]: 配置文件路径,默认为config.toml
     返回:
-        dict: 验证过的配置字典，如果读取出错则返回None
+        dict: 验证过的配置字典,如果读取出错则返回None
     '''
     global CFG
     try:
@@ -74,7 +74,7 @@ def verify_config(cfg: dict) -> dict:
     参数:
         cfg: 配置字典
     返回:
-        dict: 验证过的配置字典，剔除错误的和不必要的项目
+        dict: 验证过的配置字典,剔除错误的和不必要的项目
     '''
     vcfg = {
         'main': {'check_update': True, 'debug': False},
@@ -91,7 +91,7 @@ def verify_config(cfg: dict) -> dict:
             'debug': debug
         }
     else:
-        logger.debug('[main]节配置有误或者未配置，将使用默认配置')
+        logger.debug('[main]节配置有误或者未配置,将使用默认配置')
 
     ftqq = cfg.get('ftqq', {})
     if ftqq and type(ftqq) == dict:
@@ -99,14 +99,14 @@ def verify_config(cfg: dict) -> dict:
         skey = ftqq.get('skey', "")
         only_on_error = ftqq.get('only_on_error', False)
         if enable and not skey:
-            raise ValueError('开启了FTQQ模块，但是未指定SKEY，请检查配置文件')
+            raise ValueError('开启了FTQQ模块,但是未指定SKEY,请检查配置文件')
         vcfg['ftqq'] = {
             'enable': enable,
             'skey': skey,
             'only_on_error': only_on_error
         }
     else:
-        logger.debug('[ftqq]节配置有误或者未配置，将使用默认配置')
+        logger.debug('[ftqq]节配置有误或者未配置,将使用默认配置')
 
     heybox = cfg.get('heybox', {})
     if heybox and type(heybox) == dict:
@@ -119,7 +119,7 @@ def verify_config(cfg: dict) -> dict:
             'os_version': os_version
         }
     else:
-        logger.debug('[heybox]节配置有误或者未配置，将使用默认配置')
+        logger.debug('[heybox]节配置有误或者未配置,将使用默认配置')
 
     accounts = cfg.get('accounts', [])
     if accounts and type(accounts) == list:
@@ -138,7 +138,7 @@ def verify_config(cfg: dict) -> dict:
                 else:
                     raise ValueError
             except (ValueError, AttributeError):
-                logger.warning(f'[*] 第{i}项账号配置有误，已忽略该项')
+                logger.warning(f'[*] 第{i}项账号配置有误,已忽略该项')
                 logger.debug(f'[*] 配置项为{account}')
 
     if not vcfg['accounts']:

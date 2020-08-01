@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 21:32:50
+# @LastEditTime : 2020-08-01 21:54:37
 # @Description  : 静态资源
 '''
 
@@ -66,10 +66,10 @@ class URLS():
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
-    
+
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
-
+    GET_UNREAD_MESSAGE='https://api.xiaoheihe.cn/bbs/app/user/message'
 
 class TAGS():
     '标签转换工具类'
