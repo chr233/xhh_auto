@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:08:11
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 22:30:29
+# @LastEditTime : 2020-08-01 23:00:13
 # @Description  : 方糖气球模块
 '''
 
@@ -35,6 +35,6 @@ def send_to_ftqq(title: str, text: str, ftqqcfg: dict) -> bool:
             msg = jd.get('errmsg', '空')
             raise ValueError(f'{msg}')
     except (ValueError, JSONDecodeError) as e:
-        logger.error(f'[*] FTQQ推送出错,[{e}]')
+        logger.error(f'[*] FTQQ推送出错 [{e}]')
         logger.error(f'[*] 请检查SKEY是否配置正确')
         return(False)

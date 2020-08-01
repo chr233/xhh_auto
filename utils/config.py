@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-31 22:47:06
+# @LastEditTime : 2020-08-01 22:58:24
 # @Description  : 读取并验证配置
 '''
 
@@ -64,9 +64,9 @@ def load_config(path: str = DEFAULT_PATH):
         logger.debug('配置验证通过')
 
     except FileNotFoundError:
-        logger.error(f'配置文件[{path}]不存在')
+        logger.error(f'[*] 配置文件[{path}]不存在')
     except ValueError as e:
-        logger.error(f'配置文件验证失败[{e}]')
+        logger.error(f'[*] 配置文件验证失败 [{e}]', exc_info=True)
 
 
 def verify_config(cfg: dict) -> dict:
@@ -79,6 +79,8 @@ def verify_config(cfg: dict) -> dict:
     vcfg = {
         'main': {'check_update': True, 'debug': False},
         'ftqq': {'enable': False, 'skey': '', 'only_on_error': False},
+        'email': {'port': 465, 'server': '', 'password': '', 'user': '',
+                  'recvaddr': '', 'sendaddr': '', 'only_on_error': False},
         'heybox': {'channel': 'heybox_yingyongbao', 'os_type': 'Android', 'os_version': '9'},
         'account': []
     }
@@ -107,6 +109,33 @@ def verify_config(cfg: dict) -> dict:
         }
     else:
         logger.debug('[ftqq]节配置有误或者未配置,将使用默认配置')
+
+    email = cfg.get('email', {})
+    if email and type(email) == dict:
+        enable = email.get('enable', False)
+        try:
+            port = int(email.get('port', 0))
+        except ValueError:
+            port = 465
+            logger.warn('[*] [email]节port必须为数字')
+        server = email.get('server', '')
+        password = email.get('password', '')
+        user = email.get('user', '')
+        recvaddr = email.get('recvaddr', '')
+        sendaddr = email.get('sendaddr', '')
+        only_on_error = email.get('only_on_error', '')
+        if enable and not (port and server
+             and password and user and recvaddr and sendaddr):
+            raise ValueError('开启了email模块,但是配置不完整,请检查配置文件')
+        vcfg['email'] = {
+            'enable': enable,
+            'port': port, 'server': server,
+            'password': password, 'user': user,
+            'recvaddr': recvaddr, 'sendaddr': sendaddr,
+            'only_on_error': only_on_error
+        }
+    else:
+        logger.debug('[email]节配置有误或者未配置,将使用默认配置')
 
     heybox = cfg.get('heybox', {})
     if heybox and type(heybox) == dict:
