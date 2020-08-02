@@ -1,0 +1,68 @@
+# 配置文件,"[]"中的值为默认配置
+
+# ====账号信息======================================
+# 说明:三个参数都可以抓包得到,抓包教程:
+# [安卓手机端抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)
+# [Fiddler抓取教程](https://blog.chrxw.com/archives/2019/10/20/437.html)
+
+[[accounts]]
+heybox_id = 0
+imei = ""
+pkey = ""
+
+# 如果有多个账号,像这样多写几组即可(记得去除前面的#号)
+
+# [[accounts]]
+# heybox_id = 0
+# imei = ""
+# pkey = ""
+
+# ====其他配置======================================
+[main]
+# 是否检查更新,[true]
+check_update = true
+# 是否开启调试模式,[false]
+debug = false
+# 是否参与互助计划,[true]
+join_xhhauto = true
+# 说明:
+# 开启后会自动关注我的账号和我的粉丝的账号
+# 也就是让使用本脚本的用户都能互相关注
+# 再配合动态点赞功能,让所有人都能快速获赞
+# 如果不想参加改成false即可
+
+# ====推送设置======================================
+[ftqq]
+# 方糖气球模块,用于推送运行结果到微信
+# 是否开启方糖气球模块,开启后会将结果推送至微信,[false]
+enable = false
+# 方糖气球SKEY,获取地址:(http://sc.ftqq.com/)
+skey = ""
+# 【未完成】设置为true后只会在程序出错时才会推送消息,[false]
+# only_on_error = false
+
+[email]
+# 邮件模块,用于推送结果到邮箱
+# 是否开启邮箱模块,[false]
+enable = false
+# SMTP服务器设置
+port = 465
+server = "smtp.qq.com"
+# SMTP登陆凭据
+password = ''
+user = 'example@mail.com'
+# 收发信箱设置
+recvaddr = 'recv@example.com'
+sendaddr = 'send@example.com'
+# 【未完成】设置为true后只会在程序出错时才会推送消息,[false]
+# only_on_error = false
+
+# ====高级配置======================================
+[heybox]
+# 自定义请求头数据,如果担心被风控请自行修改成自己的手机
+# 表明客户端来自哪个渠道,["heybox_yingyongbao"]
+channel = "heybox_yingyongbao"
+# 系统类型,["Android"]
+os_type = "Android"
+# 系统版本,["9"]
+os_version = "9"
