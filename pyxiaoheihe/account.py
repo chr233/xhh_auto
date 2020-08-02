@@ -2,15 +2,15 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 11:10:18
+# @LastEditTime : 2020-08-02 12:08:42
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
 
 from .network import Network
-from .static import HEYBOX_VERSION, URLS, BString, ERROR_RETRYS, EMPTY_RETRYS
+from .static import HEYBOX_VERSION, URLS, BString, ERROR_RETRYS, EMPTY_RETRYS, RelationType
 from .error import *
-from .utils import ex_extend
+from .utils import ex_extend, user_relation_filter
 
 
 class Account(Network):
@@ -21,8 +21,9 @@ class Account(Network):
 
     def debug(self):
         super().debug()
-        a = self.get_user_fans()
-        # print(self.get_daily_task())
+        self.get_user_relation(21922217)
+        # a = self.get_new_fans()
+        # # print(self.get_daily_task())
         pass
 
     def get_heybox_latest_version(self) -> str:
@@ -41,6 +42,35 @@ class Account(Network):
         except (ClientException, KeyError, NameError) as e:
             self.logger.error(f'获取小黑盒最新版本出错[{e}]')
             return(False)
+
+    def get_user_relation(self, userid: int) -> int:
+        '''获取用户和我的关系,返回值释义参考static.RelationType
+
+        参数:
+            userid: 用户id
+        返回:
+            int: 关注状态,释义参考static.RelationType
+        '''
+        if userid == self._heybox_id:
+            self.logger.debug('[*] 无法查看自己和自己的关系')
+            return(RelationType.BOthFollowed)
+        url = URLS.GET_USER_PROFILE
+        params = {'userid': userid}
+        try:
+            result = self._get(url=url, params=params)
+
+            ad = result['account_detail']
+
+            uid = ad['userid']  # 用户id
+            uname = ad['username']  # 用户名
+            relation = ad['bbs_info']['follow_status']  # 关注状态
+
+            self.logger.debug(
+                f'昵称:{uname} @{uid} [{RelationType.num2name[relation]}]')
+            return(relation)
+        except (ClientException, KeyError, NameError) as e:
+            self.logger.error(f'[*] 获取用户关系出错 [{e}]')
+            return(RelationType.Unknown)
 
     def get_user_profile(self, userid: int = 0) -> (int, int, int):
         '''获取个人资料,失败返回False
@@ -206,9 +236,12 @@ class Account(Network):
             tmp = []
             for f in result:
                 try:
-                    uid = f['userid']
+                    uid = int(f['userid'])
                     uname = f['username']
                     relation = f['is_follow']
+                    # 把自己跟自己的关系设为互关
+                    if uid == self._heybox_id:
+                        relation=RelationType.BOthFollowed
                     tmp.append((uid, uname, relation))
                 except KeyError as e:
                     self.logger.debug(f'提取动态列表出错[{f}]')
@@ -263,9 +296,12 @@ class Account(Network):
             tmp = []
             for f in result:
                 try:
-                    uid = f['userid']
+                    uid = int(f['userid'])
                     uname = f['username']
                     relation = f['is_follow']
+                    # 把自己跟自己的关系设为互关
+                    if uid == self._heybox_id:
+                        relation=RelationType.BOthFollowed
                     tmp.append((uid, uname, relation))
                 except KeyError as e:
                     self.logger.debug(f'提取动态列表出错[{f}]')
@@ -305,3 +341,12 @@ class Account(Network):
             self.logger.debug('拉取完毕,粉丝列表为空,可能遇到错误')
         return(fanlist)
 
+    def get_new_fans(self) -> list:
+        '''获取新粉丝
+
+        返回:
+            list: 新粉丝列表
+        '''
+        fanlist = self.get_user_fans(self._heybox_id, 60)
+        newfans = user_relation_filter(fanlist, RelationType.HeFollowedMe)
+        return(newfans)

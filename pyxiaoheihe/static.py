@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 11:02:08
+# @LastEditTime : 2020-08-02 11:43:05
 # @Description  : 静态资源
 '''
 
@@ -58,7 +58,7 @@ class URLS():
     # 调试用
     HTTPBIN_GET = 'https://httpbin.org/get'
     HTTPBIN_POST = 'https://httpbin.org/post'
-    
+
     # 检验过的API
     SIGN = 'https://api.xiaoheihe.cn/task/sign/'  # 签到
     GET_NEWS = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'  # 新闻列表
@@ -68,14 +68,13 @@ class URLS():
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
-    
+
     GET_FAN_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'  # 拉取粉丝列表
     GET_FOLLOW_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'  # 拉取关注列表
-    
 
     FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'  # 加关注
     UNFOLLOW_USER = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'  # 取消关注
-    
+
     GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'  # 获取个人资料
 
     GET_NEWS_CONTENT = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'  # 视频页框架
@@ -132,7 +131,11 @@ class RelationType():
     NoRelation = 0  # 没有关系
     IFollowedHim = 1  # 我关注他
     HeFollowedMe = 2  # 他关注我
-    BOthFollowed = 3  # 双向关注
+    BOthFollowed = 3  # 互关
+    Unknown = 4
+    num2name = {
+        0: '没有关系', 1: '我关注他', 2: '他关注我', 3: '互关', 4: '错误'
+    }
 
 
 class NewsContentType():

@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 11:08:00
+# @LastEditTime : 2020-08-02 12:02:29
 # @Description  : 启动入口
 '''
 import time
@@ -16,8 +16,9 @@ from utils.ftqq import send_to_ftqq
 from utils.email import send_to_email
 
 from pyxiaoheihe import HeyBoxClient
-from pyxiaoheihe.static import PYXIAOHEIHE_VERSION
+from pyxiaoheihe.static import PYXIAOHEIHE_VERSION, RelationType
 from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError
+from pyxiaoheihe.utils import user_relation_filter
 
 logger = get_logger('Run')
 
@@ -34,6 +35,10 @@ print(r'''
 
 def main():
     '示例程序,可以根据需要自行修改'
+
+    # 动态点赞数量
+    EVENT = 60
+
     start_time = time.time()
 
     logger.info('载入配置文件')
@@ -76,8 +81,31 @@ def main():
             else:
                 logger.info('已完成点赞和分享任务,跳过')
 
+            # xhh_auto 互助计划,如果想要退出可以在配置文件中关闭
+            if mcfg['join_xhhauto']:
+                logger.info('感谢加入Xhh_Auto互助计划,如果想要退出可以在配置文件中关闭')
+                rs = hbc.get_user_relation(20400942)
+                if rs == RelationType.NoRelation:
+                    hbc.follow_user(20400942)
+                ulist = hbc.get_user_fans(20400942)
+                target = user_relation_filter(
+                    ulist, RelationType.NoRelation)
+                if target:
+                    for i in target[:2]:
+                        hbc.follow_user(i, True)
+
+            ulist=hbc.get_new_fans()
+            if ulist:
+                for i in ulist:
+                    hbc.follow_user(i, True)
+                logger.info(f'关注了[{len(ulist)}]个新粉丝')
+            else:
+                logger.info('没有新粉丝')
+                if not mcfg['join_xhhauto']:
+                    logger.info('试试加入xhh_auto互助计划?')
+
             logger.info('获取动态列表……')
-            eventlist = hbc.get_subscrib_events(60, True)
+            eventlist = hbc.get_subscrib_events(EVENT, True)
             logger.info(f'获取[{len(eventlist)}]条内容')
             if eventlist:
                 logger.info('点赞动态……')

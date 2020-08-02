@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 09:55:11
+# @LastEditTime : 2020-08-02 11:50:46
 # @Description  : 读取并验证配置
 '''
 
@@ -46,7 +46,7 @@ def get_all_config() -> dict:
     return(CFG)
 
 
-def load_config(path: str = DEFAULT_PATH)->dict:
+def load_config(path: str = DEFAULT_PATH) -> dict:
     '''读取并验证配置
     参数:
         [path]: 配置文件路径,默认为config.toml
@@ -78,7 +78,7 @@ def verify_config(cfg: dict) -> dict:
         dict: 验证过的配置字典,剔除错误的和不必要的项目
     '''
     vcfg = {
-        'main': {'check_update': True, 'debug': False},
+        'main': {'check_update': True, 'debug': False, 'join_xhhauto': True},
         'ftqq': {'enable': False, 'skey': '', 'only_on_error': False},
         'email': {'port': 465, 'server': '', 'password': '', 'user': '',
                   'recvaddr': '', 'sendaddr': '', 'only_on_error': False},
@@ -89,9 +89,11 @@ def verify_config(cfg: dict) -> dict:
     if main and type(main) == dict:
         check_update = main.get('check_update', True)
         debug = main.get('debug', False)
+        join_xhhauto = main.get('join_xhhauto', True)
         vcfg['main'] = {
             'check_update': check_update,
-            'debug': debug
+            'debug': debug,
+            'join_xhhauto': join_xhhauto
         }
     else:
         logger.debug('[main]节配置有误或者未配置,将使用默认配置')
@@ -100,7 +102,7 @@ def verify_config(cfg: dict) -> dict:
     if ftqq and type(ftqq) == dict:
         enable = ftqq.get('enable', False)
         skey = ftqq.get('skey', "")
-        only_on_error =  ftqq.get('only_on_error', False)
+        only_on_error = ftqq.get('only_on_error', False)
         if enable and not skey:
             raise ValueError('开启了FTQQ模块,但是未指定SKEY,请检查配置文件')
         vcfg['ftqq'] = {
@@ -124,7 +126,7 @@ def verify_config(cfg: dict) -> dict:
         user = email.get('user', '')
         recvaddr = email.get('recvaddr', '')
         sendaddr = email.get('sendaddr', '')
-        only_on_error =  email.get('only_on_error', '')
+        only_on_error = email.get('only_on_error', '')
         if enable and not (port and server
                            and password and user and recvaddr and sendaddr):
             raise ValueError('开启了email模块,但是配置不完整,请检查配置文件')

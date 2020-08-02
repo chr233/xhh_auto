@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 10:59:43
+# @LastEditTime : 2020-08-02 12:02:01
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -158,6 +158,7 @@ class Network():
                 print(msg)
                 if msg in ('操作已经完成', '不能进行重复的操作哦',
                            '不能重复赞哦', '不能给自己的评价点赞哟',
+                           '自己不能粉自己哦',
                            ''):
                     raise Ignore
 
