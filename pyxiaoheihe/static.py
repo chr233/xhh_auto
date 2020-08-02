@@ -2,25 +2,21 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 15:27:27
+# @LastEditTime : 2020-08-02 18:45:35
 # @Description  : 静态资源
 '''
 
 # PYXIAOHEIHE版本
-PYXIAOHEIHE_VERSION = '1.0.0'
+PYXIAOHEIHE_VERSION = '1.0.1'
 
 # 小黑盒客户端版本号
-HEYBOX_VERSION = '1.3.118'
+HEYBOX_VERSION = '1.3.119'
 
 # 遇到空结果继续请求的次数
 EMPTY_RETRYS = 0
 
 # 遇到错误继续请求的次数
 ERROR_RETRYS = 1
-
-# 批量操作时遇到错误继续操作的次数
-ERROR_OPERATES = 3
-
 
 class URLS():
     'URL常量'
