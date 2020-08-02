@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 00:46:11
+# @LastEditTime : 2020-08-02 10:03:45
 # @Description  : 启动入口
 '''
 import time
@@ -22,13 +22,14 @@ from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError
 logger = get_logger('Run')
 
 print(r'''
- _     _ __  __ __  __          .    .     .  _______   ___  
- `.   /  |   |  |   |          /|    /     / '   /    .'   `.
-   \,'   |___|  |___|         /  \   |     |     |    |     |
-  ,'\    |   |  |   |        /---'\  |     |     |    |     |
- /   \   /   /  /   /      ,'      \  `._.'      /     `.__.'
-
+██╗  ██╗██╗  ██╗██╗  ██╗     █████╗ ██╗   ██╗████████╗ ██████╗ 
+╚██╗██╔╝██║  ██║██║  ██║    ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗
+ ╚███╔╝ ███████║███████║    ███████║██║   ██║   ██║   ██║   ██║
+ ██╔██╗ ██╔══██║██╔══██║    ██╔══██║██║   ██║   ██║   ██║   ██║
+██╔╝ ██╗██║  ██║██║  ██║    ██║  ██║╚██████╔╝   ██║   ╚██████╔╝
+╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ 
 ''')
+
 
 def main():
     '示例程序,可以根据需要自行修改'
@@ -49,7 +50,7 @@ def main():
     for i, account in enumerate(accounts, 1):
         try:
             logger.info(str(f'==[{i}/{ac}]').ljust(40, '='))
-            data.append(f'#### {str(f"==[{i}/{ac}]").ljust(40, "=")}')
+            data.append(f'#### {str(f"==[{i}/{ac}]").ljust(30, "=")}')
             hbc = HeyBoxClient(account, hbxcfg, i)
 
             # 读取每日任务详情
@@ -89,7 +90,9 @@ def main():
             logger.info('生成统计数据')
             uname, uid, coin, level, sign = hbc.get_my_data()
 
-            logger.info(f'昵称[{uname}] @{uid} [{level}级]')
+            logger.info(f'昵称[{uname}] @{uid}')
+            logger.info(
+                f'等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]')
             logger.info(f'盒币[{coin}]签到[{sign}]天')
             logger.info(
                 f'等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]')
@@ -102,7 +105,7 @@ def main():
 
             logger.info(f'签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]')
 
-            data.append(f'### 昵称[{uname}] @{uid}\n'
+            data.append(f'### {uname} @{uid}\n'
                         f'#### 盒币[{coin}]签到[{sign}]天\n'
                         f'#### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                         f'#### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
@@ -121,7 +124,7 @@ def main():
 
     logger.info('=' * 40)
     logger.info(f'脚本版本:[v{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]')
-    data.append(f'#### {"=" * 40 }\n'
+    data.append(f'#### {"=" * 30 }\n'
                 f'#### 脚本版本:[v{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]')
 
     end_time = time.time()
@@ -140,9 +143,9 @@ def main():
     if email['enable']:
         result = send_to_email('小黑盒自动脚本', string, email)
         if result:
-            logger.info('FTQQ推送成功')
+            logger.info('邮件推送成功')
         else:
-            logger.warn('[*] FTQQ推送失败')
+            logger.warn('[*] 邮件推送失败')
 
     if mcfg['check_update']:
         logger.info('检查脚本更新……')
@@ -154,11 +157,11 @@ def main():
                         f'更新内容[{detail}]'
                         f'下载地址[{download_url}]')
             string = (f'### 脚本有更新\n'
-                        f'#### 最新版本[{latest_version}]\n'
-                        f'#### 下载地址:[GitHub]({download_url})\n'
-                        f'#### 更新内容\n'
-                        f'{detail}\n'
-                        f'> 如果碰到问题欢迎加群**916945024**')
+                      f'#### 最新版本[{latest_version}]\n'
+                      f'#### 下载地址:[GitHub]({download_url})\n'
+                      f'#### 更新内容\n'
+                      f'{detail}\n'
+                      f'> 如果碰到问题欢迎加群**916945024**')
             if ftqq['enable']:
                 send_to_ftqq('小黑盒自动脚本', string, ftqq)
             if email['enable']:
@@ -169,7 +172,6 @@ def main():
         logger.info(f'检查脚本更新已禁用')
     logger.info('脚本执行完毕')
     return(True)
-
 
 
 def cliwait():

@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 08:55:06
+# @LastEditTime : 2020-08-02 10:52:08
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -19,14 +19,13 @@ class Index(Network):
 
     def debug(self):
         super().debug()
-        id=self.get_news_id(10,'-1')[0]
-        self.share_news(id,1)
-        cid=self.get_comments_id(id,10,1,False)[0]
-        self.share_comment()
-        print(1)
-        
-
-
+        # id = 43662889
+        # rs=self.get_news_content(id,1)
+        # id = self.get_news_id(10, '-1')[0]
+        # self.share_news(id, 1)
+        # cid = self.get_comments_id(id, 10, 1, False)[0]
+        # self.share_comment()
+        # print(1)
 
     def get_news(self, amount: int = 30, tag: str = '-1') -> list:
         '''获取首页文章列表
@@ -94,6 +93,33 @@ class Index(Network):
         newslist = self.get_news(amount, tag)
         idlist = [x[0] for x in newslist]
         return(idlist)
+
+    def get_news_content(self, linkid: int, index: int = 1):
+        '''拉取新闻正文
+
+        参数:
+            linkid: 文章id
+            [index]: 可以理解为文章排在首页的位置,banner为0,从上往下依次递增
+            [tag]: 文章分区,可以参考static.TAGS类,-1代表首页
+        成功返回:
+            list: 文章id列表,[(linkid,title,desc,userid),……]
+        '''
+        url = URLS.GET_NEWS_CONTENT
+
+        params = {'return_json': 1, 'index': index,
+                  'h_src': base64encode('news_feeds_-1'), 'link_id': linkid}
+        if index == 0:
+            params.pop('index')
+            params.pop('h_src')
+        try:
+            result = self._get(url=url, params=params)
+            l = result['link']
+            title = l['title']
+            content = l['content']
+            return((title, content))
+        except ClientException as e:
+            self.logger.error(f'拉取文章出错[{e}]')
+            return(False)
 
     def get_comments(self, linkid: int, amount: int = 30,
                      index: int = 1, author_only: bool = False) -> list:
@@ -274,13 +300,6 @@ class Index(Network):
             list: [(linkid,ftype,已点赞?),……] ftype释义参见static.EventType
             '''
         def get(offset: int, lastval: str):
-            '''
-            拉取用户动态列表
-            参数:
-                offset:偏移,以30为单位
-            成功返回:
-                userlist:[(id,类型,已点赞?)……] 类型释义参见:FollowPostType
-            '''
             params = {'userid': userid, 'offset': offset,
                       'limit': 30, 'lastval': lastval}
             if not lastval:
@@ -331,8 +350,6 @@ class Index(Network):
                 if error > ERROR_RETRYS:
                     self.logger.error('[*] 错误次数达到上限,停止操作')
                     break
-            finally:
-                i += 1
 
         eventslist = eventslist[:amount]
         if len(eventslist) > 0:
@@ -442,58 +459,6 @@ class Index(Network):
         返回:
             bool: 是否成功
         '''
-        def view():
-            url = URLS.GET_NEWS_DETAIL + str(newsid)
-            headers = {
-                'Host': 'api.xiaoheihe.cn',
-                'Connection': 'keep-alive',
-                'Upgrade-Insecure-Requests': '1',
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 4LTE Build/OPM2.171019.029; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-                'Accept-Encoding': 'gzip, deflate',
-                'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-                'X-Requested-With': 'com.max.xiaoheihe'
-            }
-            cookies = {
-                **self._cookies,
-                'user_pkey': self._cookies['pkey'],
-                'user_heybox_id': str(self.heybox_id)
-            }
-            path = self.__get_path(url)
-            self.__flush_params(path)
-            params = {
-                'from_recommend_list': 9,
-                'from_tag': -1,
-                'h_src': 'LTE=',
-                'index': index,
-                'newsid': newsid,
-                'page_tab': 1,
-                'pos': index + 1,
-                'rec_mark': 'timeline',
-                **self._params
-            }
-            if index == 0:
-                params['al'] = 'set_top'
-            resp = self.Session.get(url=url, params=params,
-                                    headers=headers, cookies=cookies)
-            try:
-                if not fastmode:
-                    html = resp.text
-                    soup = BeautifulSoup(html, 'lxml')
-                    wz = soup.find(name='div', attrs={
-                                'class': 'article-content', 'id': 'post-content'}).get_text()
-                    if wz:
-                        self.logger.debug(f'拉取完成,共[{len(wz)}]字')
-                    else:
-                        self.logger.debug('拉取内容为空,可能遇到错误')
-                else:
-                    self.logger.debug(f'快速模式')
-                    wz = True
-                return(wz)
-            except (JSONDecodeError, ValueError, AttributeError) as e:
-                self.logger.error(f'拉取文章出错[{e}]')
-                return(False)
-                pass
         def click():
             url = URLS.SHARE_CLICK
             params = {'h_src': base64encode('news_feeds_-1'),
@@ -511,14 +476,14 @@ class Index(Network):
             params = {'h_src': base64encode('news_feeds_-1'),
                       'shared_type': 'normal'}
             try:
-                self._get(url=url)
+                self._get(url=url, params=params)
                 self.logger.debug('分享成功')
                 return(True)
             except ClientException as e:
                 self.logger.debug(f'分享出错(貌似还是可以完成任务) [{e}]')
-                return(True)  # 貌似也能完成任务,所以返回True
-        r1=click()
-        r2=check()
+                return(False)
+        r1 = click()
+        r2 = check()
         return(r1 and r2)
 
     def share_comment(self) -> bool:
@@ -532,7 +497,7 @@ class Index(Network):
         url = URLS.SHARE_CHECK
         params = {'shared_type': 'BBSComment'}
         try:
-            self._get(url=url)
+            self._get(url=url,params=params)
             self.logger.debug('分享成功')
             return(True)
         except ClientException as e:

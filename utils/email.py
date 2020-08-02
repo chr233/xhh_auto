@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 22:26:25
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 00:04:23
+# @LastEditTime : 2020-08-02 10:04:28
 # @Description  : 
 '''
 import smtplib
@@ -34,8 +34,8 @@ def send_to_email(title: str, data: str, emailcfg: dict) -> bool:
     user = emailcfg.get('user')
     password = emailcfg.get('password')
     
-    data=data.replace('### ','')
     data=data.replace('#### ','')
+    data=data.replace('### ','')
 
     mailobj['From'] = Header(sendaddr, 'utf-8')
     mailobj['To'] = Header(recvaddr, 'utf-8')

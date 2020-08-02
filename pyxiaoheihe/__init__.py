@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 13:32:04
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 08:52:06
+# @LastEditTime : 2020-08-02 09:53:22
 # @Description  : 小黑盒客户端模块
 '''
 
@@ -24,7 +24,3 @@ class HeyBoxClient(Account, Community, Game, Index):
             [tag]: 标签,用于区分打印的log
         '''
         super().__init__(account, hbxcfg, tag)
-
-    def debug(self):
-        '调试用'
-        super().debug()

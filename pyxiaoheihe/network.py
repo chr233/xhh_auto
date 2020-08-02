@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 23:52:34
+# @LastEditTime : 2020-08-02 10:59:43
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -88,13 +88,13 @@ class Network():
         try:
             jd = resp.json()
             self.__check_status(jd)
-            return(jd.get('result'))
+            return(jd)
         except JSONDecodeError as e:
-            self.logger.warn(f'JSON解析失败 [{resp.text}]')
+            self.logger.warn(f'[*] JSON解析失败 [{resp.text}]')
             return({})
 
     def _get(self, url: str, params: dict = None,  headers: dict = None,
-             cookies: dict = None) -> dict:
+             cookies: dict = None, key: str = 'result') -> dict:
         '''GET方法发送请求
 
         参数:
@@ -102,6 +102,7 @@ class Network():
             [params]: 请求参数,会添加到self._params前面
             [headers]: 请求头,会替换self._headers
             [cookies]: 请求头,会替换self._cookies
+            [key]: 要返回的数据键名,默认为'result',留空表示返回原始json
         返回:
             dict: json字典
         '''
@@ -113,6 +114,8 @@ class Network():
             url=url, params=p, headers=h, cookies=c
         )
         result = self.__get_json(resp)
+        if key:
+            result = result.get(key)
         return(result)
 
     def _post(self, url: str, params: dict = None, data: dict = None,

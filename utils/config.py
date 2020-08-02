@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 08:50:49
+# @LastEditTime : 2020-08-02 09:55:11
 # @Description  : 读取并验证配置
 '''
 
@@ -59,7 +59,7 @@ def load_config(path: str = DEFAULT_PATH)->dict:
         raw_cfg = dict(toml.load(path))
         CFG = verify_config(raw_cfg)
         debug = os.environ.get('mode', 'release').lower()
-        level = 0 if debug == 'debug' else 30
+        level = 0 if debug == 'debug' else 20
         init_logger(level)
         logger.debug('配置验证通过')
         return(CFG)
@@ -83,7 +83,7 @@ def verify_config(cfg: dict) -> dict:
         'email': {'port': 465, 'server': '', 'password': '', 'user': '',
                   'recvaddr': '', 'sendaddr': '', 'only_on_error': False},
         'heybox': {'channel': 'heybox_yingyongbao', 'os_type': 'Android', 'os_version': '9'},
-        'account': []
+        'accounts': []
     }
     main = cfg.get('main', {})
     if main and type(main) == dict:

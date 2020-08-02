@@ -2,13 +2,13 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 08:52:46
+# @LastEditTime : 2020-08-02 11:00:39
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
 
 from .network import Network
-from .static import HEYBOX_VERSION, URLS, BString
+from .static import HEYBOX_VERSION, URLS, BString, ERROR_RETRYS, EMPTY_RETRYS
 from .error import *
 
 
@@ -20,6 +20,9 @@ class Account(Network):
 
     def debug(self):
         super().debug()
+        a = self.get_user_fans()
+        # print(self.get_daily_task())
+        pass
 
     def get_heybox_latest_version(self) -> str:
         '''获取小黑盒最新版本号,失败返回False
@@ -60,15 +63,15 @@ class Account(Network):
             fan = bi['fan_num']  # 粉丝
             like = bi['awd_num']  # 获赞
             level = ad['level_info']['level']  # 等级
-            userid = ad['userid']  # 用户id
-            username = ad['username']  # 用户名
+            uid = ad['userid']  # 用户id
+            uname = ad['username']  # 用户名
 
-            self.logger.debug(f'昵称:{username} >{userid}< [{level}级]')
+            self.logger.debug(f'昵称:{uname} >{uid}< [{level}级]')
             self.logger.debug(f'关注[{follow}] 粉丝[{fan}] 获赞[{like}]')
             return((follow, fan, like))
         except (ClientException, KeyError, NameError) as e:
             self.logger.error(f'[*] 获取用户详情出错 [{e}]')
-            return((0,0,0))
+            return((0, 0, 0))
 
     def get_unread_count(self) -> (int, int, int, int, int):
         '''获取未读通知计数,失败返回False
@@ -159,7 +162,87 @@ class Account(Network):
             self.logger.debug(f'昵称[{username}] @{userid} [{level}级]')
             self.logger.debug(
                 f'盒币[{coin}]|经验[{exp}/{max_exp}]|连续签到[{sign_in_streak}]天')
-            return((username,userid, coin, (level, exp, max_exp), sign_in_streak))
+            return((username, userid, coin, (level, exp, max_exp), sign_in_streak))
         except (ClientException, KeyError, NameError) as e:
             self.logger.error(f'[*] 获取我的数据出错 [{e}]')
-            return(('读取信息出错',0, 0, (0, 0, 0), 0))
+            return(('读取信息出错', 0, 0, (0, 0, 0), 0))
+
+    def follow_user(self, userid: int, follow: bool = True) -> bool:
+        '''关注/取关用户
+
+        参数:
+            userid: 用户id
+            [follow]: True表示关注用户,False表示取关
+        返回:
+            bool: 是否成功
+        '''
+        if (userid == self._heybox_id):
+            self.logger.warn('[*] 不能关注自己哦')
+            return(False)
+        url = URLS.FOLLOW_USER if follow else URLS.UNFOLLOW_USER
+        data = {'following_id': userid}
+
+        try:
+            self._post(url=url, data=data)
+            self.logger.debug('关注/取关用户成功')
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'[*] 关注/取关用户失败 [{e}]')
+            return(False)
+
+    def get_user_fans(self, userid: int = 0, amount: int = 30):
+        '''获取用户粉丝,失败返回False
+
+        参数:
+            [userid]: 用户id,不填代入自己
+            [amount]: 要拉取的数量
+        返回:
+            list: [(userid,username,relation),……],粉丝列表,relation释义参考static.RelationType
+        '''
+        def get(offset: int):
+            params = {'userid': userid, 'offset': offset, 'limit': 30}
+            result = self._get(url=url, params=params, key='follow_list')
+            tmp = []
+            for f in result:
+                try:
+                    uid = f['userid']
+                    uname = f['username']
+                    relation = f['is_follow']
+                    tmp.append((uid, uname, relation))
+                except KeyError as e:
+                    self.logger.debug(f'提取动态列表出错[{f}]')
+            self.logger.debug(f'拉取[{len(tmp)}]个粉丝')
+            return(tmp)
+        # ==========================================
+        url = URLS.GET_FAN_LIST
+        userid = userid or self._heybox_id
+        fanlist = []
+        empty = 0
+        error = 0
+        for i in range(0, amount//30+2):
+            try:
+                self.logger.debug(f'拉取第[{i+1}]批粉丝列表')
+                tmp = get(i * 30)
+                if tmp:
+                    fanlist.extend(tmp)
+                else:
+                    self.logger.debug('[*] 粉丝列表为空,可能遇到错误')
+                    empty += 1
+                    if empty > EMPTY_RETRYS:
+                        self.logger.debug('[*] 空结果达到上限,停止操作')
+                        break
+                if len(fanlist) >= amount:
+                    break
+            except ClientException as e:
+                self.logger.debug(f'[*] 拉取粉丝列表出错 [{e}]')
+                error += 1
+                if error > ERROR_RETRYS:
+                    self.logger.error('[*] 错误次数达到上限,停止操作')
+                    break
+
+        fanlist = fanlist[:amount]
+        if len(fanlist) > 0:
+            self.logger.debug(f'操作完成,拉取了[{len(fanlist)}]个粉丝')
+        else:
+            self.logger.debug('拉取完毕,粉丝列表为空,可能遇到错误')
+        return(fanlist)

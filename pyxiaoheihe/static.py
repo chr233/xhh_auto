@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 23:07:18
+# @LastEditTime : 2020-08-02 11:02:08
 # @Description  : 静态资源
 '''
 
 # PYXIAOHEIHE版本
-PYXIAOHEIHE_VERSION='1.0.0'
+PYXIAOHEIHE_VERSION = '1.0.0'
 
 # 小黑盒客户端版本号
 HEYBOX_VERSION = '1.3.118'
@@ -32,8 +32,7 @@ class URLS():
     GET_TASK_LIST = 'https://api.xiaoheihe.cn/task/list/'  # 任务列表
     GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'  # 关注更新提醒
 
-    GET_NEWS_DETAIL = 'https://api.xiaoheihe.cn/maxnews/app/detail/'  # 文章页
-    GET_VIDEO_VIEW = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'  # 视频页框架
+    # GET_NEWS_DETAIL = 'https://api.xiaoheihe.cn/maxnews/app/detail/'  # 文章页
     GET_GAME_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/game/comments/'  # 游戏评价
     GET_GAME_DETAIL = 'https://api.xiaoheihe.cn/game/get_game_detail/'  # 游戏详情
     GET_GAME_REVIEWS = 'https://api.xiaoheihe.cn/bbs/app/link/game/reviews'  # 游戏文章
@@ -42,8 +41,7 @@ class URLS():
     GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'  # 关注列表更新提醒
     GET_AUTH_INFO = 'https://api.xiaoheihe.cn/account/get_auth_info/'  # 获取账户验证信息
     GET_ACTIVE_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'  # 拉取ROLL房列表
-    GET_FOLLOWER_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'  # 拉取粉丝列表
-    GET_FOLLOWING_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'  # 拉取关注列表
+
     GET_COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'  # 拉取社区答题题目
     GET_ACHIEVE_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'  # 检查有没有解锁新成就
     GET_NOTIFY_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/notify/alert'  # 私信/通知提醒
@@ -53,13 +51,14 @@ class URLS():
 
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'  # 评测点赞
 
-    SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
-    FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'  # 加关注
-    UNFOLLOW_USER = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'  # 取消关注
     BBS_QA_STATE = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'  # 社区答题提交
     UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'  # 修改个人资料
     SEND_MESSAGE = 'https://api.xiaoheihe.cn/chat/send_message/'  # 发送私信
 
+    # 调试用
+    HTTPBIN_GET = 'https://httpbin.org/get'
+    HTTPBIN_POST = 'https://httpbin.org/post'
+    
     # 检验过的API
     SIGN = 'https://api.xiaoheihe.cn/task/sign/'  # 签到
     GET_NEWS = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'  # 新闻列表
@@ -67,12 +66,24 @@ class URLS():
     GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
+    SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
+    
+    GET_FAN_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'  # 拉取粉丝列表
+    GET_FOLLOW_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'  # 拉取关注列表
+    
+
+    FOLLOW_USER = 'http://api.xiaoheihe.cn/bbs/app/profile/follow/user'  # 加关注
+    UNFOLLOW_USER = 'https://api.xiaoheihe.cn/bbs/app/profile/follow/user/cancel'  # 取消关注
+    
     GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'  # 获取个人资料
+
+    GET_NEWS_CONTENT = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'  # 视频页框架
 
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
-    GET_UNREAD_MESSAGE='https://api.xiaoheihe.cn/bbs/app/user/message'
+    GET_UNREAD_MESSAGE = 'https://api.xiaoheihe.cn/bbs/app/user/message'
+
 
 class TAGS():
     '标签转换工具类'
@@ -145,9 +156,9 @@ class EventType():
     CommentGame = 5  # 评测游戏
     CreateRollRoom = 6  # 赠送游戏
     name2num = {'Unknown': 0, 'post_link': 1,
-                  'follow_game': 2, 'game_purchase': 3,
-                  'game_achieve': 4, 'game_comment': 5,
-                  'roll_room': 6}
+                'follow_game': 2, 'game_purchase': 3,
+                'game_achieve': 4, 'game_comment': 5,
+                'roll_room': 6}
 
 
 class GamePlatformType():

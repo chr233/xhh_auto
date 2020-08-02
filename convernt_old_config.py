@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:09:15
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-07-30 22:01:26
+# @LastEditTime : 2020-08-02 10:35:26
 # @Description  : 旧版配置文件转换
 '''
 
@@ -10,40 +10,47 @@ import toml
 import json
 import os
 
+print(r'''
+ ██████╗ ██████╗ ███╗   ██╗██╗   ██╗███████╗████████╗███╗   ██╗████████╗
+██╔════╝██╔═══██╗████╗  ██║██║   ██║██╔════╝╚══██╔══╝████╗  ██║╚══██╔══╝
+██║     ██║   ██║██╔██╗ ██║██║   ██║█████╗     ██║   ██╔██╗ ██║   ██║   
+██║     ██║   ██║██║╚██╗██║╚██╗ ██╔╝██╔══╝     ██║   ██║╚██╗██║   ██║   
+╚██████╗╚██████╔╝██║ ╚████║ ╚████╔╝ ███████╗   ██║   ██║ ╚████║   ██║   
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝  ╚═══╝  ╚══════╝   ╚═╝   ╚═╝  ╚═══╝   ╚═╝   
+''')
+
 
 def read_old_config(path: str) -> dict:
     '''读取旧的config文件
+
     返回:
         dict: 配置字典
     '''
     cfg = {}
     print('> 读取[settings.json]……')
+    cfg['email'] = {'enable': False, 'port': 465, 'server': '', 'password': '',
+                    'user': '', 'recvaddr': '', 'sendaddr': '', 'only_on_error': False}
+    cfg['heybox'] = {'channel': 'heybox_yingyongbao', 'os_type': 'Android',
+                     'os_version': '9'}
     try:
         with open(f'{path}settings.json', 'r', encoding='utf-8') as f:
             jd = json.loads(f.read())
         cfg['main'] = {'debug': bool(jd.get('Debug', False)),
-                       'check_update': bool(jd.get('UpdateCheck', True))}
-        cfg['ftqq'] = {'enable': bool(jd.get('EnableFtqq', True)),
+                       'check_update': bool(jd.get('UpdateCheck', True)),
+                       'join_xhhauto': True}
+        cfg['ftqq'] = {'enable': bool(jd.get('EnableFtqq', False)),
                        'skey': jd.get('FtqqSKEY', ''),
                        'only_on_error': False}
-        cfg['heybox'] = {'channel': 'heybox_yingyongbao',
-                         'os_type': 'Android',
-                         'os_version': '9'}
     except (json.JSONDecodeError, FileNotFoundError) as e:
         if isinstance(e, json.JSONDecodeError):
             print('[*] 读取[settings.json]失败,格式有误,使用默认配置……')
         elif isinstance(e, FileNotFoundError):
             print('[*] 缺失[settings.json],使用默认配置……')
         else:
-            print('[*] 读取[settings.json]失败,使用默认配置……')
-        cfg['main'] = {'debug': False,
-                       'check_update': True}
-        cfg['ftqq'] = {'enable': True,
-                       'skey': '',
-                       'only_on_error': False}
-        cfg['heybox'] = {'channel': 'heybox_yingyongbao',
-                         'os_type': 'Android',
-                         'os_version': '9'}
+            print(f'[*] 读取[settings.json]失败,使用默认配置…… [{e}]')
+        cfg['main'] = {'debug': False, 'check_update': True,
+                       'join_xhhauto': True}
+        cfg['ftqq'] = {'enable': False, 'skey': '', 'only_on_error': False}
     print('< 完成')
     print('> 读取[accounts.json]……')
     try:
@@ -75,7 +82,7 @@ def read_old_config(path: str) -> dict:
         elif isinstance(e, ValueError):
             print('[*] 有效账号列表为空,添加示例配置……')
         else:
-            print('[*] 读取[accounts.json]失败,添加示例配置……')
+            print(f'[*] 读取[accounts.json]失败,添加示例配置…… [{e}]')
         cfg['accounts'] = [{'heybox_id': 0, 'imei': '', 'pkey': ''}]
         print('[*] 未识别到有效的账号信息,请稍后修改[config.toml]自行添加')
     print('< 完成')
@@ -83,9 +90,16 @@ def read_old_config(path: str) -> dict:
 
 
 def write_new_config(path: str, cfg: dict):
+    '''写入新的配置文件
+
+    参数:
+        path: 配置文件目录
+        cfg: 配置字典
+    '''
     fpath = f'{path}config.toml'
     if os.path.exists(fpath):
-        answer = input(('[*] 配置文件[config.toml]已经存在\n'
+        answer = input(('\n'
+                        '[*] 配置文件[config.toml]已经存在\n'
                         '[*] 接下来的操作将会覆盖该文件\n'
                         '[*] 确定要继续吗？【输入 y 继续】：')).strip().lower()
         if answer != 'y':
