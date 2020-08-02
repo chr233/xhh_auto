@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 00:42:30
+# @LastEditTime : 2020-08-02 08:55:06
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -19,6 +19,14 @@ class Index(Network):
 
     def debug(self):
         super().debug()
+        id=self.get_news_id(10,'-1')[0]
+        self.share_news(id,1)
+        cid=self.get_comments_id(id,10,1,False)[0]
+        self.share_comment()
+        print(1)
+        
+
+
 
     def get_news(self, amount: int = 30, tag: str = '-1') -> list:
         '''获取首页文章列表

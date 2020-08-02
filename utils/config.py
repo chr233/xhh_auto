@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 00:11:11
+# @LastEditTime : 2020-08-02 08:50:49
 # @Description  : 读取并验证配置
 '''
 
@@ -46,12 +46,12 @@ def get_all_config() -> dict:
     return(CFG)
 
 
-def load_config(path: str = DEFAULT_PATH):
+def load_config(path: str = DEFAULT_PATH)->dict:
     '''读取并验证配置
     参数:
         [path]: 配置文件路径,默认为config.toml
     返回:
-        dict: 验证过的配置字典,如果读取出错则返回None
+        dict: 验证过的配置字典
     '''
     global CFG
     try:
@@ -62,6 +62,7 @@ def load_config(path: str = DEFAULT_PATH):
         level = 0 if debug == 'debug' else 30
         init_logger(level)
         logger.debug('配置验证通过')
+        return(CFG)
 
     except FileNotFoundError:
         logger.error(f'[*] 配置文件[{path}]不存在')

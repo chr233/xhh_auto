@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 13:32:04
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 23:09:15
+# @LastEditTime : 2020-08-02 08:52:06
 # @Description  : 小黑盒客户端模块
 '''
 
@@ -21,9 +21,10 @@ class HeyBoxClient(Account, Community, Game, Index):
         参数:
             account: 账号字典,需要包含'pkey','imei'和'heybox_id'
             hbxcfg: 客户端设置字典,需要包含
-        
+            [tag]: 标签,用于区分打印的log
         '''
         super().__init__(account, hbxcfg, tag)
 
     def debug(self):
+        '调试用'
         super().debug()
