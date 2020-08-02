@@ -1,8 +1,9 @@
+#!/usr/bin/python3
 '''
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:09:15
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 13:43:30
+# @LastEditTime : 2020-08-02 17:46:42
 # @Description  : 旧版配置文件转换
 '''
 
@@ -22,6 +23,7 @@ print(r'''
 
 
 def read_old_config(path: str) -> dict:
+    
     '''读取旧的config文件
 
     返回:
@@ -91,7 +93,8 @@ def read_old_config(path: str) -> dict:
 
 
 def write_new_config(path: str, cfg: dict):
-    '''写入新的配置文件
+    '''
+    写入新的配置文件
 
     参数:
         path: 配置文件目录

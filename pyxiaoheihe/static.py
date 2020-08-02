@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 11:43:05
+# @LastEditTime : 2020-08-02 15:27:27
 # @Description  : 静态资源
 '''
 
@@ -40,7 +40,6 @@ class URLS():
     GET_ADS_INFO = 'https://api.xiaoheihe.cn/account/get_ads_info/'  # 拉取广告
     GET_FOLLOW_ALERT = 'https://api.xiaoheihe.cn/bbs/app/api/follow/alert'  # 关注列表更新提醒
     GET_AUTH_INFO = 'https://api.xiaoheihe.cn/account/get_auth_info/'  # 获取账户验证信息
-    GET_ACTIVE_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'  # 拉取ROLL房列表
 
     GET_COMMUNITY_SURVEY = 'https://api.xiaoheihe.cn/bbs/app/api/activity/community_survey'  # 拉取社区答题题目
     GET_ACHIEVE_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/achieve/list'  # 检查有没有解锁新成就
@@ -78,6 +77,8 @@ class URLS():
     GET_USER_PROFILE = 'https://api.xiaoheihe.cn/bbs/app/profile/user/profile'  # 获取个人资料
 
     GET_NEWS_CONTENT = 'https://api.xiaoheihe.cn/bbs/app/link/web/view'  # 视频页框架
+
+    GET_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'  # 拉取ROLL房列表
 
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
@@ -162,6 +163,14 @@ class EventType():
                 'follow_game': 2, 'game_purchase': 3,
                 'game_achieve': 4, 'game_comment': 5,
                 'roll_room': 6}
+
+
+class RollSort():
+    'Roll房排序'
+    ROLL = 0  # 最近开奖
+    TIME = 1  # 最新创建
+    PRICE = 2  # 最高价格
+    num2name = {0: 'roll', 1: 'time', 2: 'price'}
 
 
 class GamePlatformType():

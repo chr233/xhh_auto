@@ -59,7 +59,7 @@ sendaddr = 'send@example.com'
 
 # ====高级配置======================================
 [heybox]
-# 自定义请求头数据,如果担心被风控请自行修改成自己的手机
+# 自定义请求头,如果担心被风控请自行修改成和自己的手机一致
 # 表明客户端来自哪个渠道,["heybox_yingyongbao"]
 channel = "heybox_yingyongbao"
 # 系统类型,["Android"]
