@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 20:08:31
+# @LastEditTime : 2020-08-02 11:11:12
 # @Description  : 公共函数库
 '''
 
@@ -32,3 +32,7 @@ def ex_extend(listA: list, listB: list) -> list:
     listC = list(set(listA))
     listC.sort(key=listA.index)
     return(listC)
+
+def user_relation_filter( userlist:list, relation: int):
+    '''粉丝列表/关注列表过滤器'''
+    pass
