@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 15:35:31
+# @LastEditTime : 2020-08-02 17:48:27
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
 from .network import Network
-from .static import RollSort, URLS
+from .static import RollSort, URLS,ERROR_RETRYS,EMPTY_RETRYS
 from .utils import ex_extend
 
 
@@ -66,18 +66,18 @@ class Game(Network):
                 if tmp:
                     roomlist = ex_extend(roomlist, tmp)
                 else:
-                    self.logger.debug('ROLL房列表为空,可能没有可参与的ROLL房,也可能遇到错误')
+                    self.logger.debug('[*] ROLL房列表为空,可能没有可参与的ROLL房,也可能遇到错误')
                     empty += 1
-                    if empty > EMPTY_RETRY_TIMES:
-                        self.logger.debug('空结果达到上限,停止操作')
+                    if empty > EMPTY_RETRYS:
+                        self.logger.debug('[*] 空结果达到上限,停止操作')
                         break
                 if len(roomlist) >= amount:
                     break
             except (JSONDecodeError, ClientException) as e:
-                self.logger.debug(f'拉取ROLL房出错[{e}]')
+                self.logger.debug(f'[*] 拉取ROLL房出错[{e}]')
                 error += 1
-                if error > ERROR_RETRY_TIMES:
-                    self.logger.error('错误次数达到上限,停止操作')
+                if error > ERROR_RETRYS:
+                    self.logger.error('[*] 错误次数达到上限,停止操作')
 
         roomlist = roomlist[:amount]
         if len(roomlist) > 0:
