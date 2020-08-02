@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 12:02:29
+# @LastEditTime : 2020-08-02 13:08:02
 # @Description  : 启动入口
 '''
 import time
@@ -152,9 +152,9 @@ def main():
             data.append(f'#### 遇到了未知错误:[{e}]')
 
     logger.info('=' * 40)
-    logger.info(f'脚本版本:[v{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]')
+    logger.info(f'脚本版本:[{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]')
     data.append(f'#### {"=" * 30 }\n'
-                f'#### 脚本版本:[v{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]')
+                f'#### 脚本版本:[{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]')
 
     end_time = time.time()
     logger.info(f'脚本耗时:[{round(end_time-start_time,4)}]s')

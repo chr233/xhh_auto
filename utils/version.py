@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 00:27:54
+# @LastEditTime : 2020-08-02 13:06:42
 # @Description  : 检查脚本更新
 '''
 
@@ -12,7 +12,7 @@ from json import JSONDecodeError
 from .log import get_logger
 
 
-SCRIPT_VERSION = "0.80"
+SCRIPT_VERSION = "0.82"
 
 logger = get_logger('Version')
 
