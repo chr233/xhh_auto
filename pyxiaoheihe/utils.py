@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 11:33:22
+# @LastEditTime : 2020-08-02 12:19:38
 # @Description  : 公共函数库
 '''
 
@@ -35,7 +35,8 @@ def ex_extend(listA: list, listB: list) -> list:
 
 
 def user_relation_filter(userlist: list, relation: int) -> list:
-    '''粉丝列表/关注列表过滤器,返回指定relation的用户id列表
+    '''
+    粉丝列表/关注列表过滤器,返回指定relation的用户id列表
 
     参数:
         userlist: 粉丝列表或者关注列表
