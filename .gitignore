@@ -268,3 +268,4 @@ __pycache__/
 debug.py
 *.zip
 test.py
+test/
