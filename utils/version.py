@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 13:14:44
+# @LastEditTime : 2020-08-02 21:19:33
 # @Description  : 检查脚本更新
 '''
 
@@ -13,6 +13,8 @@ from .log import get_logger
 
 
 SCRIPT_VERSION = "0.82"
+
+MINI_CORE_VERSION = "1.0.1"
 
 logger = get_logger('Version')
 
@@ -35,7 +37,7 @@ def check_update():
     try:
         resp = requests.get(url=url)
         jd = resp.json()
-        current_version=float(SCRIPT_VERSION)
+        current_version = float(SCRIPT_VERSION)
         latest_version = float(str(jd['tag_name'])[1:])
         update_info = jd['body']
         download_url = jd['assets'][0]['browser_download_url']
@@ -43,11 +45,12 @@ def check_update():
             logger.debug(f'当前为最新版本,版本号{current_version}')
             return(False)
         elif (current_version > latest_version):
-            logger.debug(f'当前版本号比发行版高,版本号[{current_version}<-{latest_version}]')
+            logger.debug(
+                f'当前版本号比发行版高,版本号[{current_version}<-{latest_version}]')
             return(False)
         else:
             logger.debug(f'脚本有更新,版本号[{current_version}->{latest_version}]')
             return((latest_version, update_info, download_url))
-    except (ConnectionError,KeyError, NameError, JSONDecodeError) as e:
+    except (ConnectionError, KeyError, NameError, JSONDecodeError) as e:
         logger.error(f'[*] 检测脚本更新出错 [{e}]')
         return(False)
