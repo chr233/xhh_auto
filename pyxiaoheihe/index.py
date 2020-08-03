@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 10:52:08
+# @LastEditTime : 2020-08-03 21:49:09
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -14,8 +14,8 @@ from .utils import base64encode, ex_extend
 
 class Index(Network):
 
-    def __init__(self, account: dict, hbxcfg: dict, tag: str):
-        super().__init__(account, hbxcfg, tag)
+    def __init__(self, account: dict, hbxcfg: dict, debug: bool):
+        super().__init__(account, hbxcfg, debug)
 
     def debug(self):
         super().debug()

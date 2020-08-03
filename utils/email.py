@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 22:26:25
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 08:55:37
+# @LastEditTime : 2020-08-03 21:57:40
 # @Description  : 
 '''
 import smtplib
@@ -33,11 +33,11 @@ def send_to_email(title: str, data: str, emailcfg: dict) -> bool:
     port = emailcfg.get('port')
     user = emailcfg.get('user')
     password = emailcfg.get('password')
-    
-    data=data.replace('#### ','')
-    data=data.replace('### ','')
 
-    mailobj['From'] = Header(f"{email_from}<小黑盒自动脚本>", 'utf-8')
+    data = data.replace('#### ', '')
+    data = data.replace('### ', '')
+
+    mailobj['From'] = Header(f'{sendaddr}<小黑盒自动脚本>', 'utf-8')
     mailobj['To'] = Header(recvaddr, 'utf-8')
     mailobj['Subject'] = Header(title, 'utf-8')
     mailobj.attach(MIMEText(data, 'plain', 'utf-8'))

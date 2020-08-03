@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 17:48:27
+# @LastEditTime : 2020-08-03 21:48:59
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
@@ -13,8 +13,8 @@ from .utils import ex_extend
 
 class Game(Network):
 
-    def __init__(self, account: dict, hbxcfg: dict, tag: str):
-        super().__init__(account, hbxcfg, tag)
+    def __init__(self, account: dict, hbxcfg: dict, debug: bool):
+        super().__init__(account, hbxcfg, debug)
 
     def debug(self):
         super().debug()

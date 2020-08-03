@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 12:02:01
+# @LastEditTime : 2020-08-03 21:56:32
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,7 +13,7 @@ from base64 import b64encode
 from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
-from utils.log import get_logger
+import logging
 
 from .static import HEYBOX_VERSION, BString
 from .error import *
@@ -27,9 +27,9 @@ class Network():
     _params = {}
 
     _heybox_id = 0
-    logger = get_logger("-")
+    logger = logging.getLogger('-')
 
-    def __init__(self, account: dict, hbxcfg: dict, tag: str):
+    def __init__(self, account: dict, hbxcfg: dict, debug: bool):
         super().__init__()
         self._headers = {'Referer': 'http://api.maxjia.com/',
                          'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
@@ -45,8 +45,16 @@ class Network():
                         '_time': '',
                         'hkey': '',
                         'channel': hbxcfg.get('channel', 'heybox_yingyongbao')}
-        self.logger = get_logger(str(tag))
-        self._heybox_id = account.get('heybox_id')
+
+        log_level = 10 if debug else 20
+        log_format = '%(asctime)s [%(levelname)s][%(name)s]%(message)s'
+        log_time = '%H:%M:%S'
+        logging.basicConfig(level=log_level,
+                            format=log_format,
+                            datefmt=log_time)
+        heybox_id = account.get('heybox_id')
+        self._heybox_id = heybox_id
+        self.logger = logging.getLogger(str(heybox_id))
         self.logger.debug('网络模块初始化完毕')
 
     def debug(self):

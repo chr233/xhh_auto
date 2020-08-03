@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 18:44:52
+# @LastEditTime : 2020-08-03 21:48:34
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -16,8 +16,8 @@ from .utils import ex_extend, user_relation_filter
 class Account(Network):
     '账号模块,负责[我]TAB下的内容'
 
-    def __init__(self, account: dict, hbxcfg: dict, tag: str):
-        super().__init__(account, hbxcfg, tag)
+    def __init__(self, account: dict, hbxcfg: dict, debug: bool):
+        super().__init__(account, hbxcfg, debug)
 
     def debug(self):
         super().debug()
