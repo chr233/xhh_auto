@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 00:45:50
+# @LastEditTime : 2020-08-04 00:46:26
 # @Description  : 检查脚本更新
 '''
 
@@ -33,9 +33,6 @@ def get_script_version() -> str:
 #     core=PYXIAOHEIHE_VERSION.split('.')
 #     mini=MINI_CORE_VERSION.split('.')
     
-
-check_core_version()
-
 def check_update():
 
     '''检查脚本更新
