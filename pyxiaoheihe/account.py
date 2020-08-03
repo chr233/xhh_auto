@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 21:48:34
+# @LastEditTime : 2020-08-03 22:46:24
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -21,8 +21,6 @@ class Account(Network):
 
     def debug(self):
         super().debug()
-        self.get_heybox_latest_version()
-        print(1)
         
     def get_heybox_latest_version(self) -> str:
         '''获取小黑盒最新版本号,失败返回False

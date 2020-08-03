@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 21:49:09
+# @LastEditTime : 2020-08-03 22:46:42
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -19,13 +19,6 @@ class Index(Network):
 
     def debug(self):
         super().debug()
-        # id = 43662889
-        # rs=self.get_news_content(id,1)
-        # id = self.get_news_id(10, '-1')[0]
-        # self.share_news(id, 1)
-        # cid = self.get_comments_id(id, 10, 1, False)[0]
-        # self.share_comment()
-        # print(1)
 
     def get_news(self, amount: int = 30, tag: str = '-1') -> list:
         '''获取首页文章列表
@@ -231,7 +224,7 @@ class Index(Network):
                     try:
                         l = m['link']
                         linkid = int(l['linkid'])
-                        liked = BString(l['is_award_link'] == 1)
+                        liked = bool(l['is_award_link'] == 1)
                         userid = int(m['user']['userid'])
                         ftype = EventType.name2num.get(
                             m['content_type'], 0)
