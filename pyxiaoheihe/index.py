@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 22:46:42
+# @LastEditTime : 2020-08-03 23:03:37
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -304,7 +304,7 @@ class Index(Network):
                 try:
                     link = m['link']
                     linkid = int(link['linkid'])
-                    liked = BString(link['is_award_link'] == 1)
+                    liked = bool(link['is_award_link'] == 1)
                     ftype = EventType.name2num.get(
                         m['content_type'], 0)
                     # 过滤自己的评测
@@ -490,7 +490,7 @@ class Index(Network):
         url = URLS.SHARE_CHECK
         params = {'shared_type': 'BBSComment'}
         try:
-            self._get(url=url,params=params)
+            self._get(url=url, params=params)
             self.logger.debug('分享成功')
             return(True)
         except ClientException as e:
