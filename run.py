@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 21:58:24
+# @LastEditTime : 2020-08-04 00:34:06
 # @Description  : 启动入口
 '''
 import time
@@ -160,24 +160,11 @@ def main():
 
     end_time = time.time()
     logger.info(f'脚本耗时:[{round(end_time-start_time,4)}]s')
-    data.append(f'#### 脚本耗时:[{round(end_time-start_time,4)}]s')
+    data.append(f'#### 任务耗时:[{round(end_time-start_time,4)}]s')
 
     string = '\n'.join(data)
 
-    logger.info('推送统计信息……')
-    if ftqq['enable']:
-        result = send_to_ftqq('小黑盒自动脚本', string, ftqq)
-        if result:
-            logger.info('FTQQ推送成功')
-        else:
-            logger.warn('[*] FTQQ推送失败')
-    if email['enable']:
-        result = send_to_email('小黑盒自动脚本', string, email)
-        if result:
-            logger.info('邮件推送成功')
-        else:
-            logger.warn('[*] 邮件推送失败')
-
+    title = '小黑盒自动脚本'
     if mcfg['check_update']:
         logger.info('检查脚本更新……')
         result = check_update()
@@ -187,20 +174,33 @@ def main():
                         f'最新版本[{latest_version}]'
                         f'更新内容[{detail}]'
                         f'下载地址[{download_url}]')
-            string = (f'### 脚本有更新\n'
-                      f'#### 最新版本[{latest_version}]\n'
-                      f'#### 下载地址:[GitHub]({download_url})\n'
-                      f'#### 更新内容\n'
-                      f'{detail}\n'
-                      f'> 如果碰到问题欢迎加群**916945024**')
-            if ftqq['enable']:
-                send_to_ftqq('小黑盒自动脚本', string, ftqq)
-            if email['enable']:
-                send_to_email('小黑盒自动脚本', string, email)
+            data.append('')
+            data.append = (f'### 脚本有更新\n'
+                           f'#### 最新版本[{latest_version}]\n'
+                           f'#### 下载地址:[GitHub]({download_url})\n'
+                           f'#### 更新内容\n'
+                           f'{detail}\n'
+                           f'> 如果碰到问题欢迎加群**916945024**')
+            title += '【有更新】'
         else:
             logger.info(f'脚本已是最新')
     else:
         logger.info(f'检查脚本更新已禁用')
+
+    logger.info('推送统计信息……')
+    if ftqq['enable']:
+        result = send_to_ftqq(title, string, ftqq)
+        if result:
+            logger.info('FTQQ推送成功')
+        else:
+            logger.warn('[*] FTQQ推送失败')
+    if email['enable']:
+        result = send_to_email(title, string, email)
+        if result:
+            logger.info('邮件推送成功')
+        else:
+            logger.warn('[*] 邮件推送失败')
+
     logger.info('脚本执行完毕')
     return(True)
 

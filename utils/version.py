@@ -2,17 +2,18 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 21:19:33
+# @LastEditTime : 2020-08-04 00:45:50
 # @Description  : 检查脚本更新
 '''
 
 import requests
 from json import JSONDecodeError
+from pyxiaoheihe.static import PYXIAOHEIHE_VERSION
 
 from .log import get_logger
 
 
-SCRIPT_VERSION = "0.82"
+SCRIPT_VERSION = "0.83"
 
 MINI_CORE_VERSION = "1.0.1"
 
@@ -20,15 +21,25 @@ logger = get_logger('Version')
 
 
 def get_script_version() -> str:
+
     '''获取脚本版本
+    
     返回:
         str: 脚本版本号
     '''
     return(SCRIPT_VERSION)
 
+# def check_core_version()->bool:
+#     core=PYXIAOHEIHE_VERSION.split('.')
+#     mini=MINI_CORE_VERSION.split('.')
+    
+
+check_core_version()
 
 def check_update():
+
     '''检查脚本更新
+    
     返回:
         False: 无更新
         (str,str,str): 有更新,最新版本,更新信息,下载链接

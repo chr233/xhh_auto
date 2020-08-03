@@ -31,9 +31,7 @@
 
     当前版本不支持直接登录,只能手动抓包获取账号凭据
 
-> 如果你使用国产安卓系统,可以利用自带的备份工具,把小黑盒备份,然后还原到已经Root的设备上,再进行抓包.
-
-* **[安卓手机端抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)**
+* **[安卓手机抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)**
 
 * **[Fiddler抓取教程](https://blog.chrxw.com/archives/2019/10/20/437.html)**
 
