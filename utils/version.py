@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 10:14:32
+# @LastEditTime : 2020-08-04 10:21:08
 # @Description  : 检查脚本更新
 '''
 
@@ -15,7 +15,7 @@ from .log import get_logger
 
 SCRIPT_VERSION = "0.83"
 
-MINI_CORE_VERSION = "1.0.5"
+MINI_CORE_VERSION = "1.0.1"
 
 logger = get_logger('Version')
 
