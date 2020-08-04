@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 23:51:57
+# @LastEditTime : 2020-08-05 00:53:51
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -61,7 +61,8 @@ class Network():
         pass
 
     def __flush_token(self, url: str):
-        '''根据当前时间生成time_和hkey,并存入self._parames中
+        '''
+        根据当前时间生成time_和hkey,并存入self._parames中
 
         参数:
             url: url路径
@@ -83,7 +84,8 @@ class Network():
         p['hkey'] = h
 
     def __get_json(self, resp: Response) -> dict:
-        '''把Response对象转成json字典,出错返回{}
+        '''
+        把Response对象转成json字典,出错返回{}
 
         参数:
             resp: Response对象
@@ -100,7 +102,8 @@ class Network():
 
     def _get(self, url: str, params: dict = None,  headers: dict = None,
              cookies: dict = None, key: str = 'result') -> dict:
-        '''GET方法发送请求
+        '''
+        GET方法发送请求
 
         参数:
             url: URL
@@ -125,7 +128,8 @@ class Network():
 
     def _post(self, url: str, params: dict = None, data: dict = None,
               headers: dict = None, cookies: dict = None) -> dict:
-        '''POST方法发送请求
+        '''
+        POST方法发送请求
 
         参数:
             url: URL
@@ -146,20 +150,31 @@ class Network():
         jd = self.__get_json(resp)
         return(jd)
 
-    def _post_encrypt(self, url: str, params: dict = None, data: dict = None,
+    def _post_encrypt(self, url: str, data: dict, params: dict = None,
                       headers: dict = None, cookies: dict = None) -> dict:
+        '''
+        POST方法发送加密请求,data参数将被加密
 
+        参数:
+            url: URL
+            [data]: 请求体
+            [params]: 请求参数,会添加到self._params前面
+            [headers]: 请求头,会替换self._headers
+        返回:
+            Response: 请求结果
+        '''
         self.__flush_token(url)
         p = {**(params or {}), **self._params}
         h = headers or self._headers
         c = cookies or self._cookies
-        d = data or {}
 
+        t = p["_time"]
+        p['time_'] = t
         key = gen_random_str(8)
-        ziped_data = gzip_compress(d)
+        ziped_data = gzip_compress(data)
         des_data = des_encrypt(ziped_data, key)
         rsa_data = rsa_encrypt(key)
-        sid = f'{md5_calc(rsa+str(p["_time"]))}{md5_calc(des_data)}'
+        sid = f'{md5_calc(rsa_data+str(t))}{md5_calc(des_data)}'
 
         d = {'data': des_data, 'key': rsa_data, 'sid': sid}
 

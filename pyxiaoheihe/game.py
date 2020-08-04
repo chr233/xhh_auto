@@ -2,13 +2,14 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 21:49:19
+# @LastEditTime : 2020-08-05 00:47:09
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
 from .network import Network
-from .static import RollSort, URLS,ERROR_RETRYS,EMPTY_RETRYS
+from .static import RollSort, URLS, ERROR_RETRYS, EMPTY_RETRYS
 from .utils import ex_extend
+from .error import ClientException,Ignore
 
 
 class Game(Network):
@@ -18,13 +19,20 @@ class Game(Network):
 
     def debug(self):
         super().debug()
+        s = self.get_roll_room(30, RollSort.TIME)
+        self.join_roll_room(s[0][0])
 
-    def get_roll_room(self, amount: int = 30, sort: int = 0) -> list:
-        '''拉取可参与的ROLL房列表
+    def get_roll_room(self, amount: int = 30, sort: int = 0,
+                      ignore_joined: bool = True, ignore_password: bool = True) -> list:
+        '''
+        拉取可参与的ROLL房列表
+
         参数:
-            value:要拉取的数量
+            [amount]: 要拉取的数量
+            [sort]: 排序方式,参见static.RollSort
+            [ignore_password]: 是否忽略有密码的房间
         成功返回:
-            rollroomlist:[(link_id,room_id,人数,价格),……]
+            rollroomlist:[(room_id,有密码?,已参与?),……]
         '''
         def get(offset=0):
             '''
@@ -32,7 +40,7 @@ class Game(Network):
             参数:
                 offset:偏移,以30为单位
             成功返回:
-                rollroomlist:[(link_id,room_id,人数,价格),……]
+                rollroomlist:[(room_id,有密码?,已参与?),……]
             '''
             params = {'filter_passwd': '1', 'sort_types': RollSort.num2name.get(sort, 'roll'),
                       'page_type': 'home', 'offset': offset,   'limit': '30'}
@@ -40,13 +48,16 @@ class Game(Network):
             tmp = []
             for room in result['rooms']:
                 try:
-                    link_id = room['link_id']
                     room_id = room['room_id']
-                    people = room['people']
-                    price = room['price']
-                    # self.logger.debug(f'房号{room_id}|价格{price}|人数{people}')
-                    if not 'over' in room:
-                        tmp.append((link_id, room_id, people, price))
+                    # people = room['people']
+                    # price = room['price']
+                    joined = 'joined' in room
+                    password = room['has_pass']
+                    # 三个过滤器
+                    if 'over' not in room:
+                        if password == False or ignore_password == False:
+                            if joined == False or ignore_joined == False:
+                                tmp.append((room_id, password, joined))
                     else:
                         break
                 except KeyError as e:
@@ -84,3 +95,25 @@ class Game(Network):
         else:
             self.logger.debug('拉取完毕,ROLL房列表为空,可能没有可参与的ROLL房')
         return(roomlist)
+
+    def join_roll_room(self, room_id: int) -> bool:
+        '''
+        参加Roll房
+
+        参数:
+            room_id: roll房号
+        返回:
+            bool: 操作是否成功
+        '''
+        url = URLS.JOIN_ROLL_ROOM
+        data = {"room_id": room_id}
+        try:
+            self._post_encrypt(url=url,  data=data)
+            self.logger.debug('加入Roll房成功')
+            return(True)
+        except Ignore:
+            self.logger.debug('文章已经点赞/取消点赞了')
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'[*] 文章点赞/取消点赞出错 [{e}]')
+            return(False)
