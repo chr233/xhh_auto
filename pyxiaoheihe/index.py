@@ -2,15 +2,14 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 19:20:44
+# @LastEditTime : 2020-08-04 21:48:39
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
-from base64 import b64encode
 from .network import Network
 from .static import URLS, BString, EMPTY_RETRYS, ERROR_RETRYS, EventType
 from .error import ClientException, Ignore
-from .utils import ex_extend
+from .utils import ex_extend, b64encode
 
 
 class Index(Network):

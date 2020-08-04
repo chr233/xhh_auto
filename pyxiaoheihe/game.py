@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 21:48:59
+# @LastEditTime : 2020-08-04 21:49:19
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
@@ -18,7 +18,6 @@ class Game(Network):
 
     def debug(self):
         super().debug()
-        self.get_roll_room()
 
     def get_roll_room(self, amount: int = 30, sort: int = 0) -> list:
         '''拉取可参与的ROLL房列表

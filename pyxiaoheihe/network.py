@@ -2,20 +2,20 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 21:56:32
+# @LastEditTime : 2020-08-04 21:49:45
 # @Description  : 网络模块,负责网络请求
 '''
 
-import traceback
 import time
 import hashlib
-from base64 import b64encode
+import logging
+import traceback
 from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
-import logging
 
 from .static import HEYBOX_VERSION, BString
+from .utils import md5_calc, b64encode
 from .error import *
 
 
@@ -73,14 +73,11 @@ class Network():
             return(path)
         t = int(time.time())
         h = f'{url_to_path(url)}/bfhdkud_time={t}'
-        md5 = hashlib.md5()
-        md5.update(h.encode('utf-8'))
-        h = md5.hexdigest()
+        h = md5_calc(h)
         h = h.replace('a', 'app')
         h = h.replace('0', 'app')
-        md5 = hashlib.md5()
-        md5.update(h.encode('utf-8'))
-        h = md5.hexdigest()[:10]
+        h = md5_calc(h)
+        h = h[:10]
         p = self._params
         p['_time'] = t
         p['hkey'] = h
@@ -166,7 +163,7 @@ class Network():
                 print(msg)
                 if msg in ('操作已经完成', '不能进行重复的操作哦',
                            '不能重复赞哦', '不能给自己的评价点赞哟',
-                           '自己不能粉自己哦',
+                           '自己不能粉自己哦','该帖已被删除',
                            ''):
                     raise Ignore
 
@@ -179,7 +176,8 @@ class Network():
                 elif msg == '系统时间不正确':
                     raise OSError('系统时间错误')
 
-                elif msg == '用户名或密码错误或者登录过于频繁':
+                elif msg in('用户名或密码错误或者登录过于频繁',
+                            '你的账号已被限制访问，如有疑问请于管理员联系'):
                     raise TokenError
 
                 elif msg == '出现了一些问题,请稍后再试':

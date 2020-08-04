@@ -2,16 +2,32 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 19:34:59
+# @LastEditTime : 2020-08-04 21:42:23
 # @Description  : 公共函数库
 '''
 
 import gzip
+import random
+import hashlib
 from .static import RSA_PUB_KEY
-from base64 import b64encode
+from base64 import b64encode as b64e
 
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
+
+
+def gen_random_str(length: int = 8) -> str:
+    '''
+    生成随机字符串
+
+    参数:
+        length: 密钥参数
+    返回:
+        str: 随机字符串
+    '''
+    source = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    result = ''.join(random.sample(source, length))
+    return(result)
 
 
 def gzip_compress(jd: dict) -> bytes:
@@ -28,18 +44,45 @@ def gzip_compress(jd: dict) -> bytes:
     return(result)
 
 
-def rsa_encrypt(payload: bytes) -> bytes:
+def md5_calc(data: str) -> str:
+    '''
+    计算MD5值
+
+    参数:
+        data: 待加密字符串
+    返回:
+        str: MD5计算结果
+    '''
+    md5 = hashlib.md5()
+    md5.update(data.encode('utf-8'))
+    result = md5.hexdigest()
+    return(result)
+
+
+def rsa_encrypt(data: str) -> bytes:
     '''
     RSA加密函数,公钥来自客户端
 
     参数:
-        payload: 待加密内容
+        data: 待加密字符串
     返回:
         bytes: 加密后的内容
     '''
     pub_key = RSA.importKey(RSA_PUB_KEY)
     cipher = PKCS1_v1_5.new(pub_key)
-    result = cipher.encrypt(payload)
+    result = cipher.encrypt(data.encode('utf-8'))
+    return(result)
+
+
+def b64encode(data: str) -> str:
+    '''base64编码
+
+    参数:
+        txt: 待编码的文本
+    返回:
+        str: 编码后的文本
+    '''
+    result = b64e(data.encode('utf-8'))
     return(result)
 
 
