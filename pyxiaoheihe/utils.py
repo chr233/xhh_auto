@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 21:42:23
+# @LastEditTime : 2020-08-04 23:25:07
 # @Description  : 公共函数库
 '''
 
@@ -13,7 +13,7 @@ from .static import RSA_PUB_KEY
 from base64 import b64encode as b64e
 
 from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5
+from Crypto.Cipher import DES, PKCS1_v1_5
 
 
 def gen_random_str(length: int = 8) -> str:
@@ -49,7 +49,7 @@ def md5_calc(data: str) -> str:
     计算MD5值
 
     参数:
-        data: 待加密字符串
+        data: 字符串
     返回:
         str: MD5计算结果
     '''
@@ -59,18 +59,38 @@ def md5_calc(data: str) -> str:
     return(result)
 
 
-def rsa_encrypt(data: str) -> bytes:
+def rsa_encrypt(data: str) -> str:
     '''
     RSA加密函数,公钥来自客户端
 
     参数:
-        data: 待加密字符串
+        data: 明文字符串
     返回:
-        bytes: 加密后的内容
+        str: base64编码后的密文
     '''
     pub_key = RSA.importKey(RSA_PUB_KEY)
     cipher = PKCS1_v1_5.new(pub_key)
-    result = cipher.encrypt(data.encode('utf-8'))
+    ens = cipher.encrypt(data.encode('utf-8'))
+    result = b64e(ens)
+    return(result)
+
+
+def des_encrypt(payload: bytes, key: str) -> str:
+    '''
+    DES加密函数,key必须为8位
+
+    参数:
+        payload: 字节集
+        key: 加密密钥
+    返回:
+        str: base64编码后的密文
+    '''
+    ks = len(payload) % 8
+    if ks:
+        payload += b' ' * (8-ks)
+    cipher = DES.new(key.encode('utf-8'), DES.MODE_CBC)
+    ens = cipher.iv + cipher.encrypt(payload)
+    result = b64e(ens)
     return(result)
 
 

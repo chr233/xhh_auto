@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 21:49:45
+# @LastEditTime : 2020-08-04 23:51:57
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -15,7 +15,7 @@ from json import JSONDecodeError
 from urllib.parse import urlparse
 
 from .static import HEYBOX_VERSION, BString
-from .utils import md5_calc, b64encode
+from .utils import md5_calc, b64encode, gzip_compress, rsa_encrypt, des_encrypt, gen_random_str
 from .error import *
 
 
@@ -146,6 +146,29 @@ class Network():
         jd = self.__get_json(resp)
         return(jd)
 
+    def _post_encrypt(self, url: str, params: dict = None, data: dict = None,
+                      headers: dict = None, cookies: dict = None) -> dict:
+
+        self.__flush_token(url)
+        p = {**(params or {}), **self._params}
+        h = headers or self._headers
+        c = cookies or self._cookies
+        d = data or {}
+
+        key = gen_random_str(8)
+        ziped_data = gzip_compress(d)
+        des_data = des_encrypt(ziped_data, key)
+        rsa_data = rsa_encrypt(key)
+        sid = f'{md5_calc(rsa+str(p["_time"]))}{md5_calc(des_data)}'
+
+        d = {'data': des_data, 'key': rsa_data, 'sid': sid}
+
+        resp = self._session.post(
+            url=url, params=p, data=d, headers=h, cookies=c
+        )
+        jd = self.__get_json(resp)
+        return(jd)
+
     def __check_status(self, jd: dict):
         '''检查json字典,检测到问题抛出异常
 
@@ -163,7 +186,7 @@ class Network():
                 print(msg)
                 if msg in ('操作已经完成', '不能进行重复的操作哦',
                            '不能重复赞哦', '不能给自己的评价点赞哟',
-                           '自己不能粉自己哦','该帖已被删除',
+                           '自己不能粉自己哦', '该帖已被删除',
                            ''):
                     raise Ignore
 
