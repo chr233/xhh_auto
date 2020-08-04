@@ -2,14 +2,15 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 23:03:37
+# @LastEditTime : 2020-08-04 19:20:44
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
+from base64 import b64encode
 from .network import Network
 from .static import URLS, BString, EMPTY_RETRYS, ERROR_RETRYS, EventType
 from .error import ClientException, Ignore
-from .utils import base64encode, ex_extend
+from .utils import ex_extend
 
 
 class Index(Network):
@@ -100,7 +101,7 @@ class Index(Network):
         url = URLS.GET_NEWS_CONTENT
 
         params = {'return_json': 1, 'index': index,
-                  'h_src': base64encode('news_feeds_-1'), 'link_id': linkid}
+                  'h_src': b64encode('news_feeds_-1'), 'link_id': linkid}
         if index == 0:
             params.pop('index')
             params.pop('h_src')
@@ -127,7 +128,7 @@ class Index(Network):
             list: [(commintid,text,userid)…],评论列表
         '''
         def get(page: int):
-            params = {'h_src': base64encode('news_feeds_-1'),
+            params = {'h_src': b64encode('news_feeds_-1'),
                       'link_id': linkid, 'page': page, 'limit': 30,
                       'is_first': 1 if page == 1 else 0,
                       'owner_only': 1 if author_only else 0,
@@ -401,7 +402,7 @@ class Index(Network):
         url = URLS.LIKE_LINK
         data = {'link_id': linkid, 'award_type': 1 if like else 0}
         if index:
-            params = {'h_src': base64encode('news_feeds_-1'), 'index': index}
+            params = {'h_src': b64encode('news_feeds_-1'), 'index': index}
         else:
             params = {}
         try:
@@ -454,7 +455,7 @@ class Index(Network):
         '''
         def click():
             url = URLS.SHARE_CLICK
-            params = {'h_src': base64encode('news_feeds_-1'),
+            params = {'h_src': b64encode('news_feeds_-1'),
                       'link_id': linkid, 'index': index}
             try:
                 self._get(url=url, params=params)
@@ -466,7 +467,7 @@ class Index(Network):
 
         def check():
             url = URLS.SHARE_CHECK
-            params = {'h_src': base64encode('news_feeds_-1'),
+            params = {'h_src': b64encode('news_feeds_-1'),
                       'shared_type': 'normal'}
             try:
                 self._get(url=url, params=params)

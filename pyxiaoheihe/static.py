@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 18:45:35
+# @LastEditTime : 2020-08-04 19:27:37
 # @Description  : 静态资源
 '''
 
@@ -242,3 +242,10 @@ class BString():
 
     def __repr__(self):
         return(self.__string)
+
+RSA_PUB_KEY = '''-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZgjVwAiKTjZ55nG+mW6r3TSU4
+ECvNYqDMIS/bhCj2QaH5GI/KZb2TBp+CBvUj9SLFnmJQ0kzHzHoGZCQ88VevCffF
+7JePGF9cmKQqotlfTKbV4oxV5iLz7JSG6b/Vg7AXtrTolNtWsa8HiB0tI0YClYaQ
+lOXm4UxLeSxQwSFETwIDAQAB
+-----END PUBLIC KEY-----'''
