@@ -3,14 +3,14 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 00:34:06
+# @LastEditTime : 2020-08-04 10:14:17
 # @Description  : 启动入口
 '''
 import time
 import os
 
 from utils.config import load_config, get_all_config
-from utils.version import check_update, SCRIPT_VERSION
+from utils.version import check_script_update,check_pyxiaoheihe_version, SCRIPT_VERSION,MINI_CORE_VERSION
 from utils.log import get_logger
 from utils.ftqq import send_to_ftqq
 from utils.email import send_to_email
@@ -31,7 +31,6 @@ print(r'''
 ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ 
                                                        By Chr_
 ''')
-
 
 def main():
     '示例程序,可以根据需要自行修改'
@@ -167,7 +166,7 @@ def main():
     title = '小黑盒自动脚本'
     if mcfg['check_update']:
         logger.info('检查脚本更新……')
-        result = check_update()
+        result = check_script_update()
         if result:
             latest_version, detail, download_url = result
             logger.info(f'-->脚本有更新<--'
@@ -216,10 +215,14 @@ def cliwait():
 
 if __name__ == '__main__':
     try:
-        main()
+        if check_pyxiaoheihe_version():
+            main()
+        else:
+            print(f'[*] Pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
+            print('[*] 可以使用 pip3 install --upgrade pyxiaoheihe 命令升级')
+            cliwait()
     except KeyboardInterrupt as e:
-        logger.info('[*] 被用户终止')
-        cliwait()
+        logger.info('[*] 手动终止运行')
     except FileNotFoundError:
         logger.error('[*] 配置文件[config.toml]不存在,请参考[README.md]生成配置')
         cliwait()

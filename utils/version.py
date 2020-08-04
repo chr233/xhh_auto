@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 00:46:26
+# @LastEditTime : 2020-08-04 10:14:32
 # @Description  : 检查脚本更新
 '''
 
@@ -15,28 +15,42 @@ from .log import get_logger
 
 SCRIPT_VERSION = "0.83"
 
-MINI_CORE_VERSION = "1.0.1"
+MINI_CORE_VERSION = "1.0.5"
 
 logger = get_logger('Version')
 
 
 def get_script_version() -> str:
+    '''
+    获取脚本版本
 
-    '''获取脚本版本
-    
     返回:
         str: 脚本版本号
     '''
     return(SCRIPT_VERSION)
 
-# def check_core_version()->bool:
-#     core=PYXIAOHEIHE_VERSION.split('.')
-#     mini=MINI_CORE_VERSION.split('.')
-    
-def check_update():
 
-    '''检查脚本更新
-    
+def check_pyxiaoheihe_version() -> bool:
+    '''
+    检查PYxiaoheihe版本是否达到要求
+
+    返回:
+        bool: 是否达到最低版本要求
+    '''
+    core = tuple(int(x) for x in PYXIAOHEIHE_VERSION.split('.'))
+    mini = tuple(int(x) for x in MINI_CORE_VERSION.split('.'))
+    if core >= mini:
+        logger.debug(f'满足最低版本要求 [当前{PYXIAOHEIHE_VERSION} >= 要求{MINI_CORE_VERSION}]')
+    else:
+        logger.debug(
+            f'Pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
+        logger.debug('可以使用 pip3 install --upgrade pyxiaoheihe 命令升级')
+
+
+def check_script_update() -> (str, str, str):
+    '''
+    检查脚本更新
+
     返回:
         False: 无更新
         (str,str,str): 有更新,最新版本,更新信息,下载链接
