@@ -2,18 +2,18 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 09:12:57
+# @LastEditTime : 2020-08-05 14:12:44
 # @Description  : 公共函数库
 '''
 
+import rsa
 import gzip
+import json
+import pyDes
 import random
 import hashlib
-from .static import RSA_PUB_KEY
 from base64 import b64encode as b64e
-
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import DES, PKCS1_v1_5
+from .static import RSA_PUB_KEY, DES_IV
 
 
 def gen_random_str(length: int = 8) -> str:
@@ -26,22 +26,51 @@ def gen_random_str(length: int = 8) -> str:
         str: 随机字符串
     '''
     source = 'abcdefghijklmnopqrstuvwxyz0123456789'
-    result = ''.join(random.sample(source, length))
+    result = ''.join(random.choice(source) for _ in range(length))
     return(result)
 
 
-def gzip_compress(jd: dict) -> bytes:
+def encrypt_data(jd: dict, time: int) -> dict:
     '''
-    使用gzip进行压缩
+    生成加密请求体
 
     参数:
-        jd: json字典
+        jd: 明文请求体
+        time: 整数时间戳
     返回:
-        bytes: 压缩后的内容
+       dict: 密文请求体
     '''
-    payload = str(jd).encode('utf-8')
-    result = gzip.compress(payload, 9)
-    return(result)
+    sjd = json.dumps(jd, separators=(',', ':'))
+    zjd = gzip.compress(sjd.encode('utf-8'))
+
+    des_key = gen_random_str(8)
+    des_unit = pyDes.des(des_key, pyDes.CBC, DES_IV, pad=None,
+                         padmode=pyDes.PAD_PKCS5)
+    des_enc = des_unit.encrypt(zjd)
+    des_enc = b64e(des_enc).decode('utf-8')
+
+    rsa_pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(RSA_PUB_KEY)
+    rsa_enc = rsa.encrypt(des_key.encode('utf-8'), rsa_pubkey)
+    rsa_enc = b64e(rsa_enc).decode('utf-8')
+
+    s_rsa = md5_calc(f'{rsa_enc}{time}')
+    s_des = md5_calc(des_enc)
+
+    ejd = {'data': des_enc, 'key': rsa_enc, 'sid': f'{s_rsa}{s_des}'}
+
+    return(ejd)
+
+
+def b64encode(data: str) -> str:
+    '''base64编码
+
+    参数:
+        txt: 待编码的文本
+    返回:
+        str: 编码后的文本
+    '''
+    result = b64e(data.encode('utf-8'))
+    return(str(result))
 
 
 def md5_calc(data: str) -> str:
@@ -57,53 +86,6 @@ def md5_calc(data: str) -> str:
     md5.update(data.encode('utf-8'))
     result = md5.hexdigest()
     return(result)
-
-
-def rsa_encrypt(data: str) -> str:
-    '''
-    RSA加密函数,公钥来自客户端
-
-    参数:
-        data: 明文字符串
-    返回:
-        str: base64编码后的密文
-    '''
-    pub_key = RSA.importKey(RSA_PUB_KEY)
-    cipher = PKCS1_v1_5.new(pub_key)
-    ens = cipher.encrypt(data.encode('utf-8'))
-    result = str(b64e(ens))
-    return(result)
-
-
-def des_encrypt(payload: bytes, key: str) -> str:
-    '''
-    DES加密函数,key必须为8位
-
-    参数:
-        payload: 字节集
-        key: 加密密钥
-    返回:
-        str: base64编码后的密文
-    '''
-    ks = len(payload) % 8
-    if ks:
-        payload += b'\0' * (8-ks)
-    cipher = DES.new(key.encode('utf-8'), DES.MODE_CBC)
-    ens = cipher.iv + cipher.encrypt(payload)
-    result = str(b64e(ens))
-    return(result)
-
-
-def b64encode(data: str) -> str:
-    '''base64编码
-
-    参数:
-        txt: 待编码的文本
-    返回:
-        str: 编码后的文本
-    '''
-    result = b64e(data.encode('utf-8'))
-    return(str(result))
 
 
 def ex_extend(listA: list, listB: list) -> list:

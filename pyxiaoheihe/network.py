@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 00:53:51
+# @LastEditTime : 2020-08-05 13:19:31
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -15,7 +15,7 @@ from json import JSONDecodeError
 from urllib.parse import urlparse
 
 from .static import HEYBOX_VERSION, BString
-from .utils import md5_calc, b64encode, gzip_compress, rsa_encrypt, des_encrypt, gen_random_str
+from .utils import md5_calc, encrypt_data
 from .error import *
 
 
@@ -60,12 +60,14 @@ class Network():
     def debug(self):
         pass
 
-    def __flush_token(self, url: str):
+    def __flush_token(self, url: str) -> int:
         '''
         根据当前时间生成time_和hkey,并存入self._parames中
 
         参数:
             url: url路径
+        返回:
+            int: 整数时间戳
         '''
         def url_to_path(url: str) -> str:
             path = urlparse(url).path
@@ -82,6 +84,7 @@ class Network():
         p = self._params
         p['_time'] = t
         p['hkey'] = h
+        return(t)
 
     def __get_json(self, resp: Response) -> dict:
         '''
@@ -163,21 +166,11 @@ class Network():
         返回:
             Response: 请求结果
         '''
-        self.__flush_token(url)
-        p = {**(params or {}), **self._params}
+        t = self.__flush_token(url)
+        p = {**(params or {}), 'time_': t, **self._params}
         h = headers or self._headers
         c = cookies or self._cookies
-
-        t = p["_time"]
-        p['time_'] = t
-        key = gen_random_str(8)
-        ziped_data = gzip_compress(data)
-        des_data = des_encrypt(ziped_data, key)
-        rsa_data = rsa_encrypt(key)
-        sid = f'{md5_calc(rsa_data+str(t))}{md5_calc(des_data)}'
-
-        d = {'data': des_data, 'key': rsa_data, 'sid': sid}
-
+        d = encrypt_data(data, t)
         resp = self._session.post(
             url=url, params=p, data=d, headers=h, cookies=c
         )

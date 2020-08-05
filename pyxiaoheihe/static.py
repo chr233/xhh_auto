@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 00:23:48
+# @LastEditTime : 2020-08-05 11:32:10
 # @Description  : 静态资源
 '''
 
@@ -17,6 +17,7 @@ EMPTY_RETRYS = 0
 
 # 遇到错误继续请求的次数
 ERROR_RETRYS = 1
+
 
 class URLS():
     'URL常量'
@@ -43,7 +44,6 @@ class URLS():
     GET_USER_POST = 'https://api.xiaoheihe.cn/bbs/app/profile/user/link/list'  # 拉取用户发帖
     GET_USER_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/profile/news/comment/list'  # 拉取用户评论
     GET_STORE_GAME_LIST = 'https://api.xiaoheihe.cn/mall/list/'  # 获取商店的游戏列表
-
 
     BBS_QA_STATE = 'https://api.xiaoheihe.cn/task/push_bbs_qa_state/'  # 社区答题提交
     UPDATE_PROFILE = 'https://api.xiaoheihe.cn/account/update_profile/'  # 修改个人资料
@@ -77,7 +77,6 @@ class URLS():
 
     GET_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/get_all_active_roll_room/'  # 拉取ROLL房列表
     JOIN_ROLL_ROOM = 'https://api.xiaoheihe.cn/store/join_roll_room/'  # 发送私信
-
 
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
@@ -246,9 +245,13 @@ class BString():
     def __repr__(self):
         return(self.__string)
 
+
+# 加密相关
 RSA_PUB_KEY = '''-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZgjVwAiKTjZ55nG+mW6r3TSU4
 ECvNYqDMIS/bhCj2QaH5GI/KZb2TBp+CBvUj9SLFnmJQ0kzHzHoGZCQ88VevCffF
 7JePGF9cmKQqotlfTKbV4oxV5iLz7JSG6b/Vg7AXtrTolNtWsa8HiB0tI0YClYaQ
 lOXm4UxLeSxQwSFETwIDAQAB
 -----END PUBLIC KEY-----'''
+
+DES_IV = 'abcdefgh'
