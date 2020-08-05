@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 00:51:14
+# @LastEditTime : 2020-08-05 09:12:57
 # @Description  : 公共函数库
 '''
 
@@ -87,7 +87,7 @@ def des_encrypt(payload: bytes, key: str) -> str:
     '''
     ks = len(payload) % 8
     if ks:
-        payload += b' ' * (8-ks)
+        payload += b'\0' * (8-ks)
     cipher = DES.new(key.encode('utf-8'), DES.MODE_CBC)
     ens = cipher.iv + cipher.encrypt(payload)
     result = str(b64e(ens))

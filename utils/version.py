@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 10:21:08
+# @LastEditTime : 2020-08-05 01:04:59
 # @Description  : 检查脚本更新
 '''
 
@@ -40,11 +40,14 @@ def check_pyxiaoheihe_version() -> bool:
     core = tuple(int(x) for x in PYXIAOHEIHE_VERSION.split('.'))
     mini = tuple(int(x) for x in MINI_CORE_VERSION.split('.'))
     if core >= mini:
-        logger.debug(f'满足最低版本要求 [当前{PYXIAOHEIHE_VERSION} >= 要求{MINI_CORE_VERSION}]')
+        logger.debug(
+            f'满足最低版本要求 [当前{PYXIAOHEIHE_VERSION} >= 要求{MINI_CORE_VERSION}]')
+        return(True)
     else:
         logger.debug(
             f'Pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
         logger.debug('可以使用 pip3 install --upgrade pyxiaoheihe 命令升级')
+        return(False)
 
 
 def check_script_update() -> (str, str, str):
