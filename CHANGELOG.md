@@ -1,10 +1,16 @@
 # CHANGELOG
 
-## 2020-08-24 v0.83
+## 2020-08-05 v0.84
+
+* 本版本新增了2个依赖库,请使用命令`pip isntall -r requirements.txt`重新安装依赖
+* 全面支持小黑盒加密协议,隐藏用法请加群
+* 从该版本开始发行版中不再附带`convernt_old_config.py`
+* 新支持了几条API
+
+## 2020-08-04 v0.83
 
 * 修复了拉取动态不能正确判断有没有点过赞的问题
 * 更新提醒现在会附在执行结果后面而不是单独推送
-* 这周会支持roll房,敬请期待
 
 ## 2020-08-01 v0.82
 
@@ -20,32 +26,32 @@
 * 更新新版hkey机制
 * 大部分沿用旧版代码,后续将进行重构
 
-## 以下版本均已失效,仅作存档
+## 【以下版本均已失效,仅作存档】
 
 ## 2019-11-23 v0.70
 
-* 新增get_user_comment_list函数,可以拉取用户评论,**暂不能判断是否已赞**
-* 新增batch_like_commentlist函数,可以批量点赞评论列表
+* 新增`get_user_comment_list`函数,可以拉取用户评论,**暂不能判断是否已赞**
+* 新增`batch_like_commentlist`函数,可以批量点赞评论列表
 * 默认不解析HTML,手机端执行不会因为缺少lxml报错
 * 修改了几个批量拉取函数,执行速度提升约20%
-* 修改了start.py中的几处语法错误
+* 修改了`start.py`中的几处语法错误
 * 小幅调整控制台的了输出样式
 * ~~下一个大版本将会重构~~
 
 ## 2019-10-18 v0.60
 
 * 修改了一处输出错误
-* 新增get_news_comments函数,可以批量拉取文章评论
-* 新增share_comment函数,用于分享文章评论
-* 函数修改get_daily_task_detail,现在能正确检测4项每日任务是否完成
-* 函数更名share -> share_news,原函数将被删除
-* 函数更名get_follower_list -> get_follower_list_by_userid,原函数将被删除,新函数支持获取他人的粉丝列表
-* 函数更名get_following_list -> get_following_list_by_userid,原函数将被删除,新函数支持获取他人的关注列表
+* 新增`get_news_comments`函数,可以批量拉取文章评论
+* 新增`share_comment`函数,用于分享文章评论
+* 函数修改`get_daily_task_detail`,现在能正确检测4项每日任务是否完成
+* 函数更名`share` -> `share_news`,原函数将被删除
+* 函数更名`get_follower_list` -> `get_follower_list_by_userid`,原函数将被删除,新函数支持获取他人的粉丝列表
+* 函数更名`get_following_list` -> `get_following_list_by_userid`,原函数将被删除,新函数支持获取他人的关注列表
 * 现在可以完成小黑盒新的每日任务了(分享评论),每日经验+10
 
 ## 2019-10-04 v0.50
 
-* 增加了更新检测的开关(UpdateCheck), 不过不建议关闭
+* 增加了更新检测的开关(`UpdateCheck`), 不过不建议关闭
 * 修复了直接运行脚本时读取配置文件的路径不正确的问题
 * 增加了运行结束后的提示, 使用参数-N禁用
 * 修复了几个bug

@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 21:37:12
+# @LastEditTime : 2020-08-06 22:14:34
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -225,7 +225,7 @@ class Network():
             elif status == 'relogin':
                 raise TokenError('账号凭据过期,请重新登录')
         except (KeyError, ValueError, NameError, AttributeError):
-            self.logger.debug('JSON格式错误,请提交到chr@chrxw.com')
+            self.logger.debug(f'JSON格式错误')
             self.logger.debug(f'{jd}')
-            self.logger.error(f'{traceback.print_stack()}')
+            self.logger.error(f'{traceback.format_exc()}')
             raise UnknownError(f'未知的返回值[{jd}]')

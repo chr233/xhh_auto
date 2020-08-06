@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:09:15
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 17:46:42
+# @LastEditTime : 2020-08-06 22:33:46
 # @Description  : 旧版配置文件转换
 '''
 
@@ -33,7 +33,7 @@ def read_old_config(path: str) -> dict:
     print('> 读取[settings.json]……')
     cfg['email'] = {'enable': False, 'port': 465, 'server': '', 'password': '',
                     'user': '', 'recvaddr': '', 'sendaddr': '', 'only_on_error': False}
-    cfg['heybox'] = {'channel': 'heybox_yingyongbao', 'os_type': 'Android',
+    cfg['heybox'] = {'channel': 'heybox_yingyongbao', 'os_type': 1,
                      'os_version': '9'}
     try:
         with open(f'{path}settings.json', 'r', encoding='utf-8') as f:

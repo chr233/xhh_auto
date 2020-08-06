@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 22:21:56
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 20:14:05
+# @LastEditTime : 2020-08-06 22:27:21
 # @Description  : 社区模块,负责[社区]TAB下的内容
 '''
 
@@ -79,7 +79,7 @@ class Community(Network):
             self.logger.warn('[*] 拉取完毕,帖子列表为空,请检查参数')
         return(postlist)
 
-    def get_news_id(self, amount: int = 30) -> list:
+    def get_news_id(self, amount: int = 8) -> list:
         '''
         获取首页文章id列表
 
@@ -88,6 +88,6 @@ class Community(Network):
         成功返回:
             list: 文章id列表,[linkid,……]
         '''
-        newslist = self.get_recommend_post(amount)
-        idlist = [x[0] for x in newslist]
+        postlist = self.get_recommend_post(amount)
+        idlist = [x[0] for x in postlist]
         return(idlist)

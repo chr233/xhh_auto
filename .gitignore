@@ -269,3 +269,4 @@ debug.py
 *.zip
 test.py
 test/
+roll.py
