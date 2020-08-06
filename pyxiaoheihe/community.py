@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 22:21:56
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 22:27:21
+# @LastEditTime : 2020-08-06 23:50:41
 # @Description  : 社区模块,负责[社区]TAB下的内容
 '''
 
@@ -19,7 +19,6 @@ class Community(Network):
 
     def debug(self):
         super().debug()
-        self.get_recommend_post(30)
 
     def get_recommend_post(self, amount: int = 8) -> list:
         '''

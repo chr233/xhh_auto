@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 14:12:44
+# @LastEditTime : 2020-08-06 23:49:46
 # @Description  : 公共函数库
 '''
 
@@ -42,6 +42,8 @@ def encrypt_data(jd: dict, time: int) -> dict:
     '''
     sjd = json.dumps(jd, separators=(',', ':'))
     zjd = gzip.compress(sjd.encode('utf-8'))
+    
+    zjd=b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x00' + zjd[10:]
 
     des_key = gen_random_str(8)
     des_unit = pyDes.des(des_key, pyDes.CBC, DES_IV, pad=None,

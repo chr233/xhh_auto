@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 19:08:17
+# @LastEditTime : 2020-08-06 23:02:41
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
@@ -19,6 +19,8 @@ class Game(Network):
 
     def debug(self):
         super().debug()
+        a=self.get_roll_room(10)[0][0]
+        self.join_roll_room(a)
 
     def get_roll_room(self, amount: int = 30, sort: int = 0,
                       ignore_joined: bool = True, ignore_password: bool = True) -> list:
