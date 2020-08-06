@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 19:27:53
+# @LastEditTime : 2020-08-06 22:55:48
 # @Description  : 静态资源
 '''
 
@@ -249,7 +249,7 @@ class BString():
 
 # User-Agent
 Android_UA = 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0'
-IOS_UA = 'xiaoheihe/1.3.119 (iPhone; iOS 13.5.1; Scale/3.00)'
+iOS_UA = 'xiaoheihe/1.3.119 (iPhone; iOS %s; Scale/3.00)'
 
 # 加密相关
 RSA_PUB_KEY = '''-----BEGIN PUBLIC KEY-----
