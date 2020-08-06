@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 22:44:51
+# @LastEditTime : 2020-08-07 00:03:33
 # @Description  : 启动入口
 '''
 
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     except Exception as e:
         logger.error(f'[ERROR][main]哎呀,又出错了 [{e}]', exc_info=True)
         title = '脚本执行遇到未知错误'
-        message = (f'#### 脚本版本:[{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]\n',
+        message = (f'#### 脚本版本:[{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]\n'
                    f'#### 系统信息:[{os.name}]\n'
                    f'#### Python版本: [{sys.version}]\n'
                    f'#### {"=" * 30}\n'
