@@ -204,7 +204,7 @@ class Account(Network):
             bool: 是否成功
         '''
         if (userid == self._heybox_id):
-            self.logger.warn('[*] 不能关注自己哦')
+            self.logger.warning('[*] 不能关注自己哦')
             return(False)
         url = URLS.FOLLOW_USER if follow else URLS.UNFOLLOW_USER
         data = {'following_id': userid}

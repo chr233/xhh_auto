@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 22:11:39
+# @LastEditTime : 2020-08-06 22:44:51
 # @Description  : 启动入口
 '''
 
@@ -108,7 +108,7 @@ def main():
 
             # xhh_auto 互助计划,如果想要退出可以在配置文件中关闭
             if mcfg['join_xhhauto']:
-                logger.info('感谢加入Xhh_Auto互助计划,如果想要退出可以在配置文件中关闭')
+                logger.info('感谢加入Xhh_Auto互助计划')
                 rs = hbc.get_user_relation(20400942)
                 if rs == RelationType.NoRelation:
                     hbc.follow_user(20400942)
@@ -180,7 +180,7 @@ def main():
 
     logger.info('=' * 40)
     if (success < total):
-        logger.warn(f'[{total-success}]个任务执行出错')
+        logger.warning(f'[{total-success}]个任务执行出错')
         data.append(f'#### {"=" * 30 }\n'
                     f'#### **[{total-success}]个任务执行出错**')
     logger.info(f'脚本版本:[{SCRIPT_VERSION}],核心版本:[{PYXIAOHEIHE_VERSION}]')
@@ -236,19 +236,19 @@ def message_push(title: str, message: str, error: bool = False):
             if result:
                 logger.info('FTQQ推送成功')
             else:
-                logger.warn('[*] FTQQ推送失败')
+                logger.warning('[*] FTQQ推送失败')
     if email['enable']:
         if (email['only_on_error'] == True and error) or (email['only_on_error'] == False):
             result = send_to_email(title, message, email)
             if result:
                 logger.info('邮件推送成功')
             else:
-                logger.warn('[*] 邮件推送失败')
+                logger.warning('[*] 邮件推送失败')
 
 
 if __name__ == '__main__':
     try:
-        logger.warn('载入配置文件')
+        logger.info('载入配置文件')
         CFG = load_config()
     except FileNotFoundError:
         logger.error('[*] 配置文件[config.toml]不存在,请参考[README.md]生成配置')
@@ -262,8 +262,6 @@ if __name__ == '__main__':
         exit()
 
     try:
-        logger.info('载入配置文件')
-        CFG = load_config()
         if check_pyxiaoheihe_version():
             main()
         else:

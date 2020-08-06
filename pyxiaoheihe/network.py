@@ -100,7 +100,7 @@ class Network():
             self.__check_status(jd)
             return(jd)
         except JSONDecodeError as e:
-            self.logger.warn(f'[*] JSON解析失败 [{resp.text}]')
+            self.logger.warning(f'[*] JSON解析失败 [{resp.text}]')
             return({})
 
     def _get(self, url: str, params: dict = None,  headers: dict = None,

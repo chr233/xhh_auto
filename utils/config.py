@@ -121,7 +121,7 @@ def verify_config(cfg: dict) -> dict:
             port = int(email.get('port', 0))
         except ValueError:
             port = 465
-            logger.warn('[*] [email]节port必须为数字')
+            logger.warning('[*] [email]节port必须为数字')
         server = email.get('server', '')
         password = email.get('password', '')
         user = email.get('user', '')
@@ -150,7 +150,7 @@ def verify_config(cfg: dict) -> dict:
                 raise ValueError
         except ValueError:
             os_type = 1
-            logger.warn('[*] [heybox]节os_type只能为1或者2')
+            logger.warning('[*] [heybox]节os_type只能为1或者2')
         os_version = heybox.get('os_version', "9")
         vcfg['heybox'] = {
             'channel': channel,

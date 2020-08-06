@@ -72,7 +72,7 @@ class Index(Network):
         if len(newslist) > 0:
             self.logger.debug(f'操作完成,拉取了[{len(newslist)}]条新闻')
         else:
-            self.logger.warn('[*] 拉取完毕,新闻列表为空,请检查参数')
+            self.logger.warning('[*] 拉取完毕,新闻列表为空,请检查参数')
         return(newslist)
 
     def get_news_id(self, amount: int = 30, tag: str = '-1') -> list:

@@ -76,7 +76,7 @@ class Community(Network):
         if len(postlist) > 0:
             self.logger.debug(f'操作完成,拉取了[{len(postlist)}]条帖子')
         else:
-            self.logger.warn('[*] 拉取完毕,帖子列表为空,请检查参数')
+            self.logger.warning('[*] 拉取完毕,帖子列表为空,请检查参数')
         return(postlist)
 
     def get_news_id(self, amount: int = 8) -> list:
