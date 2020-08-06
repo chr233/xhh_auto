@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-04 21:48:39
+# @LastEditTime : 2020-08-06 20:11:44
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
 from .network import Network
-from .static import URLS, BString, EMPTY_RETRYS, ERROR_RETRYS, EventType
+from .static import URLS, BString, EMPTY_RETRYS, ERROR_RETRYS, EventType, NewsContentType
 from .error import ClientException, Ignore
 from .utils import ex_extend, b64encode
 
@@ -21,7 +21,8 @@ class Index(Network):
         super().debug()
 
     def get_news(self, amount: int = 30, tag: str = '-1') -> list:
-        '''获取首页文章列表
+        '''
+        获取首页文章列表
 
         参数:
             [amount]: 需要拉取的数量
@@ -29,17 +30,17 @@ class Index(Network):
         成功返回:
             list: 文章id列表,[(linkid,title,desc,userid),……]
         '''
-        def get(offset: int):
+        def get(offset: int) -> list:
             params = {'offset': offset, 'limit': 30,
                       'tag': tag, 'rec_mark': 'timeline'}
             result = self._get(url=url, params=params)
             tmp = []
-            l = result['links']
-            for ni in l:
-                # 1,2,4 含义参见static.NewsContentType类
-                if ni['content_type'] in(1, 2, 4):
-                    tmp.append((ni['linkid'], ni['title'],
-                                ni['description'], ni.get('userid', 0)))
+            for l in result['links']:
+                if l['content_type'] in(NewsContentType.VideoNews,
+                                        NewsContentType.TextNews,
+                                        NewsContentType.TextNewsEx):
+                    tmp.append((l['linkid'], l['title'],
+                                l['description'], l.get('userid', 0)))
             self.logger.debug(f'拉取了{len(tmp)}条新闻')
             return(tmp)
         # ==========================================
@@ -75,7 +76,8 @@ class Index(Network):
         return(newslist)
 
     def get_news_id(self, amount: int = 30, tag: str = '-1') -> list:
-        '''获取首页文章id列表
+        '''
+        获取首页文章id列表
 
         参数:
             [amount]: 需要拉取的数量
@@ -87,15 +89,16 @@ class Index(Network):
         idlist = [x[0] for x in newslist]
         return(idlist)
 
-    def get_news_content(self, linkid: int, index: int = 1):
-        '''拉取新闻正文
+    def get_news_content(self, linkid: int, index: int = 1) -> (str, dict):
+        '''
+        拉取新闻正文
 
         参数:
             linkid: 文章id
             [index]: 可以理解为文章排在首页的位置,banner为0,从上往下依次递增
-            [tag]: 文章分区,可以参考static.TAGS类,-1代表首页
         成功返回:
-            list: 文章id列表,[(linkid,title,desc,userid),……]
+            str: 文章标题
+            dict: 文章内容字典,类似富文本
         '''
         url = URLS.GET_NEWS_CONTENT
 
@@ -116,7 +119,8 @@ class Index(Network):
 
     def get_comments(self, linkid: int, amount: int = 30,
                      index: int = 1, author_only: bool = False) -> list:
-        '''拉取文章的评论列表,不包含楼中楼,失败返回False
+        '''
+        拉取文章的评论列表,不包含楼中楼,失败返回False
 
         参数:
             linkid: 文章id
@@ -126,7 +130,7 @@ class Index(Network):
         返回:
             list: [(commintid,text,userid)…],评论列表
         '''
-        def get(page: int):
+        def get(page: int) -> list:
             params = {'h_src': b64encode('news_feeds_-1'),
                       'link_id': linkid, 'page': page, 'limit': 30,
                       'is_first': 1 if page == 1 else 0,
@@ -188,7 +192,8 @@ class Index(Network):
 
     def get_comments_id(self, linkid: int, amount: int = 30,
                         index: int = 1, author_only: bool = False) -> list:
-        '''拉取文章的评论id列表,失败返回False
+        '''
+        拉取文章的评论id列表,失败返回False
 
         参数:
             linkid: 文章id
@@ -203,7 +208,8 @@ class Index(Network):
         return(idlist)
 
     def get_subscrib_events(self, amount: int = 30, ignore_liked: bool = True) -> list:
-        '''拉取动态列表,失败返回False
+        '''
+        拉取动态列表,失败返回False
 
         参数:
             value: 要拉取的数量
@@ -211,7 +217,7 @@ class Index(Network):
         成功返回:
             list: [(linkid,ftype,已点赞?),……] ftype释义参见static.EventType
         '''
-        def get(offset: int, lastval: str):
+        def get(offset: int, lastval: str) -> (list, str):
             params = {'offset': offset, 'limit': 30, 'lastval': lastval,
                       'filters': 'post_link|follow_game|game_purchase|game_comment|roll_room'}
             if not lastval:
@@ -292,7 +298,7 @@ class Index(Network):
         返回:
             list: [(linkid,ftype,已点赞?),……] ftype释义参见static.EventType
             '''
-        def get(offset: int, lastval: str):
+        def get(offset: int, lastval: str) -> (list, str):
             params = {'userid': userid, 'offset': offset,
                       'limit': 30, 'lastval': lastval}
             if not lastval:
@@ -352,7 +358,8 @@ class Index(Network):
         return(eventslist)
 
     def get_tags(self) -> list:
-        '''获取标签列表,可以用于获取指定分区的文章,出错返回False
+        '''
+        获取标签列表,可以用于获取指定分区的文章,出错返回False
 
         返回:
             list: tag列表,[(name,key),…]
@@ -389,7 +396,8 @@ class Index(Network):
             return(False)
 
     def like_news(self, linkid: int, index: int = 1, like: bool = True) -> bool:
-        '''给新闻点赞
+        '''
+        给新闻点赞
 
         参数:
             linkid: 文章链接id
@@ -416,7 +424,8 @@ class Index(Network):
             return(False)
 
     def like_event(self, linkid: int, ftype: int = 0, like: bool = True) -> bool:
-        '''给好友动态点赞
+        '''
+        给好友动态点赞
 
         参数:
             linkid: 动态id
@@ -444,7 +453,8 @@ class Index(Network):
             return(False)
 
     def share_news(self, linkid: int, index: int = 1) -> bool:
-        '''分享首页文章
+        '''
+        分享首页文章
 
         参数:
             newsid: 文章id
@@ -480,7 +490,8 @@ class Index(Network):
         return(r1 and r2)
 
     def share_comment(self) -> bool:
-        '''分享文章评论
+        '''
+        分享文章评论
 
         参数:
             不需要??
@@ -498,7 +509,8 @@ class Index(Network):
             return(True)  # 貌似也能完成任务,所以返回True
 
     def sign(self) -> bool:
-        '''进行签到
+        '''
+        进行签到
 
         返回:
             bool: 是否成功

@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 11:32:10
+# @LastEditTime : 2020-08-06 19:27:53
 # @Description  : 静态资源
 '''
 
 # PYXIAOHEIHE版本
-PYXIAOHEIHE_VERSION = '1.0.1'
+PYXIAOHEIHE_VERSION = '1.0.2'
 
 # 小黑盒客户端版本号
 HEYBOX_VERSION = '1.3.119'
@@ -53,13 +53,14 @@ class URLS():
     HTTPBIN_GET = 'https://httpbin.org/get'
     HTTPBIN_POST = 'https://httpbin.org/post'
 
-    # 检验过的API
+    # 验证过的API
     SIGN = 'https://api.xiaoheihe.cn/task/sign/'  # 签到
-    GET_NEWS = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'  # 新闻列表
+    GET_NEWS = 'https://api.xiaoheihe.cn/bbs/app/feeds/news'   # 获取新闻列表
     GET_TAGS = 'https://api.xiaoheihe.cn/maxnews/app/tag/list'  # 获取文章标签
-    GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 文章附加信息
+    GET_COMMENTS = 'https://api.xiaoheihe.cn/bbs/app/link/tree'  # 获取文章附加信息
     LIKE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/support'  # 评论点赞
     SUPPORT_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/link/game/comment/up'  # 评测点赞
+    GET_RECOMMEND_POST = 'https://api.xiaoheihe.cn/bbs/app/feeds'  # 获取社区推荐帖子
 
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
@@ -245,6 +246,10 @@ class BString():
     def __repr__(self):
         return(self.__string)
 
+
+# User-Agent
+Android_UA = 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0'
+IOS_UA = 'xiaoheihe/1.3.119 (iPhone; iOS 13.5.1; Scale/3.00)'
 
 # 加密相关
 RSA_PUB_KEY = '''-----BEGIN PUBLIC KEY-----

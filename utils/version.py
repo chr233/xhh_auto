@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 01:04:59
+# @LastEditTime : 2020-08-06 19:23:07
 # @Description  : 检查脚本更新
 '''
 
@@ -76,6 +76,6 @@ def check_script_update() -> (str, str, str):
         else:
             logger.debug(f'脚本有更新,版本号[{current_version}->{latest_version}]')
             return((latest_version, update_info, download_url))
-    except (ConnectionError, KeyError, NameError, JSONDecodeError) as e:
+    except Exception as e:
         logger.error(f'[*] 检测脚本更新出错 [{e}]')
         return(False)

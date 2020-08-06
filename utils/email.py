@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 22:26:25
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 21:57:40
+# @LastEditTime : 2020-08-06 21:15:35
 # @Description  : 
 '''
 import smtplib
@@ -10,6 +10,7 @@ from smtplib import SMTPAuthenticationError
 from email.header import Header
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.utils import formataddr
 
 from .log import get_logger
 
@@ -37,7 +38,7 @@ def send_to_email(title: str, data: str, emailcfg: dict) -> bool:
     data = data.replace('#### ', '')
     data = data.replace('### ', '')
 
-    mailobj['From'] = Header(f'{sendaddr}<小黑盒自动脚本>', 'utf-8')
+    mailobj['From'] = formataddr(["小黑盒自动脚本", sendaddr])
     mailobj['To'] = Header(recvaddr, 'utf-8')
     mailobj['Subject'] = Header(title, 'utf-8')
     mailobj.attach(MIMEText(data, 'plain', 'utf-8'))

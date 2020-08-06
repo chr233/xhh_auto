@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 13:19:31
+# @LastEditTime : 2020-08-06 21:37:12
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -14,7 +14,7 @@ from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
 
-from .static import HEYBOX_VERSION, BString
+from .static import HEYBOX_VERSION, BString, Android_UA, IOS_UA
 from .utils import md5_calc, encrypt_data
 from .error import *
 
@@ -32,7 +32,7 @@ class Network():
     def __init__(self, account: dict, hbxcfg: dict, debug: bool):
         super().__init__()
         self._headers = {'Referer': 'http://api.maxjia.com/',
-                         'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 ApiMaxJia/1.0',
+                         'User-Agent': '',
                          'Host': 'api.xiaoheihe.cn',
                          'Connection': 'Keep-Alive',
                          'Accept-Encoding': 'gzip'}
@@ -191,16 +191,17 @@ class Network():
                 raise Ignore
             elif status == 'failed':
                 msg = jd['msg']
-                print(msg)
                 if msg in ('操作已经完成', '不能进行重复的操作哦',
                            '不能重复赞哦', '不能给自己的评价点赞哟',
                            '自己不能粉自己哦', '该帖已被删除',
+                           '您已经加入了房间',
                            ''):
                     raise Ignore
 
                 elif msg in ('抱歉,没有找到你要的帖子',
                              '操作失败', 'error link_id',
                              '错误的帖子', '错误的用户',
+                             '加入房间失败,已到开奖时间',
                              '该用户已注销'):
                     raise ClientException(f'客户端出错@{msg}')
 
@@ -209,7 +210,7 @@ class Network():
 
                 elif msg in('用户名或密码错误或者登录过于频繁',
                             '你的账号已被限制访问，如有疑问请于管理员联系'):
-                    raise TokenError
+                    raise TokenError('账号被限制访问')
 
                 elif msg == '出现了一些问题,请稍后再试':
                     self.logger.error(f'返回值:{jd}')
@@ -222,9 +223,9 @@ class Network():
                 self.logger.error(f'{traceback.print_stack()}')
                 raise UnknownError(f'未知的返回值[{msg}]')
             elif status == 'relogin':
-                raise TokenError
+                raise TokenError('账号凭据过期,请重新登录')
         except (KeyError, ValueError, NameError, AttributeError):
             self.logger.debug('JSON格式错误,请提交到chr@chrxw.com')
             self.logger.debug(f'{jd}')
             self.logger.error(f'{traceback.print_stack()}')
-            raise UnknownError
+            raise UnknownError(f'未知的返回值[{jd}]')

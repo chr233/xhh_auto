@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 00:47:09
+# @LastEditTime : 2020-08-06 19:08:17
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
@@ -19,8 +19,6 @@ class Game(Network):
 
     def debug(self):
         super().debug()
-        s = self.get_roll_room(30, RollSort.TIME)
-        self.join_roll_room(s[0][0])
 
     def get_roll_room(self, amount: int = 30, sort: int = 0,
                       ignore_joined: bool = True, ignore_password: bool = True) -> list:
@@ -112,8 +110,8 @@ class Game(Network):
             self.logger.debug('加入Roll房成功')
             return(True)
         except Ignore:
-            self.logger.debug('文章已经点赞/取消点赞了')
+            self.logger.debug('重复加入Roll房')
             return(True)
         except ClientException as e:
-            self.logger.error(f'[*] 文章点赞/取消点赞出错 [{e}]')
+            self.logger.error(f'[*] 加入Roll房出错 [{e}]')
             return(False)

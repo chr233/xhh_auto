@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 13:32:04
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-05 09:13:39
+# @LastEditTime : 2020-08-06 19:09:00
 # @Description  : 小黑盒客户端模块
 '''
 
@@ -26,3 +26,9 @@ class HeyBoxClient(Account, Community, Game, Index):
             [debug]: 调试模式开关,打开后会输出调试日志
         '''
         super().__init__(account, hbxcfg, debug)
+
+    def debug(self):
+        '''
+        仅供测试使用
+        '''
+        return super().debug()

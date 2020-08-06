@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-02 13:46:33
+# @LastEditTime : 2020-08-06 21:57:37
 # @Description  : 读取并验证配置
 '''
 
@@ -144,7 +144,13 @@ def verify_config(cfg: dict) -> dict:
     heybox = cfg.get('heybox', {})
     if heybox and type(heybox) == dict:
         channel = heybox.get('channel', "heybox_yingyongbao")
-        os_type = heybox.get('os_type', "Android")
+        try:
+            os_type = int(heybox.get('os_type', 1))
+            if os_type not in (1, 2):
+                raise ValueError
+        except ValueError:
+            os_type = 1
+            logger.warn('[*] [heybox]节os_type只能为1或者2')
         os_version = heybox.get('os_version', "9")
         vcfg['heybox'] = {
             'channel': channel,
