@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 22:59:33
+# @LastEditTime : 2020-08-07 19:20:18
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -102,6 +102,7 @@ class Network():
         '''
         try:
             jd = resp.json()
+            self.logger.debug(f'返回值 [{jd}]')
             self.__check_status(jd)
             return(jd)
         except JSONDecodeError as e:
@@ -199,7 +200,7 @@ class Network():
                 if msg in ('操作已经完成', '不能进行重复的操作哦',
                            '不能重复赞哦', '不能给自己的评价点赞哟',
                            '自己不能粉自己哦', '该帖已被删除',
-                           '您已经加入了房间',
+                           '您已经加入了房间','帖子已被删除',
                            ''):
                     raise Ignore
 

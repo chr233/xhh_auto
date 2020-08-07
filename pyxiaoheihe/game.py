@@ -2,14 +2,14 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 23:52:10
+# @LastEditTime : 2020-08-07 19:28:35
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
 from .network import Network
 from .static import RollSort, URLS, ERROR_RETRYS, EMPTY_RETRYS
 from .utils import ex_extend
-from .error import ClientException,Ignore
+from .error import ClientException, Ignore
 
 
 class Game(Network):
@@ -28,38 +28,34 @@ class Game(Network):
         参数:
             [amount]: 要拉取的数量
             [sort]: 排序方式,参见static.RollSort
+            [ignore_joined]: 是否忽略参加过的房间
             [ignore_password]: 是否忽略有密码的房间
         成功返回:
-            rollroomlist:[(room_id,有密码?,已参与?),……]
+            list: 房间列表[(room_id,link_id,有密码?,已参与?),……]
         '''
         def get(offset=0):
-            '''
-            拉取可参与的ROLL房列表
-            参数:
-                offset:偏移,以30为单位
-            成功返回:
-                rollroomlist:[(room_id,有密码?,已参与?),……]
-            '''
             params = {'filter_passwd': '1', 'sort_types': RollSort.num2name.get(sort, 'roll'),
                       'page_type': 'home', 'offset': offset,   'limit': '30'}
             result = self._get(url=url, params=params)
             tmp = []
-            for room in result['rooms']:
+            for r in result['rooms']:
                 try:
-                    room_id = room['room_id']
+                    room_id = r['room_id']
+                    link_id = r['link_id']
                     # people = room['people']
                     # price = room['price']
-                    joined = 'joined' in room
-                    password = room['has_pass']
+                    joined = 'joined' in r
+                    password = r['has_pass']
                     # 三个过滤器
-                    if 'over' not in room:
+                    if 'over' not in r:
                         if password == False or ignore_password == False:
                             if joined == False or ignore_joined == False:
-                                tmp.append((room_id, password, joined))
+                                tmp.append(
+                                    (room_id, link_id, password, joined))
                     else:
                         break
                 except KeyError as e:
-                    self.logger.debug(f'提取ROLL房出错[{room}]')
+                    self.logger.debug(f'提取ROLL房出错[{r}]')
             self.logger.debug(f'拉取[{len(tmp)}]个ROLL房')
             return(tmp)
         # ==========================================
@@ -93,6 +89,118 @@ class Game(Network):
         else:
             self.logger.debug('拉取完毕,ROLL房列表为空,可能没有可参与的ROLL房')
         return(roomlist)
+
+    def like_roll_room(self, linkid: int,  like: bool = True) -> bool:
+        '''
+        给好友动态点赞
+
+        参数:
+            linkid: 文章id
+            [like]: 为True表式点赞,False表式取消赞
+        返回:
+            bool: 操作是否成功
+        '''
+        data = {'link_id': linkid, 'award_type': 1 if like else 0}
+        url = URLS.LIKE_LINK
+        try:
+            result = self._post(url=url, data=data)
+            self.logger.debug('房间点赞/取消点赞成功')
+            return(True)
+        except Ignore:
+            self.logger.debug('房间已经点赞/取消点赞了')
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'房间点赞/取消点赞出错 [{e}]')
+            return(False)
+
+    def send_room_comment(self, linkid: int, message: str) -> bool:
+        '''
+        发送Roll房评论
+
+        参数:
+            linkid: 文章id
+            message: 文字评论内容
+        返回:
+            操作是否成功
+        '''
+        data = {'link_id': linkid, 'text': message,
+                'root_id': -1, 'reply_id': -1, 'imgs': None}
+        url = URLS.CREATE_COMMENT
+        try:
+            result = self._post(url=url, data=data)
+            self.logger.debug('发送评论成功')
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'发送评论出错 [{e}]')
+            return(False)
+
+    def get_roll_comments(self, linkid: int, amount: int = 30,
+                          author_only: bool = False) -> list:
+        '''
+        拉取Roll房的评论列表,不包含楼中楼,失败返回False
+
+        参数:
+            linkid: 文章id
+            [amount]: 要拉取的数量
+            [author_only]: 是否开启只看楼主
+        返回:
+            list: [(commintid,text,userid)…],评论列表
+        '''
+        def get(page: int) -> list:
+            params = {'link_id': linkid, 'page': page, 'limit': 30,
+                      'is_first': 1 if page == 1 else 0,
+                      'owner_only': 1 if author_only else 0}
+            result = self._get(url=url, params=params)
+            tmp = []
+            for cmt in result['comments']:
+                try:
+                    c = cmt['comment'][0]
+                    # child_num = comment['child_num'] #回复数
+                    commentid = c['commentid']  # 评论ID
+                    text = c['text']  # 评论内容
+                    u = c['user']
+                    username = u['username']
+                    userid = u['userid']
+                    # level = comment['level_info']['level'] #等级
+                    # self.logger.debug(
+                    #     f'[{username}][{userid}]：[{commentid}][{text}]')
+                    tmp.append((commentid, userid, text))
+                except KeyError:
+                    self.logger.error(f'[*] 拉取房间评论出错 [{cmt}]')
+            self.logger.debug(f'拉取[{len(tmp)}]条评论')
+            return(tmp)
+        # ==========================================
+        url = URLS.GET_COMMENTS
+        commentslist = []
+        empty = 0
+        error = 0
+        for i in range(0, amount//30 + 2):
+            try:
+                self.logger.debug(f'拉取第[{i+1}]页评论')
+                tmp = get(i)
+                if tmp:
+                    commentslist.extend(tmp)
+                else:
+                    self.logger.debug('评论列表为空,可能遇到错误')
+                    empty += 1
+                    if empty > EMPTY_RETRYS:
+                        self.logger.debug('空结果达到上限,停止操作')
+                        break
+                if len(commentslist) >= amount:
+                    break
+            except ClientException as e:
+                self.logger.debug(f'拉取评论列表出错[{e}]')
+                error += 1
+                if error > ERROR_RETRYS:
+                    self.logger.debug('错误次数达到上限,停止操作')
+                    break
+
+        commentslist = commentslist[:amount]
+        if len(commentslist) > 0:
+            self.logger.debug(f'操作完成,拉取了[{len(commentslist)}]条评论')
+        else:
+            self.logger.debug('[*] 拉取完毕,评论列表为空,可能遇到错误')
+        return(commentslist)
 
     def join_roll_room(self, room_id: int) -> bool:
         '''

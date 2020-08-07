@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 22:55:48
+# @LastEditTime : 2020-08-07 22:42:03
 # @Description  : 静态资源
 '''
 
 # PYXIAOHEIHE版本
-PYXIAOHEIHE_VERSION = '1.0.2'
+PYXIAOHEIHE_VERSION = '1.0.3'
 
 # 小黑盒客户端版本号
 HEYBOX_VERSION = '1.3.119'
@@ -65,6 +65,7 @@ class URLS():
     LIKE_LINK = 'https://api.xiaoheihe.cn/bbs/app/profile/award/link'  # 一般点赞
     SHARE_CLICK = 'https://api.xiaoheihe.cn/bbs/app/link/share/click'  # 分享
     SHARE_CHECK = 'https://api.xiaoheihe.cn/task/shared/'  # 检查分享
+    CREATE_COMMENT = 'https://api.xiaoheihe.cn/bbs/app/comment/create'  # 评论
 
     GET_FAN_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/follower/list'  # 拉取粉丝列表
     GET_FOLLOW_LIST = 'https://api.xiaoheihe.cn/bbs/app/profile/following/list'  # 拉取关注列表

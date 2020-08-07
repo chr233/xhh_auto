@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 00:19:41
+# @LastEditTime : 2020-08-07 17:40:36
 # @Description  : 启动入口
 '''
 
@@ -50,6 +50,7 @@ except ImportError as e:
     print(e)
     print('导入模块出错,请执行 pip install -r requirements.txt 安装所需的依赖库')
     cliwait()
+    exit()
 
 
 logger = get_logger('Run')
@@ -82,7 +83,7 @@ def main():
         try:
             logger.info(str(f'==[{i}/{ac}]').ljust(40, '='))
             data.append(f'#### {str(f"==[{i}/{ac}]").ljust(30, "=")}')
-            hbc = HeyBoxClient(account, hbxcfg, i)
+            hbc = HeyBoxClient(account, hbxcfg, mcfg['debug'])
 
             # 读取每日任务详情
             qd, fxxw, fxpl, dz = hbc.get_daily_task()
@@ -217,12 +218,8 @@ def main():
         logger.info(f'检查脚本更新已禁用')
 
     logger.info('推送统计信息……')
-
     message_push(title, message, success != total)
-
     logger.info('脚本执行完毕')
-    return(True)
-
 
 def message_push(title: str, message: str, error: bool = False):
     '''
