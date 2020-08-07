@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 12:25:50
+# @LastEditTime : 2020-08-07 22:42:42
 # @Description  : 检查脚本更新
 '''
 
@@ -13,7 +13,7 @@ from pyxiaoheihe.static import PYXIAOHEIHE_VERSION
 from .log import get_logger
 
 
-SCRIPT_VERSION = "0.84"
+SCRIPT_VERSION = "0.85"
 
 MINI_CORE_VERSION = "1.0.1"
 
