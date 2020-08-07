@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 21:57:37
+# @LastEditTime : 2020-08-07 12:26:49
 # @Description  : 读取并验证配置
 '''
 
@@ -21,7 +21,9 @@ CFG = {}
 
 
 def get_script_path() -> str:
-    '''获取脚本所在路径
+    '''
+    获取脚本所在路径
+    
     返回:
         str: 脚本所在路径
     '''
@@ -29,7 +31,9 @@ def get_script_path() -> str:
 
 
 def get_config(key: str) -> dict:
-    '''获取某一项配置
+    '''
+    获取某一项配置
+    
     参数:
         key: 要获取的设置键名
     返回:
@@ -39,7 +43,9 @@ def get_config(key: str) -> dict:
 
 
 def get_all_config() -> dict:
-    '''获取全部配置
+    '''
+    获取全部配置
+    
     返回:
         dict: 配置信息字典
     '''
@@ -47,7 +53,9 @@ def get_all_config() -> dict:
 
 
 def load_config(path: str = DEFAULT_PATH) -> dict:
-    '''读取并验证配置
+    '''
+    读取并验证配置
+    
     参数:
         [path]: 配置文件路径,默认为config.toml
     返回:
@@ -72,7 +80,9 @@ def load_config(path: str = DEFAULT_PATH) -> dict:
 
 
 def verify_config(cfg: dict) -> dict:
-    '''验证配置
+    '''
+    验证配置
+    
     参数:
         cfg: 配置字典
     返回:

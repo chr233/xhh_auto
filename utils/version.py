@@ -1,13 +1,13 @@
+
 '''
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 22:23:48
+# @LastEditTime : 2020-08-07 12:25:50
 # @Description  : 检查脚本更新
 '''
 
 import requests
-from json import JSONDecodeError
 from pyxiaoheihe.static import PYXIAOHEIHE_VERSION
 
 from .log import get_logger

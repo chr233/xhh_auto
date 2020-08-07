@@ -1,8 +1,9 @@
+
 '''
 # @Author       : Chr_
 # @Date         : 2020-07-30 13:32:04
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 19:09:00
+# @LastEditTime : 2020-08-07 12:25:08
 # @Description  : 小黑盒客户端模块
 '''
 
@@ -14,7 +15,9 @@ from .index import Index
 
 class HeyBoxClient(Account, Community, Game, Index):
 
-    'Python实现的小黑盒客户端'
+    '''
+    Python实现的小黑盒客户端
+    '''
 
     def __init__(self, account: dict, hbxcfg: dict, debug: bool = False):
         '''

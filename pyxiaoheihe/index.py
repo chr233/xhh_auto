@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 20:11:44
+# @LastEditTime : 2020-08-07 12:19:00
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -319,7 +319,7 @@ class Index(Network):
                     # 忽略已点赞的动态
                     if liked == False or ignore_liked == False:
                         tmp.append((linkid, ftype, liked))
-                except KeyError as e:
+                except KeyError:
                     self.logger.debug(f'提取动态列表出错[{m}]')
             self.logger.debug(f'拉取[{len(tmp)}]条动态')
             return((tmp, val))
@@ -533,6 +533,6 @@ class Index(Network):
         except Ignore:
             self.logger.debug('已经签过到了')
             return(True)
-        except (ClientException, KeyError, NameError) as e:
+        except ClientException as e:
             self.logger.error(f'签到出错[{e}]')
             return(False)

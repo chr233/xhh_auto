@@ -1,10 +1,12 @@
+
 '''
 # @Author       : Chr_
 # @Date         : 2020-08-01 22:26:25
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 21:15:35
-# @Description  : 
+# @LastEditTime : 2020-08-07 12:17:49
+# @Description  : 邮件推送模块
 '''
+
 import smtplib
 from smtplib import SMTPAuthenticationError
 from email.header import Header
@@ -18,7 +20,9 @@ logger = get_logger('EMail')
 
 
 def send_to_email(title: str, data: str, emailcfg: dict) -> bool:
-    '''发送消息到电子邮箱
+    '''
+    发送消息到电子邮箱
+    
     参数:
         title: 标题
         text: 内容
