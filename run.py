@@ -3,13 +3,14 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 17:40:36
+# @LastEditTime : 2020-08-08 12:50:15
 # @Description  : 启动入口
 '''
 
 import os
 import sys
 import time
+import random
 import traceback
 
 print(r'''
@@ -56,6 +57,16 @@ except ImportError as e:
 logger = get_logger('Run')
 
 
+def random_sleep(min, max):
+    '''
+    随机延时
+    '''
+    t = random.randint(min, max)
+    t += random.random()
+    logger.info(f'随机延时 {"%.2f" % t} 秒')
+    time.sleep(t)
+
+
 def main():
     '''
     示例程序,可以根据需要自行修改
@@ -87,29 +98,39 @@ def main():
 
             # 读取每日任务详情
             qd, fxxw, fxpl, dz = hbc.get_daily_task()
+            qd, fxxw, fxpl, dz = False, False, False, False
 
             logger.info(f'任务[签到{qd}|分享{fxxw}{fxpl}|点赞{dz}]')
             if not qd:
-                logger.info('签到……')
+                hbc.logger.info('签到……')
                 hbc.sign()
             if not dz or not fxxw or not fxpl:
-                logger.info('获取首页新闻列表……')
+                hbc.logger.info('获取首页新闻列表……')
                 idlist = hbc.get_news_id(6, -1)
-                logger.info(f'获取[{len(idlist)}]条内容')
+                hbc.logger.info(f'获取[{len(idlist)}]条内容')
                 if not fxxw or not fxpl:
-                    logger.info('分享新闻……')
-                    hbc.share_news(idlist[0], 1)
+                    hbc.logger.info('分享新闻……')
+                    id = idlist[0]
+                    hbc.get_news_content(id, 1)
+                    hbc.get_comments(id, 1, i, False)
+                    hbc.share_news(id, 1)
+                    random_sleep(0, 1)
                     hbc.share_comment()
+                    random_sleep(0, 1)
                 if not dz:
-                    logger.info('点赞新闻……')
                     for i, id in enumerate(idlist, 1):
+                        # 伪装正常流量
+                        hbc.logger.info(f'模拟浏览新闻{id}')
+                        hbc.get_news_content(id)
+                        hbc.get_comments(id, 1, i, False)
                         hbc.like_news(id, i, True)
+                        random_sleep(1, 10)
             else:
-                logger.info('已完成点赞和分享任务,跳过')
+                hbc.logger.info('已完成点赞和分享任务,跳过')
 
             # xhh_auto 互助计划,如果想要退出可以在配置文件中关闭
             if mcfg['join_xhhauto']:
-                logger.info('感谢加入Xhh_Auto互助计划')
+                hbc.logger.info('感谢加入Xhh_Auto互助计划')
                 rs = hbc.get_user_relation(20400942)
                 if rs == RelationType.NoRelation:
                     hbc.follow_user(20400942)
@@ -119,26 +140,28 @@ def main():
                 if target:
                     for i in target[:2]:
                         hbc.follow_user(i, True)
+                        random_sleep(0, 5)
 
             ulist = hbc.get_new_fans()
             if ulist:
                 for i in ulist:
                     hbc.follow_user(i, True)
-                logger.info(f'关注了[{len(ulist)}]个新粉丝')
+                    random_sleep(0, 5)
+                hbc.logger.info(f'关注了[{len(ulist)}]个新粉丝')
             else:
-                logger.info('没有新粉丝')
+                hbc.logger.info('没有新粉丝')
                 if not mcfg['join_xhhauto']:
-                    logger.info('[!] 试试加入xhh_auto互助计划?')
+                    hbc.logger.info('[!] 试试加入xhh_auto互助计划?')
 
-            logger.info('获取动态列表……')
             eventlist = hbc.get_subscrib_events(EVENT, True)
-            logger.info(f'获取[{len(eventlist)}]条内容')
+            hbc.logger.info(f'获取[{len(eventlist)}]条动态')
             if eventlist:
-                logger.info('点赞动态……')
                 for id, ftype, _ in eventlist:
+                    hbc.logger.info(f'点赞动态')
                     hbc.like_event(id, ftype, True)
+                    random_sleep(0, 2)
             else:
-                logger.info('没有新动态')
+                hbc.logger.info('没有新动态')
 
             logger.info('-' * 40)
 
@@ -220,6 +243,7 @@ def main():
     logger.info('推送统计信息……')
     message_push(title, message, success != total)
     logger.info('脚本执行完毕')
+
 
 def message_push(title: str, message: str, error: bool = False):
     '''
