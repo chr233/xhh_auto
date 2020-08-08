@@ -1,9 +1,10 @@
 #!/usr/bin/python3
+
 '''
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 12:50:15
+# @LastEditTime : 2020-08-08 19:24:10
 # @Description  : 启动入口
 '''
 
@@ -37,7 +38,7 @@ def cliwait():
 
 
 try:
-    from utils.config import load_config, get_all_config
+    from utils.config import load_config
     from utils.version import check_script_update, check_pyxiaoheihe_version, SCRIPT_VERSION, MINI_CORE_VERSION
     from utils.log import get_logger
     from utils.ftqq import send_to_ftqq
@@ -57,13 +58,19 @@ except ImportError as e:
 logger = get_logger('Run')
 
 
-def random_sleep(min, max):
+def random_sleep(min_t: int, max_t: int):
     '''
     随机延时
+
+    参数:
+        min_t: 最短时间
+        max_t: 最长时间
     '''
-    t = random.randint(min, max)
+    x = CFG['main']['sleep_interval']
+    t = random.randint(min_t, max_t)
+    t *= x
     t += random.random()
-    logger.info(f'随机延时 {"%.2f" % t} 秒')
+    logger.info(f'随机延时{"%.2f" % t}秒')
     time.sleep(t)
 
 
@@ -80,8 +87,6 @@ def main():
     success = 0
     accounts = CFG['accounts']
     hbxcfg = CFG['heybox']
-    ftqq = CFG['ftqq']
-    email = CFG['email']
     mcfg = CFG['main']
 
     if not accounts:
@@ -110,20 +115,20 @@ def main():
                 hbc.logger.info(f'获取[{len(idlist)}]条内容')
                 if not fxxw or not fxpl:
                     hbc.logger.info('分享新闻……')
-                    id = idlist[0]
-                    hbc.get_news_content(id, 1)
-                    hbc.get_comments(id, 1, i, False)
-                    hbc.share_news(id, 1)
+                    linkid = idlist[0]
+                    hbc.get_news_content(linkid, 1)
+                    hbc.get_comments(linkid, 1, i, False)
+                    hbc.share_news(linkid, 1)
                     random_sleep(0, 1)
                     hbc.share_comment()
                     random_sleep(0, 1)
                 if not dz:
-                    for i, id in enumerate(idlist, 1):
+                    for i, linkid in enumerate(idlist, 1):
                         # 伪装正常流量
-                        hbc.logger.info(f'模拟浏览新闻{id}')
-                        hbc.get_news_content(id)
-                        hbc.get_comments(id, 1, i, False)
-                        hbc.like_news(id, i, True)
+                        hbc.logger.info(f'模拟浏览新闻{linkid}')
+                        hbc.get_news_content(linkid)
+                        hbc.get_comments(linkid, 1, i, False)
+                        hbc.like_news(linkid, i, True)
                         random_sleep(1, 10)
             else:
                 hbc.logger.info('已完成点赞和分享任务,跳过')
@@ -156,9 +161,9 @@ def main():
             eventlist = hbc.get_subscrib_events(EVENT, True)
             hbc.logger.info(f'获取[{len(eventlist)}]条动态')
             if eventlist:
-                for id, ftype, _ in eventlist:
-                    hbc.logger.info(f'点赞动态')
-                    hbc.like_event(id, ftype, True)
+                for linkid, ftype, _ in eventlist:
+                    hbc.logger.info(f'点赞动态 {linkid}')
+                    hbc.like_event(linkid, ftype, True)
                     random_sleep(0, 2)
             else:
                 hbc.logger.info('没有新动态')
@@ -236,9 +241,9 @@ def main():
                            f'> 如果碰到问题欢迎加群**916945024**')
             title += '【有更新】'
         else:
-            logger.info(f'脚本已是最新')
+            logger.info(f'脚本已是最新,当前版本{SCRIPT_VERSION}')
     else:
-        logger.info(f'检查脚本更新已禁用')
+        logger.info('检查脚本更新已禁用,当前版本{SCRIPT_VERSION}')
 
     logger.info('推送统计信息……')
     message_push(title, message, success != total)
@@ -290,7 +295,7 @@ if __name__ == '__main__':
                 f'[*] Pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
             logger.error('[*] 可以使用 pip3 install --upgrade pyxiaoheihe 命令升级')
             cliwait()
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         logger.info('[*] 手动终止运行')
         cliwait()
     except Exception as e:
