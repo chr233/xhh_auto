@@ -3,12 +3,13 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 12:26:49
+# @LastEditTime : 2020-08-08 13:03:57
 # @Description  : 读取并验证配置
 '''
 
-import toml
 import os
+import toml
+import chardet
 from .log import get_logger, init_logger
 
 logger = get_logger('Setting')
@@ -23,7 +24,7 @@ CFG = {}
 def get_script_path() -> str:
     '''
     获取脚本所在路径
-    
+
     返回:
         str: 脚本所在路径
     '''
@@ -33,7 +34,7 @@ def get_script_path() -> str:
 def get_config(key: str) -> dict:
     '''
     获取某一项配置
-    
+
     参数:
         key: 要获取的设置键名
     返回:
@@ -45,7 +46,7 @@ def get_config(key: str) -> dict:
 def get_all_config() -> dict:
     '''
     获取全部配置
-    
+
     返回:
         dict: 配置信息字典
     '''
@@ -55,7 +56,7 @@ def get_all_config() -> dict:
 def load_config(path: str = DEFAULT_PATH) -> dict:
     '''
     读取并验证配置
-    
+
     参数:
         [path]: 配置文件路径,默认为config.toml
     返回:
@@ -64,7 +65,11 @@ def load_config(path: str = DEFAULT_PATH) -> dict:
     global CFG
     try:
         logger.debug('开始读取配置')
-        raw_cfg = dict(toml.load(path))
+        with open(path, 'rb') as f:
+            content = f.read()
+        
+        encode = chardet.detect(content).get('encoding', 'utf-8')
+        raw_cfg = dict(toml.loads(content, encode))
         CFG = verify_config(raw_cfg)
         debug = os.environ.get('mode', 'release').lower()
         level = 0 if debug == 'debug' else 20
@@ -82,30 +87,31 @@ def load_config(path: str = DEFAULT_PATH) -> dict:
 def verify_config(cfg: dict) -> dict:
     '''
     验证配置
-    
+
     参数:
         cfg: 配置字典
     返回:
         dict: 验证过的配置字典,剔除错误的和不必要的项目
     '''
-    vcfg = {
-        'main': {'check_update': True, 'debug': False, 'join_xhhauto': True},
-        'ftqq': {'enable': False, 'skey': '', 'only_on_error': False},
-        'email': {'port': 465, 'server': '', 'password': '', 'user': '',
-                  'recvaddr': '', 'sendaddr': '', 'only_on_error': False},
-        'heybox': {'channel': 'heybox_yingyongbao', 'os_type': 'Android', 'os_version': '9'},
-        'accounts': []
-    }
+    vcfg = {'main': {'check_update': True, 'debug': False, 'sleep_interval': 1.0, 'join_xhhauto': True},
+            'ftqq': {'enable': False, 'skey': '', 'only_on_error': False},
+            'email': {'port': 465, 'server': '', 'password': '', 'user': '',
+                      'recvaddr': '', 'sendaddr': '', 'only_on_error': False},
+            'heybox': {'channel': 'heybox_yingyongbao', 'os_type': 'Android', 'os_version': '9'},
+            'accounts': []}
+
     main = cfg.get('main', {})
     if main and type(main) == dict:
         check_update = main.get('check_update', True)
         debug = main.get('debug', False)
+        try:
+            sleep = float(main.get('sleep_interval', 1))
+        except ValueError:
+            sleep = 1.0
+            logger.warning('[*] [main]节sleep_interval必须为数字')
         join_xhhauto = main.get('join_xhhauto', True)
-        vcfg['main'] = {
-            'check_update': check_update,
-            'debug': debug,
-            'join_xhhauto': join_xhhauto
-        }
+        vcfg['main'] = {'check_update': check_update, 'debug': debug,
+                        'sleep_interval': sleep, 'join_xhhauto': join_xhhauto}
     else:
         logger.debug('[main]节配置有误或者未配置,将使用默认配置')
 
@@ -116,11 +122,8 @@ def verify_config(cfg: dict) -> dict:
         only_on_error = ftqq.get('only_on_error', False)
         if enable and not skey:
             raise ValueError('开启了FTQQ模块,但是未指定SKEY,请检查配置文件')
-        vcfg['ftqq'] = {
-            'enable': enable,
-            'skey': skey,
-            'only_on_error': only_on_error
-        }
+        vcfg['ftqq'] = {'enable': enable, 'skey': skey,
+                        'only_on_error': only_on_error}
     else:
         logger.debug('[ftqq]节配置有误或者未配置,将使用默认配置')
 
@@ -141,13 +144,10 @@ def verify_config(cfg: dict) -> dict:
         if enable and not (port and server
                            and password and user and recvaddr and sendaddr):
             raise ValueError('开启了email模块,但是配置不完整,请检查配置文件')
-        vcfg['email'] = {
-            'enable': enable,
-            'port': port, 'server': server,
-            'password': password, 'user': user,
-            'recvaddr': recvaddr, 'sendaddr': sendaddr,
-            'only_on_error': only_on_error
-        }
+        vcfg['email'] = {'enable': enable, 'port': port, 'server': server,
+                         'password': password, 'user': user,
+                         'recvaddr': recvaddr, 'sendaddr': sendaddr,
+                         'only_on_error': only_on_error}
     else:
         logger.debug('[email]节配置有误或者未配置,将使用默认配置')
 
@@ -162,11 +162,8 @@ def verify_config(cfg: dict) -> dict:
             os_type = 1
             logger.warning('[*] [heybox]节os_type只能为1或者2')
         os_version = heybox.get('os_version', "9")
-        vcfg['heybox'] = {
-            'channel': channel,
-            'os_type': os_type,
-            'os_version': os_version
-        }
+        vcfg['heybox'] = {'channel': channel, 'os_type': os_type,
+                          'os_version': os_version}
     else:
         logger.debug('[heybox]节配置有误或者未配置,将使用默认配置')
 
@@ -179,11 +176,9 @@ def verify_config(cfg: dict) -> dict:
                 imei = account['imei']
                 pkey = account['pkey']
                 if heybox_id and imei and pkey:
-                    vcfg['accounts'].append({
-                        'heybox_id': heybox_id,
-                        'imei': imei,
-                        'pkey': pkey
-                    })
+                    vcfg['accounts'].append({'heybox_id': heybox_id,
+                                             'imei': imei,
+                                             'pkey': pkey})
                 else:
                     raise ValueError
             except (ValueError, AttributeError):
