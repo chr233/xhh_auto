@@ -2,21 +2,20 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 17:13:39
+# @LastEditTime : 2020-08-08 19:28:59
 # @Description  : 网络模块,负责网络请求
 '''
 
 import time
-import hashlib
 import logging
 import traceback
 from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
 
-from .static import HEYBOX_VERSION, BString, Android_UA, iOS_UA
+from .static import HEYBOX_VERSION, Android_UA, iOS_UA
 from .utils import md5_calc, encrypt_data
-from .error import *
+from .error import ClientException,Ignore,UnknownError,TokenError
 
 
 class Network():
@@ -162,7 +161,7 @@ class Network():
             self.logger.debug(f'返回值 [{jd}]')
             self.__check_status(jd)
             return(jd)
-        except JSONDecodeError as e:
+        except JSONDecodeError:
             self.logger.warning(f'[*] JSON解析失败 [{resp.text}]')
             return({})
 
