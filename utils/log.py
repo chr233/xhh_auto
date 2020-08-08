@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:24:11
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 19:09:39
+# @LastEditTime : 2020-08-08 15:43:13
 # @Description  : 控制日志输出
 '''
 
@@ -16,7 +16,7 @@ DEFAULT_TIME = '%H:%M:%S'  # '%m-%d %H:%M:%S'
 
 def init_logger(level: int = DEFAULT_LEVEL):
     '''
-    初始化logger
+    初始化logger对象
 
     参数:
         [level]: 日志等级,默认为DEBUG
@@ -29,8 +29,8 @@ def init_logger(level: int = DEFAULT_LEVEL):
 
 def get_logger(tag: str = 'Null') -> logging.Logger:
     '''
-    获取logger
-    
+    获取logger对象
+
     参数:
         tag: logger的标签
     返回:

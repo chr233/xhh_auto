@@ -1,8 +1,9 @@
+
 '''
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:08:11
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-01 23:00:13
+# @LastEditTime : 2020-08-08 15:38:40
 # @Description  : 方糖气球模块
 '''
 
@@ -14,7 +15,9 @@ logger = get_logger('FTQQ')
 
 
 def send_to_ftqq(title: str, text: str, ftqqcfg: dict) -> bool:
-    '''发送消息到方糖气球
+    '''
+    发送消息到方糖气球
+    
     参数:
         title: 标题
         text: 内容

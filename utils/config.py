@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 13:03:57
+# @LastEditTime : 2020-08-08 13:31:18
 # @Description  : 读取并验证配置
 '''
 
@@ -67,8 +67,8 @@ def load_config(path: str = DEFAULT_PATH) -> dict:
         logger.debug('开始读取配置')
         with open(path, 'rb') as f:
             content = f.read()
-        
-        encode = chardet.detect(content).get('encoding', 'utf-8')
+        detect = chardet.detect(content)
+        encode=detect.get('encode','utf-8')
         raw_cfg = dict(toml.loads(content, encode))
         CFG = verify_config(raw_cfg)
         debug = os.environ.get('mode', 'release').lower()

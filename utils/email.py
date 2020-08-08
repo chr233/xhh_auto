@@ -3,12 +3,11 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 22:26:25
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 12:17:49
+# @LastEditTime : 2020-08-08 15:39:22
 # @Description  : 邮件推送模块
 '''
 
 import smtplib
-from smtplib import SMTPAuthenticationError
 from email.header import Header
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -55,5 +54,5 @@ def send_to_email(title: str, data: str, emailcfg: dict) -> bool:
         logger.debug('电子邮件发送成功')
         return(True)
     except Exception as e:
-        logger.error(f'SMTP服务器连接失败,请检查配置 [e]')
+        logger.error(f'SMTP服务器连接失败,请检查配置 [{e}]')
         return(False)
