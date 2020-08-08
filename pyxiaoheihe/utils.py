@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-06 23:49:46
+# @LastEditTime : 2020-08-08 13:25:45
 # @Description  : 公共函数库
 '''
 
@@ -15,6 +15,10 @@ import hashlib
 from base64 import b64encode as b64e
 from .static import RSA_PUB_KEY, DES_IV
 
+
+class filiter():
+    def __init__(self,**kwords):
+        super().__init__()
 
 def gen_random_str(length: int = 8) -> str:
     '''
