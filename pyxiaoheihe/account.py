@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-03 22:46:24
+# @LastEditTime : 2020-08-08 19:47:54
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -47,7 +47,7 @@ class Account(Network):
         返回:
             int: 关注状态,释义参考static.RelationType
         '''
-        if userid == self._heybox_id:
+        if userid == self.heybox_id:
             self.logger.debug('[*] 无法查看自己和自己的关系')
             return(RelationType.BOthFollowed)
         url = URLS.GET_USER_PROFILE
@@ -79,7 +79,7 @@ class Account(Network):
             awd_num:获赞数
         '''
         url = URLS.GET_USER_PROFILE
-        params = {'userid': userid or self._heybox_id}
+        params = {'userid': userid or self.heybox_id}
         try:
             result = self._get(url=url, params=params)
 
@@ -203,7 +203,7 @@ class Account(Network):
         返回:
             bool: 是否成功
         '''
-        if (userid == self._heybox_id):
+        if (userid == self.heybox_id):
             self.logger.warning('[*] 不能关注自己哦')
             return(False)
         url = URLS.FOLLOW_USER if follow else URLS.UNFOLLOW_USER
@@ -236,7 +236,7 @@ class Account(Network):
                     uname = f['username']
                     relation = f['is_follow']
                     # 把自己跟自己的关系设为互关
-                    if uid == self._heybox_id:
+                    if uid == self.heybox_id:
                         relation=RelationType.BOthFollowed
                     tmp.append((uid, uname, relation))
                 except KeyError as e:
@@ -245,7 +245,7 @@ class Account(Network):
             return(tmp)
         # ==========================================
         url = URLS.GET_FOLLOW_LIST
-        userid = userid or self._heybox_id
+        userid = userid or self.heybox_id
         followlist = []
         empty = 0
         error = 0
@@ -296,7 +296,7 @@ class Account(Network):
                     uname = f['username']
                     relation = f['is_follow']
                     # 把自己跟自己的关系设为互关
-                    if uid == self._heybox_id:
+                    if uid == self.heybox_id:
                         relation=RelationType.BOthFollowed
                     tmp.append((uid, uname, relation))
                 except KeyError as e:
@@ -305,7 +305,7 @@ class Account(Network):
             return(tmp)
         # ==========================================
         url = URLS.GET_FAN_LIST
-        userid = userid or self._heybox_id
+        userid = userid or self.heybox_id
         fanlist = []
         empty = 0
         error = 0
@@ -343,6 +343,6 @@ class Account(Network):
         返回:
             list: 新粉丝列表
         '''
-        fanlist = self.get_user_fans(self._heybox_id, 60)
+        fanlist = self.get_user_fans(self.heybox_id, 60)
         newfans = user_relation_filter(fanlist, RelationType.HeFollowedMe)
         return(newfans)

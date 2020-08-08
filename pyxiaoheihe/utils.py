@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 16:33:53
+# @LastEditTime : 2020-08-08 19:30:30
 # @Description  : 公共函数库
 '''
 
@@ -26,7 +26,7 @@ class filiter():
         '''
         super().__init__()
 
-        joined = setting.get('joined', False)
+        self.joined = setting.get('joined', False)
 
 
 

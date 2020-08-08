@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:28:55
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 12:19:00
+# @LastEditTime : 2020-08-08 19:47:16
 # @Description  : 首页模块,负责[首页]TAB下的内容
 '''
 
@@ -235,7 +235,7 @@ class Index(Network):
                         ftype = EventType.name2num.get(
                             m['content_type'], 0)
                         # 过滤自己的评测
-                        if ftype == EventType.CommentGame and userid == self._heybox_id:
+                        if ftype == EventType.CommentGame and userid == self.heybox_id:
                             continue
                         # 忽略已点赞的动态
                         if liked == False or ignore_liked == False:
@@ -314,7 +314,7 @@ class Index(Network):
                     ftype = EventType.name2num.get(
                         m['content_type'], 0)
                     # 过滤自己的评测
-                    if ftype == EventType.CommentGame and userid == self._heybox_id:
+                    if ftype == EventType.CommentGame and userid == self.heybox_id:
                         continue
                     # 忽略已点赞的动态
                     if liked == False or ignore_liked == False:

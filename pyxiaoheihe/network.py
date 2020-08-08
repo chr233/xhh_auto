@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 19:28:59
+# @LastEditTime : 2020-08-08 19:46:41
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -19,13 +19,13 @@ from .error import ClientException,Ignore,UnknownError,TokenError
 
 
 class Network():
-    _session = Session()
-    _session.headers = {}
-    _headers = {}
-    _cookies = {}
-    _params = {}
+    __session = Session()
+    __session.headers = {}
+    __headers = {}
+    __cookies = {}
+    __params = {}
 
-    _heybox_id = 0
+    __heybox_id = 0
     logger = logging.getLogger('-')
 
     def __init__(self, account: dict, hbxcfg: dict, debug: bool):
@@ -42,17 +42,17 @@ class Network():
         except AttributeError:
             raise ClientException('传入参数类型错误')
 
-        self._headers = {'Referer': 'http://api.maxjia.com/',
+        self.__headers = {'Referer': 'http://api.maxjia.com/',
                          'User-Agent': Android_UA if os == 1 else (iOS_UA % os_v),
                          'Host': 'api.xiaoheihe.cn', 'Connection': 'Keep-Alive',
                          'Accept-Encoding': 'gzip'}
-        self._cookies = {'pkey': pkey}
-        self._params = {'heybox_id': heybox_id, 'imei': imei,
+        self.__cookies = {'pkey': pkey}
+        self.__params = {'heybox_id': heybox_id, 'imei': imei,
                         'os_type': 'Android' if os == 1 else 'iOS',
                         'os_version': os_v, 'version': HEYBOX_VERSION, '_time': '',
                         'hkey': '', 'channel': channel}
         if hbxcfg.get('os_type', 1) == 2:  # 模拟IOS客户端
-            self._params.pop('channel')
+            self.__params.pop('channel')
 
         log_level = 10 if debug else 20
         log_format = '%(asctime)s [%(levelname)s][%(name)s]%(message)s'
@@ -61,12 +61,16 @@ class Network():
                             format=log_format,
                             datefmt=log_time)
         heybox_id = account.get('heybox_id')
-        self._heybox_id = heybox_id
+        self.__heybox_id = heybox_id
         self.logger = logging.getLogger(str(heybox_id))
         self.logger.debug('网络模块初始化完毕')
 
     def debug(self):
         pass
+
+    @property  
+    def heybox_id(self):
+        return(self.__heybox_id)
 
     def __flush_token(self, url: str) -> int:
         '''
@@ -89,7 +93,7 @@ class Network():
         h = h.replace('0', 'app')
         h = md5_calc(h)
         h = h[:10]
-        p = self._params
+        p = self.__params
         p['_time'] = t
         p['hkey'] = h
         return(t)
@@ -181,9 +185,9 @@ class Network():
         '''
         self.__flush_token(url)
         p = {**(params or {}), **self._params}
-        h = headers or self._headers
-        c = cookies or self._cookies
-        resp = self._session.get(
+        h = headers or self.__headers
+        c = cookies or self.__cookies
+        resp = self.__session.get(
             url=url, params=p, headers=h, cookies=c
         )
         result = self.__get_json(resp)
@@ -207,9 +211,9 @@ class Network():
         self.__flush_token(url)
         p = {**(params or {}), **self._params}
         d = data or {}
-        h = headers or self._headers
-        c = cookies or self._cookies
-        resp = self._session.post(
+        h = headers or self.__headers
+        c = cookies or self.__cookies
+        resp = self.__session.post(
             url=url, params=p, data=d, headers=h, cookies=c
         )
         jd = self.__get_json(resp)
@@ -230,10 +234,10 @@ class Network():
         '''
         t = self.__flush_token(url)
         p = {**(params or {}), 'time_': t, **self._params}
-        h = headers or self._headers
-        c = cookies or self._cookies
+        h = headers or self.__headers
+        c = cookies or self.__cookies
         d = encrypt_data(data, t)
-        resp = self._session.post(
+        resp = self.__session.post(
             url=url, params=p, data=d, headers=h, cookies=c
         )
         jd = self.__get_json(resp)
@@ -261,5 +265,11 @@ class Network():
             [amount]: 要拉取的数量
         返回:
             list: [(commintid,text,userid)…],评论列表
+        '''
+        pass
+
+    def _like_content(self):
+        '''
+        点赞,通用
         '''
         pass
