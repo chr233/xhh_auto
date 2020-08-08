@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 14:27:34
+# @LastEditTime : 2020-08-08 17:13:39
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -240,9 +240,9 @@ class Network():
         jd = self.__get_json(resp)
         return(jd)
 
-        def send_room_comment(self, linkid: int, message: str) -> bool:
+    def _send_comment(self, linkid: int, message: str) -> bool:
         '''
-        发送Roll房评论
+        发送评论,通用
 
         参数:
             linkid: 文章id
@@ -250,81 +250,17 @@ class Network():
         返回:
             操作是否成功
         '''
-        data = {'link_id': linkid, 'text': message,
-                'root_id': -1, 'reply_id': -1, 'imgs': None}
-        url = URLS.CREATE_COMMENT
-        try:
-            result = self._post(url=url, data=data)
-            self.logger.debug('发送评论成功')
-            return(True)
-        except ClientException as e:
-            self.logger.error(f'发送评论出错 [{e}]')
-            return(False)
+        pass
 
     def _get_comments(self, linkid: int, amount: int = 30,
                           author_only: bool = False) -> list:
         '''
-        拉取Roll房的评论列表,不包含楼中楼,失败返回False
+        获取评论,通用
 
         参数:
             linkid: 文章id
             [amount]: 要拉取的数量
-            [author_only]: 是否开启只看楼主
         返回:
             list: [(commintid,text,userid)…],评论列表
         '''
-        def get(page: int) -> list:
-            params = {'link_id': linkid, 'page': page, 'limit': 30,
-                      'is_first': 1 if page == 1 else 0,
-                      'owner_only': 1 if author_only else 0}
-            result = self._get(url=url, params=params)
-            tmp = []
-            for cmt in result['comments']:
-                try:
-                    c = cmt['comment'][0]
-                    # child_num = comment['child_num'] #回复数
-                    commentid = c['commentid']  # 评论ID
-                    text = c['text']  # 评论内容
-                    u = c['user']
-                    username = u['username']
-                    userid = u['userid']
-                    # level = comment['level_info']['level'] #等级
-                    # self.logger.debug(
-                    #     f'[{username}][{userid}]：[{commentid}][{text}]')
-                    tmp.append((commentid, userid, text))
-                except KeyError:
-                    self.logger.error(f'[*] 拉取房间评论出错 [{cmt}]')
-            self.logger.debug(f'拉取[{len(tmp)}]条评论')
-            return(tmp)
-        # ==========================================
-        url = URLS.GET_COMMENTS
-        commentslist = []
-        empty = 0
-        error = 0
-        for i in range(0, amount//30 + 2):
-            try:
-                self.logger.debug(f'拉取第[{i+1}]页评论')
-                tmp = get(i)
-                if tmp:
-                    commentslist.extend(tmp)
-                else:
-                    self.logger.debug('评论列表为空,可能遇到错误')
-                    empty += 1
-                    if empty > EMPTY_RETRYS:
-                        self.logger.debug('空结果达到上限,停止操作')
-                        break
-                if len(commentslist) >= amount:
-                    break
-            except ClientException as e:
-                self.logger.debug(f'拉取评论列表出错[{e}]')
-                error += 1
-                if error > ERROR_RETRYS:
-                    self.logger.debug('错误次数达到上限,停止操作')
-                    break
-
-        commentslist = commentslist[:amount]
-        if len(commentslist) > 0:
-            self.logger.debug(f'操作完成,拉取了[{len(commentslist)}]条评论')
-        else:
-            self.logger.debug('[*] 拉取完毕,评论列表为空,可能遇到错误')
-        return(commentslist)
+        pass

@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 13:25:45
+# @LastEditTime : 2020-08-08 16:33:53
 # @Description  : 公共函数库
 '''
 
@@ -17,8 +17,18 @@ from .static import RSA_PUB_KEY, DES_IV
 
 
 class filiter():
-    def __init__(self,**kwords):
+    '''
+    过滤器,满足
+    '''
+    def __init__(self, **setting):
+        '''
+        设置过滤器
+        '''
         super().__init__()
+
+        joined = setting.get('joined', False)
+
+
 
 def gen_random_str(length: int = 8) -> str:
     '''
@@ -46,8 +56,8 @@ def encrypt_data(jd: dict, time: int) -> dict:
     '''
     sjd = json.dumps(jd, separators=(',', ':'))
     zjd = gzip.compress(sjd.encode('utf-8'))
-    
-    zjd=b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x00' + zjd[10:]
+
+    zjd = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x00' + zjd[10:]
 
     des_key = gen_random_str(8)
     des_unit = pyDes.des(des_key, pyDes.CBC, DES_IV, pad=None,
