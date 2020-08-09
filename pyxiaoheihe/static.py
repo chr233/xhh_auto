@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 22:42:03
+# @LastEditTime : 2020-08-09 10:14:53
 # @Description  : 静态资源
 '''
 
@@ -194,22 +194,17 @@ class GameReviewSummaryType():
     NNNN = 8  # 差评如潮
 
 
-class OPCode():
-    '操作码类型'
-    # 批量操作用户列表的操作码
-    FollowUser = 1  # 关注用户
-    UnFollowUser = 2  # 取关用户
-    # 批量浏览新闻的操作码
-    View = 1  # 浏览
-    ViewShare = 2  # 浏览分享
-    ViewLike = 3  # 浏览点赞
-    ViewLikeShare = 4  # 浏览点赞分享
-
-
 class StateType():
     '答题结果'
     Complete = 1  # 答题完成
     AlreadyDone = 2  # 已经答过了,无法重复作答
+
+
+class CommentType():
+    '评论类型'
+    NewsComment = 0  # 新闻评论
+    CommunityComment = 1  # 社区评论
+    RollComment = 3  # Roll房评论
 
 
 class BString():

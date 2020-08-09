@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 19:30:30
+# @LastEditTime : 2020-08-09 11:14:04
 # @Description  : 公共函数库
 '''
 
@@ -18,16 +18,25 @@ from .static import RSA_PUB_KEY, DES_IV
 
 class filiter():
     '''
-    过滤器,满足
+    过滤器, 只会返回满足条件的结果, 不同方法使用到的属性不一样
     '''
+    liked = False
+    joined = False
+    password = False
+
     def __init__(self, **setting):
         '''
-        设置过滤器
+        设置过滤器, 括号内为默认值
+
+        参数:
+            liked: 是否点过赞[False]
+            joined: 是否参与过[False]
+            password: 是否有密码[False]
         '''
         super().__init__()
-
+        self.liked = setting.get('liked', False)
         self.joined = setting.get('joined', False)
-
+        self.password = setting.get('password', False)
 
 
 def gen_random_str(length: int = 8) -> str:

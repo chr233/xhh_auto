@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 19:46:41
+# @LastEditTime : 2020-08-09 13:18:39
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,9 +13,9 @@ from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
 
-from .static import HEYBOX_VERSION, Android_UA, iOS_UA
-from .utils import md5_calc, encrypt_data
-from .error import ClientException,Ignore,UnknownError,TokenError
+from .static import HEYBOX_VERSION, Android_UA, iOS_UA, CommentType,URLS
+from .utils import md5_calc, encrypt_data, b64encode
+from .error import ClientException, Ignore, UnknownError, TokenError
 
 
 class Network():
@@ -24,8 +24,8 @@ class Network():
     __headers = {}
     __cookies = {}
     __params = {}
-
     __heybox_id = 0
+
     logger = logging.getLogger('-')
 
     def __init__(self, account: dict, hbxcfg: dict, debug: bool):
@@ -43,14 +43,14 @@ class Network():
             raise ClientException('传入参数类型错误')
 
         self.__headers = {'Referer': 'http://api.maxjia.com/',
-                         'User-Agent': Android_UA if os == 1 else (iOS_UA % os_v),
-                         'Host': 'api.xiaoheihe.cn', 'Connection': 'Keep-Alive',
-                         'Accept-Encoding': 'gzip'}
+                          'User-Agent': Android_UA if os == 1 else (iOS_UA % os_v),
+                          'Host': 'api.xiaoheihe.cn', 'Connection': 'Keep-Alive',
+                          'Accept-Encoding': 'gzip'}
         self.__cookies = {'pkey': pkey}
         self.__params = {'heybox_id': heybox_id, 'imei': imei,
-                        'os_type': 'Android' if os == 1 else 'iOS',
-                        'os_version': os_v, 'version': HEYBOX_VERSION, '_time': '',
-                        'hkey': '', 'channel': channel}
+                         'os_type': 'Android' if os == 1 else 'iOS',
+                         'os_version': os_v, 'version': HEYBOX_VERSION, '_time': '',
+                         'hkey': '', 'channel': channel}
         if hbxcfg.get('os_type', 1) == 2:  # 模拟IOS客户端
             self.__params.pop('channel')
 
@@ -67,9 +67,13 @@ class Network():
 
     def debug(self):
         pass
+        self._send_comment(35387034,"test",0)
 
-    @property  
+    @property
     def heybox_id(self):
+        '''
+        获取heybox_id
+        '''
         return(self.__heybox_id)
 
     def __flush_token(self, url: str) -> int:
@@ -115,7 +119,7 @@ class Network():
                 if msg in ('操作已经完成', '不能进行重复的操作哦',
                            '不能重复赞哦', '不能给自己的评价点赞哟',
                            '自己不能粉自己哦', '该帖已被删除',
-                           '您已经加入了房间','帖子已被删除',
+                           '您已经加入了房间', '帖子已被删除',
                            ''):
                     raise Ignore
 
@@ -184,7 +188,7 @@ class Network():
             dict: json字典
         '''
         self.__flush_token(url)
-        p = {**(params or {}), **self._params}
+        p = {**(params or {}), **self.__params}
         h = headers or self.__headers
         c = cookies or self.__cookies
         resp = self.__session.get(
@@ -209,7 +213,7 @@ class Network():
             Response: 请求结果
         '''
         self.__flush_token(url)
-        p = {**(params or {}), **self._params}
+        p = {**(params or {}), **self.__params}
         d = data or {}
         h = headers or self.__headers
         c = cookies or self.__cookies
@@ -233,7 +237,7 @@ class Network():
             Response: 请求结果
         '''
         t = self.__flush_token(url)
-        p = {**(params or {}), 'time_': t, **self._params}
+        p = {**(params or {}), 'time_': t, **self.__params}
         h = headers or self.__headers
         c = cookies or self.__cookies
         d = encrypt_data(data, t)
@@ -243,20 +247,40 @@ class Network():
         jd = self.__get_json(resp)
         return(jd)
 
-    def _send_comment(self, linkid: int, message: str) -> bool:
+    def _send_comment(self, linkid: int, message: str, ctype: int = 0, index: int = 0) -> bool:
         '''
         发送评论,通用
 
         参数:
             linkid: 文章id
             message: 文字评论内容
+            [ctype]: 评论类型,参加static.CommentType
+            [index]: 文章索引,模拟客户端行为
         返回:
             操作是否成功
         '''
-        pass
+        url = URLS.CREATE_COMMENT
+        if ctype == CommentType.RollComment:
+            d = {'link_id': linkid, 'text': message,
+                 'root_id': -1, 'reply_id': -1, 'imgs': None}
+            p = {}
+        elif ctype in (CommentType.NewsComment, CommentType.CommunityComment):
+            d = {'link_id': linkid, 'text': message, 'imgs': None}
+            if ctype == CommentType.CommunityComment:
+                hsrc = b64encode('bbs_app_feeds')
+            else:
+                hsrc = b64encode('news_feeds_-1')
+            p = {'h_src':hsrc,'index':index}       
+        try:
+            result = self._post(url=url, data=d,params=p)
+            self.logger.debug('发送评论成功')
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'发送评论出错 [{e}]')
+            return(False)
 
     def _get_comments(self, linkid: int, amount: int = 30,
-                          author_only: bool = False) -> list:
+                      author_only: bool = False) -> list:
         '''
         获取评论,通用
 
