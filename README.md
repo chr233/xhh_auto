@@ -5,8 +5,8 @@
 ## 声明
 
     本项目仅供学习交流使用, 用户如何使用该脚本与作者无关
-    稳定版: [releases](https://github.com/chr233/xhh_auto/releases)
-    开发版: `git clone https://github.com/chr233/xhh_auto` (不推荐)
+
+稳定版: [releases](https://github.com/chr233/xhh_auto/releases)|开发版: `git clone https://github.com/chr233/xhh_auto` (不推荐)
 
 > 官方Q群: `916945024`
 > 官方Telegram群: `https://t.me/xhh_auto`
