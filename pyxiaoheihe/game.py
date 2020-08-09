@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 19:28:35
+# @LastEditTime : 2020-08-09 14:25:18
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
 from .network import Network
-from .static import RollSort, URLS, ERROR_RETRYS, EMPTY_RETRYS
+from .static import RollSort, URLS, CommentType, ERROR_RETRYS, EMPTY_RETRYS
 from .utils import ex_extend
 from .error import ClientException, Ignore
 
@@ -113,7 +113,7 @@ class Game(Network):
             self.logger.error(f'房间点赞/取消点赞出错 [{e}]')
             return(False)
 
-    def send_room_comment(self, linkid: int, message: str) -> bool:
+    def send_roll_comment(self, linkid: int, message: str) -> bool:
         '''
         发送Roll房评论
 
@@ -123,16 +123,9 @@ class Game(Network):
         返回:
             操作是否成功
         '''
-        data = {'link_id': linkid, 'text': message,
-                'root_id': -1, 'reply_id': -1, 'imgs': None}
-        url = URLS.CREATE_COMMENT
-        try:
-            result = self._post(url=url, data=data)
-            self.logger.debug('发送评论成功')
-            return(True)
-        except ClientException as e:
-            self.logger.error(f'发送评论出错 [{e}]')
-            return(False)
+        result = self._send_comment(
+            linkid, message, CommentType.RollComment, 0)
+        return(result)
 
     def get_roll_comments(self, linkid: int, amount: int = 30,
                           author_only: bool = False) -> list:
