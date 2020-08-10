@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-09 11:14:04
+# @LastEditTime : 2020-08-10 22:40:51
 # @Description  : 公共函数库
 '''
 
@@ -140,3 +140,18 @@ def user_relation_filter(userlist: list, relation: int) -> list:
     '''
     newlist = [x[0] for x in userlist if x[2] == relation]
     return(newlist)
+
+def random_sleep(min_t: int, max_t: int):
+    '''
+    随机延时
+
+    参数:
+        min_t: 最短时间
+        max_t: 最长时间
+    '''
+    x = CFG['main']['sleep_interval']
+    t = random.randint(min_t, max_t)
+    t *= x
+    t += random.random()
+    logger.info(f'随机延时{"%.2f" % t}秒')
+    time.sleep(t)

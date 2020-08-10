@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-10 10:33:25
+# @LastEditTime : 2020-08-10 22:41:06
 # @Description  : 启动入口
 '''
 
@@ -47,7 +47,7 @@ try:
     from pyxiaoheihe import HeyBoxClient
     from pyxiaoheihe.static import PYXIAOHEIHE_VERSION, RelationType
     from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError
-    from pyxiaoheihe.utils import user_relation_filter
+    from pyxiaoheihe.utils import user_relation_filter, random_sleep
 except ImportError as e:
     print(e)
     print('导入模块出错,请执行 pip install -r requirements.txt 安装所需的依赖库')
@@ -56,22 +56,6 @@ except ImportError as e:
 
 
 logger = get_logger('Run')
-
-
-def random_sleep(min_t: int, max_t: int):
-    '''
-    随机延时
-
-    参数:
-        min_t: 最短时间
-        max_t: 最长时间
-    '''
-    x = CFG['main']['sleep_interval']
-    t = random.randint(min_t, max_t)
-    t *= x
-    t += random.random()
-    logger.info(f'随机延时{"%.2f" % t}秒')
-    time.sleep(t)
 
 
 def main():

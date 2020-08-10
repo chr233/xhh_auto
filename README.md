@@ -1,6 +1,6 @@
 # Xhh_Auto
 
-[![Codacy Badge][Codacy_B]][Codacy] [![release][Release_B]][Release] [![Download][Download_B]][Release]
+[![Codacy Badge][Codacy_B]][Codacy] [![release][Release_B]][Release] [![Download][Download_B]][Release] [![License][License_B]][License]
 
 ## 声明
 
@@ -70,3 +70,5 @@
 [Download_B]: https://img.shields.io/github/downloads/chr233/xhh_auto/total
 [Release]: https://github.com/chr233/xhh_auto/releases
 [Release_B]: https://img.shields.io/github/v/release/chr233/xhh_auto
+[License]: https://github.com/chr233/xhh_auto/blob/master/LICENSE
+[License_B]: https://img.shields.io/github/license/chr233/xhh_auto
