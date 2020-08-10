@@ -28,9 +28,11 @@
 
     当前版本暂不支持直接登录,需要手动抓包获取账号凭据,抓取后只要不主动退出可以永久登录
 
-* **[安卓手机抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)**
+* [安卓手机端抓取脚本【新】](https://blog.chrxw.com/archives/2020/08/10/1353.html)【推荐】
 
-* **[Fiddler抓取教程](https://blog.chrxw.com/archives/2019/10/20/437.html)**
+* [安卓手机抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)
+
+* [Fiddler抓取教程](https://blog.chrxw.com/archives/2019/10/20/437.html)
 
 * 抓取小黑盒数据后, 填入`config.toml`即可使用本脚本.
 

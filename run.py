@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 19:24:10
+# @LastEditTime : 2020-08-10 10:33:25
 # @Description  : 启动入口
 '''
 
@@ -103,7 +103,7 @@ def main():
 
             # 读取每日任务详情
             qd, fxxw, fxpl, dz = hbc.get_daily_task()
-            qd, fxxw, fxpl, dz = False, False, False, False
+            # qd, fxxw, fxpl, dz = False, False, False, False
 
             logger.info(f'任务[签到{qd}|分享{fxxw}{fxpl}|点赞{dz}]')
             if not qd:
