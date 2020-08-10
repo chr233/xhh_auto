@@ -1,12 +1,14 @@
 # Xhh_Auto
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/dfb3196838bf4431a8914736f103afeb)](https://www.codacy.com/manual/chr233/xhh_auto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chr233/xhh_auto&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge][Codacy_B]][Codacy] [![release][Release_B]][[Release]] [![Download][Download_B]][Release]
+
+
 
 ## 声明
 
     本项目仅供学习交流使用, 用户如何使用该脚本与作者无关
 
-稳定版: [releases](https://github.com/chr233/xhh_auto/releases)|开发版: `git clone https://github.com/chr233/xhh_auto` (不推荐)
+* 请从这里下载稳定版: [releases][Release], 仓库中的代码未经测试, 可能会有问题.
 
 > 官方Q群: `916945024`
 > 官方Telegram群: `https://t.me/xhh_auto`
@@ -15,7 +17,7 @@
 
     本项目使用`Python3.8`编写,理论上支持`3.4`及以后的版本
 
-1. 从[releases](https://github.com/chr233/xhh_auto/releases)下载最新版本.
+1. 从[releases][Release]下载最新版本.
 2. 解压,并切换到脚本所在目录.
 3. 复制 `example.config.toml` , 为 `config.toml`,并填写配置.
     > 账号凭据获取方法参考下一节.
@@ -64,3 +66,9 @@
     参与互助计划以后,会自动关注我的账号以及关注我的粉丝的账号,也就是让使用本脚本的用户都能互相关注,再配合动态点赞功能,让所有用户都能快速获赞,涨粉,升级
 
 > 退出方法:在`config.toml`中将`join_xhhauto`的值改为`false`即可.
+
+[Codacy_B]: https://app.codacy.com/project/badge/Grade/dfb3196838bf4431a8914736f103afeb
+[Codacy]: https://www.codacy.com/manual/chr233/xhh_auto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chr233/xhh_auto&amp;utm_campaign=Badge_Grade
+[Download_B]: https://img.shields.io/github/downloads/chr233/xhh_auto/total
+[Release]: https://github.com/chr233/xhh_auto/releases
+[Release_B]: https://img.shields.io/github/v/release/chr233/xhh_auto
