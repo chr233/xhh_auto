@@ -1,8 +1,6 @@
 # Xhh_Auto
 
-[![Codacy Badge][Codacy_B]][Codacy] [![release][Release_B]][[Release]] [![Download][Download_B]][Release]
-
-
+[![Codacy Badge][Codacy_B]][Codacy] [![release][Release_B]][Release] [![Download][Download_B]][Release]
 
 ## 声明
 
