@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-10 22:41:06
+# @LastEditTime : 2020-08-11 00:55:20
 # @Description  : 启动入口
 '''
 
@@ -25,19 +25,8 @@ print(r'''
 ''')
 
 
-def cliwait():
-    '''
-    等待用户输入,防止控制台消失
-    '''
-    if os.name == 'nt':
-        os.system('pause')
-    elif os.name == 'posix':
-        input("按回车键退出……")
-    else:
-        input("按回车键退出……")
-
-
 try:
+    from utils import cliwait
     from utils.config import load_config
     from utils.version import check_script_update, check_pyxiaoheihe_version, SCRIPT_VERSION, MINI_CORE_VERSION
     from utils.log import get_logger

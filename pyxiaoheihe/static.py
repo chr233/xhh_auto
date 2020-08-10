@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-09 10:14:53
+# @LastEditTime : 2020-08-10 23:58:55
 # @Description  : 静态资源
 '''
 
@@ -82,7 +82,9 @@ class URLS():
 
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
-    GET_UNREAD_MESSAGE = 'https://api.xiaoheihe.cn/bbs/app/user/message'
+    GET_UNREAD_MESSAGE = 'https://api.xiaoheihe.cn/bbs/app/user/message' # 获取未读消息数量
+
+    LOGIN='https://api.xiaoheihe.cn/account/login/'
 
 
 class TAGS():

@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 19:47:54
+# @LastEditTime : 2020-08-11 00:02:37
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -23,7 +23,8 @@ class Account(Network):
         super().debug()
         
     def get_heybox_latest_version(self) -> str:
-        '''获取小黑盒最新版本号,失败返回False
+        '''
+        获取小黑盒最新版本号,失败返回False
 
         返回:
             str: 小黑盒版本号
@@ -40,7 +41,8 @@ class Account(Network):
             return(False)
 
     def get_user_relation(self, userid: int) -> int:
-        '''获取用户和我的关系,返回值释义参考static.RelationType
+        '''
+        获取用户和我的关系,返回值释义参考static.RelationType
 
         参数:
             userid: 用户id
@@ -69,7 +71,8 @@ class Account(Network):
             return(RelationType.Unknown)
 
     def get_user_profile(self, userid: int = 0) -> (int, int, int):
-        '''获取个人资料,失败返回False
+        '''
+        获取个人资料,失败返回False
 
         参数:
             [userid]: 用户id,不填代入自己的id
@@ -101,7 +104,8 @@ class Account(Network):
             return((0, 0, 0))
 
     def get_unread_count(self) -> (int, int, int, int, int):
-        '''获取未读通知计数,失败返回False
+        '''
+        获取未读通知计数,失败返回False
 
         返回:
             like: 新获赞
@@ -129,7 +133,8 @@ class Account(Network):
             return(False)
 
     def __get_task_json(self) -> dict:
-        '''获取任务详情json,出错返回False
+        '''
+        获取任务详情json,出错返回False
 
         返回:
             dict: json字典
@@ -139,7 +144,8 @@ class Account(Network):
         return(result)
 
     def get_daily_task(self) -> (BString, BString, BString, BString):
-        '''获取每日任务详情,失败返回(False,False,False,False)
+        '''
+        获取每日任务详情,失败返回(False,False,False,False)
 
         返回:
             sign: 签到?
@@ -163,7 +169,8 @@ class Account(Network):
             return(False, False, False, False)
 
     def get_my_data(self) -> (str, int, (int, int, int), int):
-        '''获取我的数据,出错返回False
+        '''
+        获取我的数据,出错返回False
 
         返回:
             username:昵称
@@ -195,7 +202,8 @@ class Account(Network):
             return(('读取信息出错', 0, 0, (0, 0, 0), 0))
 
     def follow_user(self, userid: int, follow: bool = True) -> bool:
-        '''关注/取关用户
+        '''
+        关注/取关用户
 
         参数:
             userid: 用户id
@@ -218,7 +226,8 @@ class Account(Network):
             return(False)
 
     def get_user_follows(self, userid: int = 0, amount: int = 30) -> list:
-        '''获取用户关注列表,失败返回False
+        '''
+        获取用户关注列表,失败返回False
 
         参数:
             [userid]: 用户id,不填代入自己
@@ -278,7 +287,8 @@ class Account(Network):
         return(followlist)
 
     def get_user_fans(self, userid: int = 0, amount: int = 30) -> list:
-        '''获取用户粉丝列表,失败返回False
+        '''
+        获取用户粉丝列表,失败返回False
 
         参数:
             [userid]: 用户id,不填代入自己
@@ -338,7 +348,8 @@ class Account(Network):
         return(fanlist)
 
     def get_new_fans(self) -> list:
-        '''获取新粉丝
+        '''
+        获取新粉丝
 
         返回:
             list: 新粉丝列表
@@ -346,3 +357,6 @@ class Account(Network):
         fanlist = self.get_user_fans(self.heybox_id, 60)
         newfans = user_relation_filter(fanlist, RelationType.HeFollowedMe)
         return(newfans)
+
+
+        

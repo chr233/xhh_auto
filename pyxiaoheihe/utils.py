@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 14:50:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-10 22:40:51
+# @LastEditTime : 2020-08-11 00:47:23
 # @Description  : 公共函数库
 '''
 
@@ -52,7 +52,6 @@ def gen_random_str(length: int = 8) -> str:
     result = ''.join(random.choice(source) for _ in range(length))
     return(result)
 
-
 def encrypt_data(jd: dict, time: int) -> dict:
     '''
     生成加密请求体
@@ -74,9 +73,7 @@ def encrypt_data(jd: dict, time: int) -> dict:
     des_enc = des_unit.encrypt(zjd)
     des_enc = b64e(des_enc).decode('utf-8')
 
-    rsa_pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(RSA_PUB_KEY)
-    rsa_enc = rsa.encrypt(des_key.encode('utf-8'), rsa_pubkey)
-    rsa_enc = b64e(rsa_enc).decode('utf-8')
+    rsa_enc = rsa_encrypt(des_key)
 
     s_rsa = md5_calc(f'{rsa_enc}{time}')
     s_des = md5_calc(des_enc)
@@ -86,8 +83,22 @@ def encrypt_data(jd: dict, time: int) -> dict:
     return(ejd)
 
 
+def rsa_encrypt(data: str) -> str:
+    '''
+    rsa加密,返回base64文本
+
+    参数:
+        data: 明文文本
+    '''
+    rsa_pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(RSA_PUB_KEY)
+    rsa_enc = rsa.encrypt(data.encode('utf-8'), rsa_pubkey)
+    rsa_enc = b64e(rsa_enc).decode('utf-8')
+    return(rsa_enc)
+
+
 def b64encode(data: str) -> str:
-    '''base64编码
+    '''
+    base64编码
 
     参数:
         txt: 待编码的文本
@@ -140,6 +151,7 @@ def user_relation_filter(userlist: list, relation: int) -> list:
     '''
     newlist = [x[0] for x in userlist if x[2] == relation]
     return(newlist)
+
 
 def random_sleep(min_t: int, max_t: int):
     '''
