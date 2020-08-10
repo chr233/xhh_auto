@@ -28,7 +28,7 @@
 
     当前版本暂不支持直接登录,需要手动抓包获取账号凭据,抓取后只要不主动退出可以永久登录
 
-* [安卓手机端抓取脚本【新】](https://blog.chrxw.com/archives/2020/08/10/1353.html)【推荐】
+* [安卓手机端抓取教程【新】](https://blog.chrxw.com/archives/2020/08/10/1353.html)【推荐】
 
 * [安卓手机抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)
 
