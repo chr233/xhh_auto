@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:34
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-11 00:02:37
+# @LastEditTime : 2020-08-11 11:30:32
 # @Description  : 账号模块,负责[我]TAB下的内容
 '''
 
@@ -21,7 +21,7 @@ class Account(Network):
 
     def debug(self):
         super().debug()
-        
+
     def get_heybox_latest_version(self) -> str:
         '''
         获取小黑盒最新版本号,失败返回False
@@ -246,7 +246,7 @@ class Account(Network):
                     relation = f['is_follow']
                     # 把自己跟自己的关系设为互关
                     if uid == self.heybox_id:
-                        relation=RelationType.BOthFollowed
+                        relation = RelationType.BOthFollowed
                     tmp.append((uid, uname, relation))
                 except KeyError as e:
                     self.logger.debug(f'提取动态列表出错[{f}]')
@@ -307,7 +307,7 @@ class Account(Network):
                     relation = f['is_follow']
                     # 把自己跟自己的关系设为互关
                     if uid == self.heybox_id:
-                        relation=RelationType.BOthFollowed
+                        relation = RelationType.BOthFollowed
                     tmp.append((uid, uname, relation))
                 except KeyError as e:
                     self.logger.debug(f'提取动态列表出错[{f}]')
@@ -358,5 +358,28 @@ class Account(Network):
         newfans = user_relation_filter(fanlist, RelationType.HeFollowedMe)
         return(newfans)
 
+    def get_auth_info(self) -> (bool, int):
+        '''
+        获取自己的安全设置,失败返回False
 
-        
+        成功返回:
+            bool:有密码?
+            int:手机号
+        失败返回:
+            False
+        '''
+        url = URLS.GET_AUTH_INFO
+        try:
+            result = self._get(url)
+
+            r = result[0]
+            has_password = bool(r['has_password'] == 1)
+            phone_num = r['src_id']
+            if has_password:
+                self.logger.debug(f'手机号[{phone_num}]')
+            else:
+                self.logger.debug(f'手机号[{phone_num}],**未设置密码**')
+            return((has_password, phone_num))
+        except ClientException as e:
+            self.logger.error(f'获取安全信息出错[{e}]')
+            return(False)

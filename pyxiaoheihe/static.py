@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-10 23:58:55
+# @LastEditTime : 2020-08-11 11:26:55
 # @Description  : 静态资源
 '''
 
@@ -84,7 +84,9 @@ class URLS():
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
     GET_UNREAD_MESSAGE = 'https://api.xiaoheihe.cn/bbs/app/user/message' # 获取未读消息数量
 
-    LOGIN='https://api.xiaoheihe.cn/account/login/'
+    GET_MY_CARD = 'https://api.xiaoheihe.cn/mall/coupons/' # 获取我的卡券
+
+    LOGIN='https://api.xiaoheihe.cn/account/login/' # 登录账号
 
 
 class TAGS():
