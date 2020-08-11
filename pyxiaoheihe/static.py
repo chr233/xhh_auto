@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-11 11:26:55
+# @LastEditTime : 2020-08-11 12:35:32
 # @Description  : 静态资源
 '''
 
@@ -82,45 +82,37 @@ class URLS():
 
     GET_SUBSCRIB_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/subscribed/events'  # 关注列表
     GET_USER_EVENTS = 'https://api.xiaoheihe.cn/bbs/app/profile/events'  # 拉取用户动态
-    GET_UNREAD_MESSAGE = 'https://api.xiaoheihe.cn/bbs/app/user/message' # 获取未读消息数量
+    GET_UNREAD_MESSAGE = 'https://api.xiaoheihe.cn/bbs/app/user/message'  # 获取未读消息数量
 
-    GET_MY_CARD = 'https://api.xiaoheihe.cn/mall/coupons/' # 获取我的卡券
+    GET_MY_CARD = 'https://api.xiaoheihe.cn/mall/coupons/'  # 获取我的卡券
 
-    LOGIN='https://api.xiaoheihe.cn/account/login/' # 登录账号
+    LOGIN = 'https://api.xiaoheihe.cn/account/login/'  # 登录账号
 
 
 class TAGS():
     '标签转换工具类'
-    __name2key = {'PC游戏': 'evaluating', '宝可梦': 'Pokemon', '主机游戏': 'console', '桌游综合': 'boardgame',
-                  '荒野大镖客2': 'topic_53575', '云顶之弈': 'Teamfight', '逃离塔科夫': 'topic_74681',
-                  '死亡搁浅': 'topic_death', '荒野乱斗': 'huangyeluandou', 'Wallpaper': 'topic_11635',
-                  '超猎都市': 'topic_417725', '盗贼之海': 'topic_415163', '明日方舟': 'topic_23799',
-                  '战双帕弥什': 'ZSPMS', '和平精英': 'HPJY', '刀塔霸业': 'DotaUnderlords', '最后生还者系列': 'tloutwo',
-                  '对马之魂': 'topic_77355', '原神': 'Genshin', '手机游戏': 'Mobile', '盒友杂谈': 'HotSpots',
-                  '使命召唤': 'cod', '刺客信条系列': 'topic_50971', '绝地求生': 'PUBG', '数码硬件': 'event ',
-                  '命运2': 'Destiny', 'CS:GO': 'csgo', '彩虹六号': 'R6', '守望先锋': 'Blizzard', '英雄联盟': 'lol',
-                  '侠盗猎车手5': 'topic_2614', '怪物猎人': 'Mhw', '刀塔自走棋': 'DOTA_Piece', '炉石传说': 'hs',
-                  '公主连结': 'pcr', '王者荣耀': 'wzry', '骑马与砍杀2': 'dive', 'Valorant': 'topic_235709',
-                  '刀塔2': 'dota2', '魔兽世界': 'WOW', '动物森友会': 'animal'}
-    __key2name = {'evaluating': 'PC游戏', 'Pokemon': '宝可梦', 'console': '主机游戏', 'boardgame': '桌游综合',
-                  'topic_53575': '荒野大镖客2', 'Teamfight': '云顶之弈', 'topic_74681': '逃离塔科夫',
-                  'topic_death': '死亡搁浅', 'huangyeluandou': '荒野乱斗', 'topic_11635': 'Wallpaper',
-                  'topic_417725': '超猎都市', 'topic_415163': '盗贼之海', 'topic_23799': '明日方舟',
-                  'ZSPMS': '战双帕弥什', 'HPJY': '和平精英', 'DotaUnderlords': '刀塔霸业', 'tloutwo': '最后生还者系列',
-                  'topic_77355': '对马之魂', 'Genshin': '原神', 'Mobile': '手机游戏', 'HotSpots': '盒友杂谈',
-                  'cod': '使命召唤', 'topic_50971': '刺客信条系列', 'PUBG': '绝地求生', 'event ': '数码硬件',
-                  'Destiny': '命运2', 'csgo': 'CS: GO', 'R6': '彩虹六号', 'Blizzard': '守望先锋', 'lol': '英雄联盟',
-                  'topic_2614': '侠盗猎车手5', 'Mhw': '怪物猎人', 'DOTA_Piece': '刀塔自走棋', 'hs': '炉石传说',
-                  'pcr': '公主连结', 'wzry': '王者荣耀', 'dive': '骑马与砍杀2', 'topic_235709': 'Valorant',
-                  'dota2': '刀塔2', 'WOW': '魔兽世界', 'animal': '动物森友会'}
-
-    def name2key(self, name: str) -> str:
-        '标签name转成key'
-        return(self.__name2key.get(name))
-
-    def key2name(self, key: str) -> str:
-        '标签key转成name'
-        return(self.__key2name.get(key))
+    name2key = {'PC游戏': 'evaluating', '宝可梦': 'Pokemon', '主机游戏': 'console', '桌游综合': 'boardgame',
+                '荒野大镖客2': 'topic_53575', '云顶之弈': 'Teamfight', '逃离塔科夫': 'topic_74681',
+                '死亡搁浅': 'topic_death', '荒野乱斗': 'huangyeluandou', 'Wallpaper': 'topic_11635',
+                '超猎都市': 'topic_417725', '盗贼之海': 'topic_415163', '明日方舟': 'topic_23799',
+                '战双帕弥什': 'ZSPMS', '和平精英': 'HPJY', '刀塔霸业': 'DotaUnderlords', '最后生还者系列': 'tloutwo',
+                '对马之魂': 'topic_77355', '原神': 'Genshin', '手机游戏': 'Mobile', '盒友杂谈': 'HotSpots',
+                '使命召唤': 'cod', '刺客信条系列': 'topic_50971', '绝地求生': 'PUBG', '数码硬件': 'event ',
+                '命运2': 'Destiny', 'CS:GO': 'csgo', '彩虹六号': 'R6', '守望先锋': 'Blizzard', '英雄联盟': 'lol',
+                '侠盗猎车手5': 'topic_2614', '怪物猎人': 'Mhw', '刀塔自走棋': 'DOTA_Piece', '炉石传说': 'hs',
+                '公主连结': 'pcr', '王者荣耀': 'wzry', '骑马与砍杀2': 'dive', 'Valorant': 'topic_235709',
+                '刀塔2': 'dota2', '魔兽世界': 'WOW', '动物森友会': 'animal'}
+    key2name = {'evaluating': 'PC游戏', 'Pokemon': '宝可梦', 'console': '主机游戏', 'boardgame': '桌游综合',
+                'topic_53575': '荒野大镖客2', 'Teamfight': '云顶之弈', 'topic_74681': '逃离塔科夫',
+                'topic_death': '死亡搁浅', 'huangyeluandou': '荒野乱斗', 'topic_11635': 'Wallpaper',
+                'topic_417725': '超猎都市', 'topic_415163': '盗贼之海', 'topic_23799': '明日方舟',
+                'ZSPMS': '战双帕弥什', 'HPJY': '和平精英', 'DotaUnderlords': '刀塔霸业', 'tloutwo': '最后生还者系列',
+                'topic_77355': '对马之魂', 'Genshin': '原神', 'Mobile': '手机游戏', 'HotSpots': '盒友杂谈',
+                'cod': '使命召唤', 'topic_50971': '刺客信条系列', 'PUBG': '绝地求生', 'event ': '数码硬件',
+                'Destiny': '命运2', 'csgo': 'CS: GO', 'R6': '彩虹六号', 'Blizzard': '守望先锋', 'lol': '英雄联盟',
+                'topic_2614': '侠盗猎车手5', 'Mhw': '怪物猎人', 'DOTA_Piece': '刀塔自走棋', 'hs': '炉石传说',
+                'pcr': '公主连结', 'wzry': '王者荣耀', 'dive': '骑马与砍杀2', 'topic_235709': 'Valorant',
+                'dota2': '刀塔2', 'WOW': '魔兽世界', 'animal': '动物森友会'}
 
 
 class RecTagType():
@@ -140,6 +132,16 @@ class RelationType():
     Unknown = 4
     num2name = {
         0: '没有关系', 1: '我关注他', 2: '他关注我', 3: '互关', 4: '错误'
+    }
+
+
+class CardType():
+    '卡券分类'
+    Unknown = 0
+    Cut = 1
+    Game = 2
+    num2name = {
+        0: '错误', 1: '优惠券', 2: '礼品卡'
     }
 
 

@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-11 12:32:56
+# @LastEditTime : 2020-08-11 12:36:36
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
 from .network import Network
-from .static import RollSort, URLS, CommentType, ERROR_RETRYS, EMPTY_RETRYS
+from .static import RollSort, URLS, CommentType, ERROR_RETRYS, EMPTY_RETRYS, CardType
 from .utils import ex_extend
 from .error import ClientException, Ignore
 
@@ -78,7 +78,7 @@ class Game(Network):
                         break
                 if len(roomlist) >= amount:
                     break
-            except  ClientException as e:
+            except ClientException as e:
                 self.logger.debug(f'[*] 拉取ROLL房出错[{e}]')
                 error += 1
                 if error > ERROR_RETRYS:
@@ -218,34 +218,33 @@ class Game(Network):
             self.logger.error(f'[*] 加入Roll房出错 [{e}]')
             return(False)
 
-    def get_my_card(self, amount: int = 30) -> (list, list):
+    def get_my_card(self, amount: int = 30) -> list:
         '''
         拉取我的卡券
 
         参数:
             [amount]: 要拉取的数量
         成功返回:
-            list: 优惠券列表
-            list: 游戏券列表
+            list: 卡券列表
         '''
         def get(offset=0):
             params = {'type': 0, 'cat': 'all',
                       'offset': offset,   'limit': '30'}
             result = self._get(url=url, params=params)
-            tmp=[]
+            tmp = []
             for l in result['list']:
                 for i in l['list']:
                     try:
-                        cardtype=i['type']
-                        cardid=i['coupon_id']
-                        name=i['name']
-                        if cardtype=='moneyoff':# 优惠券
-                            cardtype=1
-                        elif cardtype=='exchange': #礼品卡
-                            cardtype=2
+                        cardtype = i['type']
+                        cardid = i['coupon_id']
+                        name = i['name']
+                        if cardtype == 'moneyoff':  # 优惠券
+                            cardtype = CardType.Cut
+                        elif cardtype == 'exchange':  # 礼品卡
+                            cardtype = CardType.Game
                         else:
-                            cardtype=0
-                        tmp.append((cardid,cardtype,name))
+                            cardtype = CardType.Unknown
+                        tmp.append((cardid, cardtype, name))
                     except KeyError as e:
                         self.logger.debug(f'提取卡券列表出错[{r}]')
             self.logger.debug(f'拉取[{len(tmp)}]个卡券')
@@ -269,7 +268,7 @@ class Game(Network):
                         break
                 if len(cardlist) >= amount:
                     break
-            except  ClientException as e:
+            except ClientException as e:
                 self.logger.debug(f'[*] 拉取卡券列表出错[{e}]')
                 error += 1
                 if error > ERROR_RETRYS:
@@ -281,3 +280,5 @@ class Game(Network):
         else:
             self.logger.debug('拉取完毕,卡券列表为空,可能没有可用卡券')
         return(cardlist)
+
+
