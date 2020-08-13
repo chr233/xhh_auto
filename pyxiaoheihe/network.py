@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-11 01:00:20
+# @LastEditTime : 2020-08-13 11:17:12
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -182,7 +182,7 @@ class Network():
 
                 elif msg == '出现了一些问题,请稍后再试':
                     self.logger.error(f'返回值:{jd}')
-                    self.logger.error('出现这个错误的原因未知,请过一会再重新运行脚本')
+                    self.logger.error('出现这个错误的原因未知,有可能是访问频率过快,请过一会再重新运行脚本')
                     raise UnknownError(f'返回值:{jd}')
 
                 self.logger.error(f'未知的返回值[{msg}]')
