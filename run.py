@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-11 00:55:20
+# @LastEditTime : 2020-08-13 09:23:11
 # @Description  : 启动入口
 '''
 
@@ -53,7 +53,7 @@ def main():
     '''
 
     # 动态点赞数量
-    EVENT = 60
+    EVENT = 20
 
     start_time = time.time()
     total = 0
