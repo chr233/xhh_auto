@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-13 23:41:25
+# @LastEditTime : 2020-08-19 23:15:02
 # @Description  : 静态资源
 '''
 
@@ -262,3 +262,5 @@ lOXm4UxLeSxQwSFETwIDAQAB
 -----END PUBLIC KEY-----'''
 
 DES_IV = 'abcdefgh'
+
+ENC_STATIC = '//Z1q/Gb/R///+9xZ561TtoHjPrv2ew0Ln8vZnI5oObw+++oa3zw++1yd7wMqU/eNKahfmji5/xDu7EuCQfjaRk4TBKXrnhrlnkz@%$^&*(-_-)hahaha(-_-)_time='

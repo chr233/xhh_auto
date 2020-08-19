@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-19 18:08:36
+# @LastEditTime : 2020-08-20 01:28:00
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -13,7 +13,7 @@ from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
 
-from .static import HEYBOX_VERSION, Android_UA, iOS_UA, CommentType, URLS
+from .static import HEYBOX_VERSION, Android_UA, iOS_UA, ENC_STATIC, CommentType, URLS
 from .utils import md5_calc, encrypt_data, b64encode, rsa_encrypt, gen_random_str
 from .error import ClientException, Ignore, UnknownError, TokenError
 
@@ -131,8 +131,22 @@ class Network():
             if path and path[-1] == '/':
                 path = path[:-1]
             return(path)
+
+        def encode(enc: str) -> str:
+            e_list = list(enc)
+            e_len = len(e_list)
+            for i in range(0, e_len-1):
+                for j in range(0, e_len-1-i):
+                    if (e_list[j] > e_list[j+1]):
+                        e_list[j], e_list[j+1] = e_list[j+1], e_list[j]
+            l = e_len // 3 + 1
+            tmp = [e_list[3*i] for i in range(0, l)]
+            r = ''.join(tmp)
+            return(r)
+
         t = int(time.time())
-        h = f'{t}{url_to_path(url)}//Z1q/Gb/R///+9xZ561TtoHjPrv2ew0Ln8vZnI5oObw+++oa3zw++1yd7wMqU/eNKahfmji5/xDu7EuCQfjaRk4TBKXrnhrlnkz@%$^&*(-_-)hahaha(-_-)_time='
+        s = f'{t}{url_to_path(url)}{ENC_STATIC}'
+        h = encode(s)
         h = md5_calc(h)
         h = h.replace('x', '')
         h = md5_calc(h)
