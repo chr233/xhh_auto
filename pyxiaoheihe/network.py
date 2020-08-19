@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-13 11:17:12
+# @LastEditTime : 2020-08-19 18:08:36
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -132,10 +132,9 @@ class Network():
                 path = path[:-1]
             return(path)
         t = int(time.time())
-        h = f'{url_to_path(url)}/bfhdkud_time={t}'
+        h = f'{t}{url_to_path(url)}//Z1q/Gb/R///+9xZ561TtoHjPrv2ew0Ln8vZnI5oObw+++oa3zw++1yd7wMqU/eNKahfmji5/xDu7EuCQfjaRk4TBKXrnhrlnkz@%$^&*(-_-)hahaha(-_-)_time='
         h = md5_calc(h)
-        h = h.replace('a', 'app')
-        h = h.replace('0', 'app')
+        h = h.replace('x', '')
         h = md5_calc(h)
         h = h[:10]
         p = self.__params

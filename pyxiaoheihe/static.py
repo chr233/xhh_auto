@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-11 12:35:32
+# @LastEditTime : 2020-08-13 23:41:25
 # @Description  : 静态资源
 '''
 
@@ -10,7 +10,7 @@
 PYXIAOHEIHE_VERSION = '1.0.3'
 
 # 小黑盒客户端版本号
-HEYBOX_VERSION = '1.3.119'
+HEYBOX_VERSION = '1.3.121'
 
 # 遇到空结果继续请求的次数
 EMPTY_RETRYS = 0
