@@ -12,6 +12,12 @@
 > 官方Q群: `916945024`
 > 官方Telegram群: `https://t.me/xhh_auto`
 
+## 捐赠
+
+    请作者恰辣条
+
+![支付宝][ZFB]
+
 ## 安装与使用方法
 
     本项目使用`Python3.8`编写,理论上支持`3.4`及以后的版本
@@ -73,3 +79,4 @@
 [Release_B]: https://img.shields.io/github/v/release/chr233/xhh_auto
 [License]: https://github.com/chr233/xhh_auto/blob/master/LICENSE
 [License_B]: https://img.shields.io/github/license/chr233/xhh_auto
+[ZFB]: https://github.com/chr233/xhh_auto/raw/master/res/zfb.png
