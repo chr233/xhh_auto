@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-20 14:55:13
+# @LastEditTime : 2020-08-20 15:32:01
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -132,14 +132,14 @@ class Network():
                 path = path[:-1]
             return(path)
 
-        def encode(url: str, t:int) -> str:
+        def encode(url: str, t: int) -> str:
             enc = list(f'{url}{ENC_STATIC}{t}')
             count = len(enc) - 1
             for i in range(0, count):
                 for j in range(0, count-i):
                     if (enc[j] > enc[j+1]):
                         enc[j], enc[j+1] = enc[j+1], enc[j]
-            l = len(enc) // 3 + 1
+            l = len(enc) // 3 
             enc = [enc[3*i] for i in range(0, l)]
             enc += list(hex(t))
             count = len(enc)-1
@@ -150,8 +150,8 @@ class Network():
             return(''.join(enc))
 
         t = int(time.time())
-        u=url_to_path(url)
-        h = encode(u,t)
+        u = url_to_path(url)
+        h = encode(u, t)
         h = h.replace('x', '')
         h = md5_calc(h)
         h = h[:10]

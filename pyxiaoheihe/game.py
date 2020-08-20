@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 16:29:29
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-20 01:35:12
+# @LastEditTime : 2020-08-20 15:32:31
 # @Description  : 游戏模块,负责[游戏库]TAB下的内容
 '''
 
@@ -280,5 +280,3 @@ class Game(Network):
         else:
             self.logger.debug('拉取完毕,卡券列表为空,可能没有可用卡券')
         return(cardlist)
-
-
