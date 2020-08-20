@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-20 01:28:00
+# @LastEditTime : 2020-08-20 14:55:13
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -132,22 +132,26 @@ class Network():
                 path = path[:-1]
             return(path)
 
-        def encode(enc: str) -> str:
-            e_list = list(enc)
-            e_len = len(e_list)
-            for i in range(0, e_len-1):
-                for j in range(0, e_len-1-i):
-                    if (e_list[j] > e_list[j+1]):
-                        e_list[j], e_list[j+1] = e_list[j+1], e_list[j]
-            l = e_len // 3 + 1
-            tmp = [e_list[3*i] for i in range(0, l)]
-            r = ''.join(tmp)
-            return(r)
+        def encode(url: str, t:int) -> str:
+            enc = list(f'{url}{ENC_STATIC}{t}')
+            count = len(enc) - 1
+            for i in range(0, count):
+                for j in range(0, count-i):
+                    if (enc[j] > enc[j+1]):
+                        enc[j], enc[j+1] = enc[j+1], enc[j]
+            l = len(enc) // 3 + 1
+            enc = [enc[3*i] for i in range(0, l)]
+            enc += list(hex(t))
+            count = len(enc)-1
+            for i in range(0, count):
+                for j in range(0, count-i):
+                    if (enc[j] > enc[j+1]):
+                        enc[j], enc[j+1] = enc[j+1], enc[j]
+            return(''.join(enc))
 
         t = int(time.time())
-        s = f'{t}{url_to_path(url)}{ENC_STATIC}'
-        h = encode(s)
-        h = md5_calc(h)
+        u=url_to_path(url)
+        h = encode(u,t)
         h = h.replace('x', '')
         h = md5_calc(h)
         h = h[:10]
