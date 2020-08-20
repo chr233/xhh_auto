@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-13 09:23:11
+# @LastEditTime : 2020-08-20 19:28:28
 # @Description  : 启动入口
 '''
 
@@ -36,7 +36,7 @@ try:
     from pyxiaoheihe import HeyBoxClient
     from pyxiaoheihe.static import PYXIAOHEIHE_VERSION, RelationType
     from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError
-    from pyxiaoheihe.utils import user_relation_filter, random_sleep
+    from pyxiaoheihe.utils import user_relation_filter
 except ImportError as e:
     print(e)
     print('导入模块出错,请执行 pip install -r requirements.txt 安装所需的依赖库')
@@ -61,6 +61,7 @@ def main():
     accounts = CFG['accounts']
     hbxcfg = CFG['heybox']
     mcfg = CFG['main']
+    TX = CFG['main']['sleep_interval']
 
     if not accounts:
         raise ValueError('未定义有效账号信息')
@@ -92,9 +93,9 @@ def main():
                     hbc.get_news_content(linkid, 1)
                     hbc.get_comments(linkid, 1, i, False)
                     hbc.share_news(linkid, 1)
-                    random_sleep(0, 1)
+                    hbc.random_sleep(0, 1, TX)
                     hbc.share_comment()
-                    random_sleep(0, 1)
+                    hbc.random_sleep(0, 1, TX)
                 if not dz:
                     for i, linkid in enumerate(idlist, 1):
                         # 伪装正常流量
@@ -102,7 +103,7 @@ def main():
                         hbc.get_news_content(linkid)
                         hbc.get_comments(linkid, 1, i, False)
                         hbc.like_news(linkid, i, True)
-                        random_sleep(1, 10)
+                        hbc.random_sleep(1, 10, TX)
             else:
                 hbc.logger.info('已完成点赞和分享任务,跳过')
 
@@ -118,13 +119,13 @@ def main():
                 if target:
                     for i in target[:2]:
                         hbc.follow_user(i, True)
-                        random_sleep(0, 5)
+                        hbc.random_sleep(0, 5, TX)
 
             ulist = hbc.get_new_fans()
             if ulist:
                 for i in ulist:
                     hbc.follow_user(i, True)
-                    random_sleep(0, 5)
+                    hbc.random_sleep(0, 5, TX)
                 hbc.logger.info(f'关注了[{len(ulist)}]个新粉丝')
             else:
                 hbc.logger.info('没有新粉丝')
@@ -137,7 +138,7 @@ def main():
                 for linkid, ftype, _ in eventlist:
                     hbc.logger.info(f'点赞动态 {linkid}')
                     hbc.like_event(linkid, ftype, True)
-                    random_sleep(0, 2)
+                    hbc.random_sleep(0, 2, TX)
             else:
                 hbc.logger.info('没有新动态')
 

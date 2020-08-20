@@ -2,11 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-20 15:32:01
+# @LastEditTime : 2020-08-20 19:28:54
 # @Description  : 网络模块,负责网络请求
 '''
 
 import time
+import random
 import logging
 import traceback
 from requests import Session, Response
@@ -78,6 +79,23 @@ class Network():
         '''
         return(self.__heybox_id)
 
+    def random_sleep(self,min_t: int, max_t: int,x:int=1):
+        '''
+        随机延时
+
+        参数:
+            min_t: 最短时间
+            max_t: 最长时间
+            x: 延时倍数
+        '''
+        t = random.randint(min_t, max_t)
+        t *= x
+        t += random.random()
+        self.logger.debug(f'随机延时{"%.2f" % t}秒')
+        time.sleep(t)
+
+
+
     def _login(self, phone: int, password: str) -> (int, str, str):
         '''
         使用手机号密码登陆小黑盒,登陆失败返回False
@@ -139,15 +157,19 @@ class Network():
                 for j in range(0, count-i):
                     if (enc[j] > enc[j+1]):
                         enc[j], enc[j+1] = enc[j+1], enc[j]
-            l = len(enc) // 3 
+            l = len(enc) // 3 + 1
+            enc += '\0'
             enc = [enc[3*i] for i in range(0, l)]
+            if enc[-1] == '\0':
+                enc = enc[:-1]
             enc += list(hex(t))
             count = len(enc)-1
             for i in range(0, count):
                 for j in range(0, count-i):
                     if (enc[j] > enc[j+1]):
                         enc[j], enc[j+1] = enc[j+1], enc[j]
-            return(''.join(enc))
+            result = ''.join(enc)
+            return(result)
 
         t = int(time.time())
         u = url_to_path(url)
@@ -200,6 +222,11 @@ class Network():
                 elif msg == '出现了一些问题,请稍后再试':
                     self.logger.error(f'返回值:{jd}')
                     self.logger.error('出现这个错误的原因未知,有可能是访问频率过快,请过一会再重新运行脚本')
+                    raise UnknownError(f'返回值:{jd}')
+
+                elif msg == '参数错误':
+                    self.logger.error(f'返回值:{jd}')
+                    self.logger.error('请求参数错误, 请联系作者解决')
                     raise UnknownError(f'返回值:{jd}')
 
                 self.logger.error(f'未知的返回值[{msg}]')
@@ -324,12 +351,12 @@ class Network():
             操作是否成功
         '''
         url = URLS.CREATE_COMMENT
+
+        d = {'link_id': linkid, 'text': message,
+             'root_id': -1, 'reply_id': -1, 'imgs': None}
         if ctype == CommentType.RollComment:
-            d = {'link_id': linkid, 'text': message,
-                 'root_id': -1, 'reply_id': -1, 'imgs': None}
             p = {}
         elif ctype in (CommentType.NewsComment, CommentType.CommunityComment):
-            d = {'link_id': linkid, 'text': message, 'imgs': None}
             if ctype == CommentType.CommunityComment:
                 hsrc = b64encode('bbs_app_feeds')
             else:
@@ -343,21 +370,21 @@ class Network():
             self.logger.error(f'发送评论出错 [{e}]')
             return(False)
 
-    def _get_comments(self, linkid: int, amount: int = 30,
-                      author_only: bool = False) -> list:
-        '''
-        获取评论,通用
+    # def _get_comments(self, linkid: int, amount: int = 30,
+    #                   author_only: bool = False) -> list:
+    #     '''
+    #     获取评论,通用
 
-        参数:
-            linkid: 文章id
-            [amount]: 要拉取的数量
-        返回:
-            list: [(commintid,text,userid)…],评论列表
-        '''
-        pass
+    #     参数:
+    #         linkid: 文章id
+    #         [amount]: 要拉取的数量
+    #     返回:
+    #         list: [(commintid,text,userid)…],评论列表
+    #     '''
+    #     pass
 
-    def _like_content(self):
-        '''
-        点赞,通用
-        '''
-        pass
+    # def _like_content(self):
+    #     '''
+    #     点赞,通用
+    #     '''
+    #     pass

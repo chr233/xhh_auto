@@ -2,12 +2,12 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 22:21:56
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-07 11:32:56
+# @LastEditTime : 2020-08-20 17:47:51
 # @Description  : 社区模块,负责[社区]TAB下的内容
 '''
 
 from .network import Network
-from .static import URLS, EMPTY_RETRYS, ERROR_RETRYS
+from .static import URLS, EMPTY_RETRYS, ERROR_RETRYS,CommentType
 from .utils import ex_extend
 from .error import ClientException
 
@@ -19,6 +19,7 @@ class Community(Network):
 
     def debug(self):
         super().debug()
+        self.send_community_comment(43817628,'test')
 
     def get_recommend_post(self, amount: int = 8) -> list:
         '''
@@ -90,3 +91,17 @@ class Community(Network):
         postlist = self.get_recommend_post(amount)
         idlist = [x[0] for x in postlist]
         return(idlist)
+
+    def send_community_comment(self, linkid: int, message: str) -> bool:
+        '''
+        发送社区评论
+
+        参数:
+            linkid: 文章id
+            message: 文字评论内容
+        返回:
+            操作是否成功
+        '''
+        result = self._send_comment(
+            linkid, message, CommentType.CommunityComment, 0)
+        return(result)
