@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-20 19:28:54
+# @LastEditTime : 2020-08-21 10:44:01
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -26,6 +26,8 @@ class Network():
     __cookies = {}
     __params = {}
     __heybox_id = 0
+    __sleep_interval = 1.0
+    __auto_report = True
 
     logger = logging.getLogger('-')
 
@@ -33,26 +35,28 @@ class Network():
         super().__init__()
 
         try:
-            os = hbxcfg.get('os_type', 1)
-            os_v = hbxcfg.get('os_version', '9')
+            os_type = hbxcfg.get('os_type', 1)
+            os_version = hbxcfg.get('os_version', '9')
             channel = hbxcfg.get('channel', 'heybox_yingyongbao')
-
-            heybox_id = account.get('heybox_id')
-            imei = account.get('imei')
-            pkey = account.get('pkey')
-        except AttributeError:
+            sleep_interval = hbxcfg.get('sleep_interval', 1)
+            auto_report = hbxcfg.get('auto_report', True)
+            heybox_id = account.get('heybox_id', -1)
+            imei = account.get('imei', gen_random_str(16))
+            pkey = account.get('pkey', None)
+        except (AttributeError, KeyError):
             raise ClientException('传入参数类型错误')
 
         self.__headers = {'Referer': 'http://api.maxjia.com/',
-                          'User-Agent': Android_UA if os == 1 else (iOS_UA % os_v),
+                          'User-Agent': Android_UA if os_type == 1 else (iOS_UA % os_version),
                           'Host': 'api.xiaoheihe.cn', 'Connection': 'Keep-Alive',
                           'Accept-Encoding': 'gzip'}
-        self.__cookies = {'pkey': pkey}
+        if pkey:
+            self.__cookies = {'pkey': pkey}
         self.__params = {'heybox_id': heybox_id, 'imei': imei,
-                         'os_type': 'Android' if os == 1 else 'iOS',
-                         'os_version': os_v, 'version': HEYBOX_VERSION, '_time': '',
+                         'os_type': 'Android' if os_type == 1 else 'iOS',
+                         'os_version': os_version, 'version': HEYBOX_VERSION, '_time': '',
                          'hkey': '', 'channel': channel}
-        if hbxcfg.get('os_type', 1) == 2:  # 模拟IOS客户端
+        if os_type == 2:  # 模拟IOS客户端
             self.__params.pop('channel')
 
         log_level = 10 if debug else 20
@@ -61,8 +65,10 @@ class Network():
         logging.basicConfig(level=log_level,
                             format=log_format,
                             datefmt=log_time)
-        heybox_id = account.get('heybox_id')
+
         self.__heybox_id = heybox_id
+        self.__sleep_interval = sleep_interval
+        self.__auto_report = auto_report
         self.logger = logging.getLogger(str(heybox_id))
         self.logger.debug('网络模块初始化完毕')
 
@@ -79,22 +85,27 @@ class Network():
         '''
         return(self.__heybox_id)
 
-    def random_sleep(self,min_t: int, max_t: int,x:int=1):
+    def data_report(self,rtype:int,)->bool:
+        pass
+
+
+    def random_sleep(self, min_t: int, max_t: int):
         '''
         随机延时
 
         参数:
             min_t: 最短时间
             max_t: 最长时间
-            x: 延时倍数
         '''
-        t = random.randint(min_t, max_t)
-        t *= x
-        t += random.random()
-        self.logger.debug(f'随机延时{"%.2f" % t}秒')
-        time.sleep(t)
-
-
+        x = self.__sleep_interval
+        if x:
+            t = random.randint(min_t, max_t)
+            t *= x
+            t += random.random()
+            self.logger.debug(f'随机延时 {"%.2f" % t} 秒')
+            time.sleep(t)
+        else:
+            self.logger.debug('随机延时已禁用')
 
     def _login(self, phone: int, password: str) -> (int, str, str):
         '''
