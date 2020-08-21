@@ -1,13 +1,12 @@
 # Xhh_Auto
 
-[![Codacy Badge][Codacy_B]][Codacy] [![release][Release_B]][Release] [![Download][Download_B]][Release] [![License][License_B]][License]
+[![Codacy Badge][codacy_b]][Codacy] [![release][release_b]][Release] [![Download][download_b]][Release] [![License][license_b]][License]
 
 ## 声明
 
     本项目仅供学习交流使用, 用户如何使用该脚本与作者无关
 
-* 请从这里下载稳定版: [releases][Release], 仓库中的代码未经测试, 可能会有问题.
-* 正在适配`1.3.121`, 仓库中的代码可能暂时无法正常工作, 请勿使用
+* 请从这里下载稳定版: [Releases][release], 仓库中的代码未经测试, 可能会有问题.
 
 > 官方Q群: `916945024`
 > 官方Telegram群: `https://t.me/xhh_auto`
@@ -16,13 +15,13 @@
 
     请作者喝一杯冰阔落吧
 
-![支付宝][ZFB]
+![支付宝][zfb]
 
 ## 安装与使用方法
 
     本项目使用`Python3.8`编写,理论上支持`3.4`及以后的版本
 
-1. 从[releases][Release]下载最新版本.
+1. 从[releases][release]下载最新版本.
 2. 解压,并切换到脚本所在目录.
 3. 复制 `example.config.toml` , 为 `config.toml`,并填写配置.
     > 账号凭据获取方法参考下一节.
@@ -35,13 +34,17 @@
 
     当前版本暂不支持直接登录,需要手动抓包获取账号凭据,抓取后只要不主动退出可以永久登录
 
-* [安卓手机端抓取教程【新】](https://blog.chrxw.com/archives/2020/08/10/1353.html)【推荐】
+* [安卓手机端抓取教程【新】][jiaocheng1]【推荐】
 
-* [安卓手机抓取教程](https://blog.chrxw.com/archives/2019/10/19/390.html)
+* [安卓手机抓取教程][jiaocheng2]
 
-* [Fiddler抓取教程](https://blog.chrxw.com/archives/2019/10/20/437.html)
+* [Fiddler抓取教程][jiaocheng3]
 
 * 抓取小黑盒数据后, 填入`config.toml`即可使用本脚本.
+
+[jiaocheng1]: https://blog.chrxw.com/archives/2020/08/10/1353.html
+[jiaocheng2]: https://blog.chrxw.com/archives/2019/10/19/390.html
+[jiaocheng3]: https://blog.chrxw.com/archives/2019/10/20/437.html
 
 ## 旧版脚本配置文件转换
 
@@ -72,11 +75,11 @@
 
 > 退出方法:在`config.toml`中将`join_xhhauto`的值改为`false`即可.
 
-[Codacy_B]: https://app.codacy.com/project/badge/Grade/dfb3196838bf4431a8914736f103afeb
-[Codacy]: https://www.codacy.com/manual/chr233/xhh_auto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chr233/xhh_auto&amp;utm_campaign=Badge_Grade
-[Download_B]: https://img.shields.io/github/downloads/chr233/xhh_auto/total
-[Release]: https://github.com/chr233/xhh_auto/releases
-[Release_B]: https://img.shields.io/github/v/release/chr233/xhh_auto
-[License]: https://github.com/chr233/xhh_auto/blob/master/LICENSE
-[License_B]: https://img.shields.io/github/license/chr233/xhh_auto
-[ZFB]: https://github.com/chr233/xhh_auto/raw/master/res/zfb.png
+[codacy_b]: https://app.codacy.com/project/badge/grade/dfb3196838bf4431a8914736f103afeb
+[codacy]: https://www.codacy.com/manual/chr233/xhh_auto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chr233/xhh_auto&amp;utm_campaign=badge_grade
+[download_b]: https://img.shields.io/github/downloads/chr233/xhh_auto/total
+[release]: https://github.com/chr233/xhh_auto/releases
+[release_b]: https://img.shields.io/github/v/release/chr233/xhh_auto
+[license]: https://github.com/chr233/xhh_auto/blob/master/license
+[license_b]: https://img.shields.io/github/license/chr233/xhh_auto
+[zfb]: https://github.com/chr233/xhh_auto/raw/master/res/zfb.png
