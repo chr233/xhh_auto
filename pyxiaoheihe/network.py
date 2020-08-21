@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-21 11:59:37
+# @LastEditTime : 2020-08-21 12:04:30
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -103,7 +103,7 @@ class Network():
             p1 = {'type': 99}
             d1 = {"events": [{"event_id": "203", "time": str(
                 int(time.time())), "type": "show"}]}
-            p2={'type': 100}
+            p2 = {'type': 100}
             d2 = {"events": [{"event_id": "176", "time": str(
                 int(time.time())), "value": 3096}]}
         elif rtype == ReportType.View:
@@ -114,10 +114,10 @@ class Network():
         url = URLS.DATA_REPORT
         try:
             if rtype == ReportType.Source:
-                self.__post_encrypt_without_report(url=url, data=d)
+                self.__post_encrypt_without_report(url=url, data=d, params=p)
             elif rtype == ReportType.Quit:
-                self.__post_encrypt_without_report(url=url, data=d1)
-                self.__post_encrypt_without_report(url=url, data=d2)
+                self.__post_encrypt_without_report(url=url, data=d1, params=p1)
+                self.__post_encrypt_without_report(url=url, data=d2, params=p2)
             else:
                 self.__get_without_report(url=url, params=p)
             self.logger.debug('模拟客户端上报数据成功')
