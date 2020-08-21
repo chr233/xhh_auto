@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-16 15:54:49
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-20 14:57:00
+# @LastEditTime : 2020-08-21 12:02:08
 # @Description  : 静态资源
 '''
 
@@ -87,6 +87,8 @@ class URLS():
     GET_MY_CARD = 'https://api.xiaoheihe.cn/mall/coupons/'  # 获取我的卡券
 
     LOGIN = 'https://api.xiaoheihe.cn/account/login/'  # 登录账号
+
+    DATA_REPORT = 'https://api.xiaoheihe.cn/account/data_report/'  # 数据汇报
 
 
 class TAGS():
@@ -208,9 +210,16 @@ class StateType():
 
 class CommentType():
     '评论类型'
-    NewsComment = 0  # 新闻评论
-    CommunityComment = 1  # 社区评论
-    RollComment = 3  # Roll房评论
+    News = 0  # 新闻评论
+    Community = 1  # 社区评论
+    Roll = 2  # Roll房评论
+
+
+class ReportType():
+    '汇报类型'
+    Source = 1  # source模板
+    Quit = 2  # events模板
+    View = 3    # views模板
 
 
 class BString():

@@ -103,5 +103,5 @@ class Community(Network):
             操作是否成功
         '''
         result = self._send_comment(
-            linkid, message, CommentType.CommunityComment, 0)
+            linkid, message, CommentType.Community, 0)
         return(result)

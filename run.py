@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-21 10:33:19
+# @LastEditTime : 2020-08-21 12:00:56
 # @Description  : 启动入口
 '''
 
@@ -28,13 +28,14 @@ print(r'''
 try:
     from utils import cliwait
     from utils.config import load_config
-    from utils.version import check_script_update, check_pyxiaoheihe_version, SCRIPT_VERSION, MINI_CORE_VERSION
+    from utils.version import check_script_update, check_pyxiaoheihe_version
+    from utils.version import SCRIPT_VERSION, MINI_CORE_VERSION
     from utils.log import get_logger
     from utils.ftqq import send_to_ftqq
     from utils.email import send_to_email
 
     from pyxiaoheihe import HeyBoxClient
-    from pyxiaoheihe.static import PYXIAOHEIHE_VERSION, RelationType
+    from pyxiaoheihe.static import PYXIAOHEIHE_VERSION, RelationType, ReportType
     from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError
     from pyxiaoheihe.utils import user_relation_filter
 except ImportError as e:
@@ -167,6 +168,9 @@ def main():
                         f'#### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
                         f'#### 签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]\n'
                         f'#### 状态[{"全部完成" if finish else "**有任务未完成**"}]')
+
+            hbc.data_report(ReportType.Quit, None)  # 模拟客户端关闭消息
+
             success += 1
         except TokenError as e:
             logger.error(f'第[{i}]个账号信息有问题,请检查:[{e}]')

@@ -125,7 +125,7 @@ class Game(Network):
             操作是否成功
         '''
         result = self._send_comment(
-            linkid, message, CommentType.RollComment, 0)
+            linkid, message, CommentType.Roll, 0)
         return(result)
 
     def get_roll_comments(self, linkid: int, amount: int = 30,

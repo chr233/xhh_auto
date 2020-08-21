@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-21 10:44:01
+# @LastEditTime : 2020-08-21 11:59:37
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -14,7 +14,8 @@ from requests import Session, Response
 from json import JSONDecodeError
 from urllib.parse import urlparse
 
-from .static import HEYBOX_VERSION, Android_UA, iOS_UA, ENC_STATIC, CommentType, URLS
+from .static import HEYBOX_VERSION, Android_UA, iOS_UA, URLS
+from .static import ENC_STATIC, CommentType, ReportType
 from .utils import md5_calc, encrypt_data, b64encode, rsa_encrypt, gen_random_str
 from .error import ClientException, Ignore, UnknownError, TokenError
 
@@ -85,9 +86,45 @@ class Network():
         '''
         return(self.__heybox_id)
 
-    def data_report(self,rtype:int,)->bool:
-        pass
+    def data_report(self, rtype: int, value: tuple = None) -> bool:
+        '''
+        模拟客户端汇报数据
 
+        参数:
+            rtype: 汇报模板,参见status.ReportType
+            value: 根据模板不同有不同的作用
+        返回:
+            bool: 操作是否成功
+        '''
+        if rtype == ReportType.Source:
+            p = {'type': 13}
+            d = {"source": [{'pageID': '1'}, {'pageID': '12'}]}
+        elif rtype == ReportType.Quit:
+            p1 = {'type': 99}
+            d1 = {"events": [{"event_id": "203", "time": str(
+                int(time.time())), "type": "show"}]}
+            p2={'type': 100}
+            d2 = {"events": [{"event_id": "176", "time": str(
+                int(time.time())), "value": 3096}]}
+        elif rtype == ReportType.View:
+            p = {'type':	9, 'viewTime'	: random.randint(1, 20),
+                 'index': value[0], 'h_src': b64encode('news_feeds_-1')	,
+                 'link_id':	value[1]}
+
+        url = URLS.DATA_REPORT
+        try:
+            if rtype == ReportType.Source:
+                self.__post_encrypt_without_report(url=url, data=d)
+            elif rtype == ReportType.Quit:
+                self.__post_encrypt_without_report(url=url, data=d1)
+                self.__post_encrypt_without_report(url=url, data=d2)
+            else:
+                self.__get_without_report(url=url, params=p)
+            self.logger.debug('模拟客户端上报数据成功')
+            return(True)
+        except ClientException as e:
+            self.logger.error(f'上报数据出错 [{e}]')
+            return(False)
 
     def random_sleep(self, min_t: int, max_t: int):
         '''
@@ -146,7 +183,7 @@ class Network():
             self.logger.error(f'登录失败 [{e}]')
             return(False)
 
-    def __flush_token(self, url: str) -> int:
+    def __flash_token(self, url: str) -> int:
         '''
         根据当前时间生成time_和hkey,并存入self._parames中
 
@@ -194,7 +231,8 @@ class Network():
         return(t)
 
     def __check_status(self, jd: dict):
-        '''检查json字典,检测到问题抛出异常
+        '''
+        检查json字典,检测到问题抛出异常
 
         参数:
             jd:json字典
@@ -217,7 +255,7 @@ class Network():
                              '操作失败', 'error link_id',
                              '错误的帖子', '错误的用户',
                              '该帖已被删除', '帖子已被删除',
-                             '加入房间失败,已到开奖时间',
+                             '加入房间失败，已到开奖时间',
                              '该用户已注销'):
                     raise ClientException(f'客户端出错@{msg}')
 
@@ -230,14 +268,14 @@ class Network():
                 elif msg == '系统时间不正确':
                     raise OSError('系统时间错误')
 
-                elif msg == '出现了一些问题,请稍后再试':
+                elif msg == '出现了一些问题，请稍后再试':
                     self.logger.error(f'返回值:{jd}')
                     self.logger.error('出现这个错误的原因未知,有可能是访问频率过快,请过一会再重新运行脚本')
                     raise UnknownError(f'返回值:{jd}')
 
                 elif msg == '参数错误':
                     self.logger.error(f'返回值:{jd}')
-                    self.logger.error('请求参数错误, 请联系作者解决')
+                    self.logger.error('请求参数错误, 有可能是小黑盒更新了, 请更新脚本')
                     raise UnknownError(f'返回值:{jd}')
 
                 self.logger.error(f'未知的返回值[{msg}]')
@@ -285,16 +323,18 @@ class Network():
         返回:
             dict: json字典
         '''
-        self.__flush_token(url)
-        p = {**(params or {}), **self.__params}
-        h = headers or self.__headers
-        c = cookies or self.__cookies
-        resp = self.__session.get(
-            url=url, params=p, headers=h, cookies=c
-        )
-        result = self.__get_json(resp)
-        if key:
-            result = result.get(key)
+        result = self.__get_without_report(
+            url=url,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            key=key)
+        if self.__auto_report:
+            i = p.get('index')
+            l = p.get('link_id')
+            if i and l and random.random() <= 0.7:  # 70%概率触发
+                self.data_report(ReportType.View, (i, l))
+
         return(result)
 
     def _post(self, url: str, params: dict = None, data: dict = None, headers: dict = None,
@@ -310,7 +350,7 @@ class Network():
         返回:
             Response: 请求结果
         '''
-        self.__flush_token(url)
+        self.__flash_token(url)
         p = {**(params or {}), **self.__params}
         d = data or {}
         h = headers or self.__headers
@@ -319,6 +359,11 @@ class Network():
             url=url, params=p, data=d, headers=h, cookies=c
         )
         result = self.__get_json(resp)
+
+        if self.__auto_report:
+            if random.random() <= 0.1:  # 10%的概率触发
+                self.data_report(ReportType.Source, None)
+
         if key:
             result = result.get(key)
         return(result)
@@ -336,7 +381,63 @@ class Network():
         返回:
             Response: 请求结果
         '''
-        t = self.__flush_token(url)
+        result = self.__post_encrypt_without_report(
+            url=url,
+            data=data,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            key=key)
+
+        if self.__auto_report:
+            if random.random() <= 0.1:  # 10%的概率触发
+                self.data_report(ReportType.Source, None)
+
+        if key:
+            result = result.get(key)
+        return(result)
+
+    def __get_without_report(self, url: str, params: dict = None,  headers: dict = None,
+                             cookies: dict = None, key: str = 'result') -> dict:
+        '''
+        GET方法发送请求[不自动调用report]
+
+        参数:
+            url: URL
+            [params]: 请求参数,会添加到self._params前面
+            [headers]: 请求头,会替换self._headers
+            [cookies]: 请求头,会替换self._cookies
+            [key]: 要返回的数据键名,默认为'result',留空表示返回原始json
+        返回:
+            dict: json字典
+        '''
+        self.__flash_token(url)
+        p = {**(params or {}), **self.__params}
+        h = headers or self.__headers
+        c = cookies or self.__cookies
+        resp = self.__session.get(
+            url=url, params=p, headers=h, cookies=c
+        )
+        result = self.__get_json(resp)
+
+        if key:
+            result = result.get(key)
+        return(result)
+
+    def __post_encrypt_without_report(self, url: str, data: dict, params: dict = None, headers: dict = None,
+                                      cookies: dict = None, key: str = 'result') -> dict:
+        '''
+        POST方法发送加密请求,data参数将被加密[不自动调用report]
+
+        参数:
+            url: URL
+            [data]: 请求体
+            [params]: 请求参数,会添加到self._params前面
+            [headers]: 请求头,会替换self._headers
+        返回:
+            Response: 请求结果
+        '''
+        t = self.__flash_token(url)
         p = {**(params or {}), 'time_': t, **self.__params}
         h = headers or self.__headers
         c = cookies or self.__cookies
@@ -365,14 +466,16 @@ class Network():
 
         d = {'link_id': linkid, 'text': message,
              'root_id': -1, 'reply_id': -1, 'imgs': None}
-        if ctype == CommentType.RollComment:
+        if ctype == CommentType.Roll:
             p = {}
-        elif ctype in (CommentType.NewsComment, CommentType.CommunityComment):
-            if ctype == CommentType.CommunityComment:
+        elif ctype in (CommentType.News, CommentType.Community):
+            if ctype == CommentType.Community:
                 hsrc = b64encode('bbs_app_feeds')
-            else:
+            elif ctype == CommentType.News:
                 hsrc = b64encode('news_feeds_-1')
             p = {'h_src': hsrc, 'index': index}
+        else:
+            raise ValueError('ctype错误')
         try:
             result = self._post(url=url, data=d, params=p)
             self.logger.debug('发送评论成功')
