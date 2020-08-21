@@ -42,10 +42,6 @@
 
 * 抓取小黑盒数据后, 填入`config.toml`即可使用本脚本.
 
-[jiaocheng1]: https://blog.chrxw.com/archives/2020/08/10/1353.html
-[jiaocheng2]: https://blog.chrxw.com/archives/2019/10/19/390.html
-[jiaocheng3]: https://blog.chrxw.com/archives/2019/10/20/437.html
-
 ## 旧版脚本配置文件转换
 
 * 运行`python convernt_old_config.py`,根据提示操作即可.
@@ -83,3 +79,6 @@
 [license]: https://github.com/chr233/xhh_auto/blob/master/license
 [license_b]: https://img.shields.io/github/license/chr233/xhh_auto
 [zfb]: https://github.com/chr233/xhh_auto/raw/master/res/zfb.png
+[jiaocheng1]: https://blog.chrxw.com/archives/2020/08/10/1353.html
+[jiaocheng2]: https://blog.chrxw.com/archives/2019/10/19/390.html
+[jiaocheng3]: https://blog.chrxw.com/archives/2019/10/20/437.html
