@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-21 12:00:56
+# @LastEditTime : 2020-08-21 12:26:27
 # @Description  : 启动入口
 '''
 
@@ -103,7 +103,7 @@ def main():
                         hbc.get_news_content(linkid)
                         hbc.get_comments(linkid, 1, i, False)
                         hbc.like_news(linkid, i, True)
-                        hbc.random_sleep(1, 10)
+                        hbc.random_sleep(1, 5)
             else:
                 hbc.logger.info('已完成点赞和分享任务,跳过')
 
@@ -119,7 +119,7 @@ def main():
                 if target:
                     for i in target[:2]:
                         hbc.follow_user(i, True)
-                        hbc.random_sleep(0, 5)
+                        hbc.random_sleep(0, 2)
 
             ulist = hbc.get_new_fans()
             if ulist:
@@ -138,7 +138,7 @@ def main():
                 for linkid, ftype, _ in eventlist:
                     hbc.logger.info(f'点赞动态 {linkid}')
                     hbc.like_event(linkid, ftype, True)
-                    hbc.random_sleep(0, 2)
+                    hbc.random_sleep(0, 1)
             else:
                 hbc.logger.info('没有新动态')
 

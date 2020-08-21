@@ -2,7 +2,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-30 17:50:27
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-21 12:04:30
+# @LastEditTime : 2020-08-21 12:23:09
 # @Description  : 网络模块,负责网络请求
 '''
 
@@ -97,9 +97,13 @@ class Network():
             bool: 操作是否成功
         '''
         if rtype == ReportType.Source:
+            # 并未完成
+            return(False)
             p = {'type': 13}
             d = {"source": [{'pageID': '1'}, {'pageID': '12'}]}
         elif rtype == ReportType.Quit:
+            # 并未完成
+            return(False)
             p1 = {'type': 99}
             d1 = {"events": [{"event_id": "203", "time": str(
                 int(time.time())), "type": "show"}]}
@@ -256,7 +260,7 @@ class Network():
                              '错误的帖子', '错误的用户',
                              '该帖已被删除', '帖子已被删除',
                              '加入房间失败，已到开奖时间',
-                             '该用户已注销'):
+                             '该用户已注销', '数据上报失败'):
                     raise ClientException(f'客户端出错@{msg}')
 
                 elif msg in ('用户名格式错误', '用户名不存在'
@@ -329,9 +333,10 @@ class Network():
             headers=headers,
             cookies=cookies,
             key=key)
-        if self.__auto_report:
-            i = p.get('index')
-            l = p.get('link_id')
+
+        if self.__auto_report and params:
+            i = params.get('index')
+            l = params.get('link_id')
             if i and l and random.random() <= 0.7:  # 70%概率触发
                 self.data_report(ReportType.View, (i, l))
 

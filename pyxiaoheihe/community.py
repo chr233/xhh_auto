@@ -19,7 +19,7 @@ class Community(Network):
 
     def debug(self):
         super().debug()
-        self.send_community_comment(43817628,'test')
+        # self.send_community_comment(43817628,'test')
 
     def get_recommend_post(self, amount: int = 8) -> list:
         '''
