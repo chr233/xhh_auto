@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-09 13:16:44
+# @LastEditTime : 2020-08-21 10:31:49
 # @Description  : 读取并验证配置
 '''
 
@@ -68,7 +68,7 @@ def load_config(path: str = DEFAULT_PATH) -> dict:
         with open(path, 'rb') as f:
             content = f.read()
         detect = chardet.detect(content)
-        encode=detect.get('encode','utf-8')
+        encode = detect.get('encode', 'utf-8')
         raw_cfg = dict(toml.loads(content.decode(encode)))
         CFG = verify_config(raw_cfg)
         debug = os.environ.get('mode', 'release').lower()
@@ -93,33 +93,29 @@ def verify_config(cfg: dict) -> dict:
     返回:
         dict: 验证过的配置字典,剔除错误的和不必要的项目
     '''
-    vcfg = {'main': {'check_update': True, 'debug': False, 'sleep_interval': 1.0, 'join_xhhauto': True},
+    vcfg = {'main': {'check_update': True, 'debug': False,  'join_xhhauto': True},
             'ftqq': {'enable': False, 'skey': '', 'only_on_error': False},
             'email': {'port': 465, 'server': '', 'password': '', 'user': '',
                       'recvaddr': '', 'sendaddr': '', 'only_on_error': False},
-            'heybox': {'channel': 'heybox_yingyongbao', 'os_type': 'Android', 'os_version': '9'},
+            'heybox': {'channel': 'heybox_yingyongbao', 'os_type': 'Android',
+                       'os_version': '9', 'sleep_interval': 1.0, 'auto_report': True},
             'accounts': []}
 
     main = cfg.get('main', {})
     if main and type(main) == dict:
-        check_update = main.get('check_update', True)
-        debug = main.get('debug', False)
-        try:
-            sleep = float(main.get('sleep_interval', 1))
-        except ValueError:
-            sleep = 1.0
-            logger.warning('[*] [main]节sleep_interval必须为数字')
-        join_xhhauto = main.get('join_xhhauto', True)
+        check_update = bool(main.get('check_update', True))
+        debug = bool(main.get('debug', False))
+        join_xhhauto = bool(main.get('join_xhhauto', True))
         vcfg['main'] = {'check_update': check_update, 'debug': debug,
-                        'sleep_interval': sleep, 'join_xhhauto': join_xhhauto}
+                        'join_xhhauto': join_xhhauto}
     else:
         logger.debug('[main]节配置有误或者未配置,将使用默认配置')
 
     ftqq = cfg.get('ftqq', {})
     if ftqq and type(ftqq) == dict:
-        enable = ftqq.get('enable', False)
+        enable =bool( ftqq.get('enable', False))
         skey = ftqq.get('skey', "")
-        only_on_error = ftqq.get('only_on_error', False)
+        only_on_error = bool(ftqq.get('only_on_error', False))
         if enable and not skey:
             raise ValueError('开启了FTQQ模块,但是未指定SKEY,请检查配置文件')
         vcfg['ftqq'] = {'enable': enable, 'skey': skey,
@@ -129,7 +125,7 @@ def verify_config(cfg: dict) -> dict:
 
     email = cfg.get('email', {})
     if email and type(email) == dict:
-        enable = email.get('enable', False)
+        enable = bool(email.get('enable', False))
         try:
             port = int(email.get('port', 0))
         except ValueError:
@@ -140,7 +136,7 @@ def verify_config(cfg: dict) -> dict:
         user = email.get('user', '')
         recvaddr = email.get('recvaddr', '')
         sendaddr = email.get('sendaddr', '')
-        only_on_error = email.get('only_on_error', '')
+        only_on_error = bool(email.get('only_on_error', False))
         if enable and not (port and server
                            and password and user and recvaddr and sendaddr):
             raise ValueError('开启了email模块,但是配置不完整,请检查配置文件')
@@ -162,8 +158,15 @@ def verify_config(cfg: dict) -> dict:
             os_type = 1
             logger.warning('[*] [heybox]节os_type只能为1或者2')
         os_version = heybox.get('os_version', "9")
+        try:
+            sleep = float(heybox.get('sleep_interval', 1))
+        except ValueError:
+            sleep = 1.0
+            logger.warning('[*] [heybox]节sleep_interval必须为数字')
+        auto_report = bool(heybox.get('auto_report', False))
         vcfg['heybox'] = {'channel': channel, 'os_type': os_type,
-                          'os_version': os_version}
+                          'os_version': os_version, 'sleep_interval': sleep,
+                          'auto_report': auto_report}
     else:
         logger.debug('[heybox]节配置有误或者未配置,将使用默认配置')
 

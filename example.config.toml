@@ -24,9 +24,6 @@ pkey = ""
 check_update = true
 # 是否开启调试模式,[false]
 debug = false
-# 延时倍数,[1.0]
-# 设为0禁用延时时间,设为0.5缩短一半延时时间,以此类推
-sleep_interval = 1.0
 # 是否参与互助计划,[true]
 join_xhhauto = true
 # 互助计划说明:
@@ -70,3 +67,9 @@ os_type = 1
 channel = "heybox_yingyongbao"
 # 系统版本,对应Android或者IOS版本,["8.1"]
 os_version = "8.1"
+# 随机延时倍数,[1.0]
+# 设为0.5代表延时时间缩短一半,以此类推
+# 如果需要手动控制延时就设为0
+sleep_interval = 1.0
+# 开启后自动发送report流量,伪装正常客户端,[true]
+auto_report = true
