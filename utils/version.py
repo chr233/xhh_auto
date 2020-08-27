@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-20 14:57:19
+# @LastEditTime : 2020-08-27 18:39:47
 # @Description  : 检查脚本更新
 '''
 
@@ -45,8 +45,7 @@ def check_pyxiaoheihe_version() -> bool:
         return(True)
     else:
         logger.debug(
-            f'Pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
-        logger.debug('可以使用 pip3 install --upgrade pyxiaoheihe 命令升级')
+            f'pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
         return(False)
 
 

@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-21 12:26:27
+# @LastEditTime : 2020-08-27 18:40:05
 # @Description  : 启动入口
 '''
 
@@ -270,7 +270,7 @@ if __name__ == '__main__':
         else:
             logger.error(
                 f'[*] Pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
-            logger.error('[*] 可以使用 pip3 install --upgrade pyxiaoheihe 命令升级')
+            logger.error('[*] 可以使用 pip3 install pyxiaoheihe -U 命令升级')
             cliwait()
     except KeyboardInterrupt:
         logger.info('[*] 手动终止运行')
