@@ -1,6 +1,6 @@
 # Xhh_Auto
 
-[![Codacy Badge][codacy_b]][Codacy] [![release][release_b]][Release] [![Download][download_b]][Release] [![License][license_b]][License]
+[![Codacy Badge][codacy_b]][Codacy] [![release][release_b]][Release] [![PyPI][pypi_v_b]][pypi] [![Download][download_b]][Release] [![License][license_b]][License]
 
 ## 声明
 
@@ -78,6 +78,8 @@
 [release_b]: https://img.shields.io/github/v/release/chr233/xhh_auto
 [license]: https://github.com/chr233/xhh_auto/blob/master/license
 [license_b]: https://img.shields.io/github/license/chr233/xhh_auto
+[pypi_v_b]: https://img.shields.io/pypi/v/pyxiaoheihe?label=pyxiaoheihe
+[pypi]: https://pypi.org/project/pyxiaoheihe/
 [zfb]: https://github.com/chr233/xhh_auto/raw/master/res/zfb.png
 [jiaocheng1]: https://blog.chrxw.com/archives/2020/08/10/1353.html
 [jiaocheng2]: https://blog.chrxw.com/archives/2019/10/19/390.html
