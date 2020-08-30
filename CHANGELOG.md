@@ -1,5 +1,10 @@
 # 更新日志
 
+## 2020-08-28 v0.90
+
+* `pyxiaoheihe`作为模块从本项目中独立出去, 可以使用`pip install pyxiaoheihe --upgrade`安装和更新.
+* 修复了几个小问题.
+
 ## 2020-08-21 v0.90
 
 * 配置文件有更新, 详细内容请查看`example.config.toml`
