@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-09-04 23:05:31
+# @LastEditTime : 2020-09-05 00:12:36
 # @Description  : 读取并验证配置
 '''
 
@@ -102,7 +102,7 @@ def verify_config(cfg: dict) -> dict:
             'accounts': []}
 
     main = cfg.get('main', {})
-    if main and type(main) == dict:
+    if main and isinstance(main, dict):
         check_update = bool(main.get('check_update', True))
         debug = bool(main.get('debug', False))
         join_xhhauto = bool(main.get('join_xhhauto', True))
@@ -112,7 +112,7 @@ def verify_config(cfg: dict) -> dict:
         logger.debug('[main]节配置有误或者未配置,将使用默认配置')
 
     ftqq = cfg.get('ftqq', {})
-    if ftqq and type(ftqq) == dict:
+    if ftqq and isinstance(ftqq, dict):
         enable = bool(ftqq.get('enable', False))
         skey = ftqq.get('skey', "")
         only_on_error = bool(ftqq.get('only_on_error', False))
@@ -124,7 +124,7 @@ def verify_config(cfg: dict) -> dict:
         logger.debug('[ftqq]节配置有误或者未配置,将使用默认配置')
 
     email = cfg.get('email', {})
-    if email and type(email) == dict:
+    if email and isinstance(email, dict):
         enable = bool(email.get('enable', False))
         try:
             port = int(email.get('port', 0))
@@ -148,7 +148,7 @@ def verify_config(cfg: dict) -> dict:
         logger.debug('[email]节配置有误或者未配置,将使用默认配置')
 
     heybox = cfg.get('heybox', {})
-    if heybox and type(heybox) == dict:
+    if heybox and isinstance(heybox, dict):
         channel = heybox.get('channel', "heybox_yingyongbao")
         try:
             os_type = int(heybox.get('os_type', 1))
@@ -171,7 +171,7 @@ def verify_config(cfg: dict) -> dict:
         logger.debug('[heybox]节配置有误或者未配置,将使用默认配置')
 
     accounts = cfg.get('accounts', [])
-    if accounts and type(accounts) == list:
+    if accounts and isinstance(accounts, list):
         vcfg['accounts'] = []
         for i, account in enumerate(accounts, 1):
             try:

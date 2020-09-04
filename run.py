@@ -4,14 +4,13 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-09-04 23:39:47
+# @LastEditTime : 2020-09-05 00:14:20
 # @Description  : 启动入口
 '''
 
 import os
 import sys
 import time
-import random
 import traceback
 
 print(r'''
@@ -41,6 +40,7 @@ try:
 except ImportError as e:
     print(e)
     print('导入模块出错,请执行 pip install -r requirements.txt 安装所需的依赖库')
+    print('或者尝试升级核心 pip install pyxiaoheihe --upgrade')
     cliwait()
     exit()
 
@@ -110,52 +110,44 @@ def main():
                 else:
                     hbc.logger.info('已完成点赞和分享任务,跳过')
 
-            except AccountLimited:
-                hbc.logger.info('当前账号点赞次数用尽, 终止点赞任务')
-                limited =True
+                # xhh_auto 互助计划,如果想要退出可以在配置文件中关闭
+                if mcfg['join_xhhauto']:
+                    hbc.logger.info('感谢加入Xhh_Auto互助计划')
+                    rs = hbc.get_user_relation(20400942)
+                    if rs == RelationType.NoRelation:
+                        hbc.follow_user(20400942)
+                    ulist = hbc.get_user_fans(20400942)
+                    target = user_relation_filter(
+                        ulist, RelationType.NoRelation)
+                    if target:
+                        for i in target[:2]:
+                            hbc.follow_user(i, True)
+                            hbc.random_sleep(0, 2)
 
-            # xhh_auto 互助计划,如果想要退出可以在配置文件中关闭
-            if mcfg['join_xhhauto']:
-                hbc.logger.info('感谢加入Xhh_Auto互助计划')
-                rs = hbc.get_user_relation(20400942)
-                if rs == RelationType.NoRelation:
-                    hbc.follow_user(20400942)
-                ulist = hbc.get_user_fans(20400942)
-                target = user_relation_filter(
-                    ulist, RelationType.NoRelation)
-                if target:
-                    for i in target[:2]:
+                ulist = hbc.get_new_fans()
+                if ulist:
+                    for i in ulist:
                         hbc.follow_user(i, True)
-                        hbc.random_sleep(0, 2)
-
-            ulist = hbc.get_new_fans()
-            if ulist:
-                for i in ulist:
-                    hbc.follow_user(i, True)
-                    hbc.random_sleep(0, 5)
-                hbc.logger.info(f'关注了[{len(ulist)}]个新粉丝')
-            else:
-                hbc.logger.info('没有新粉丝')
-                if not mcfg['join_xhhauto']:
-                    hbc.logger.info('[!] 试试加入xhh_auto互助计划?')
-           
-            try:
-                if  not limited:
-                    eventlist = hbc.get_subscrib_events(EVENT, True)
-                    hbc.logger.info(f'获取[{len(eventlist)}]条动态')
-                    if eventlist :
-                        for linkid, ftype, _ in eventlist:
-                            hbc.logger.info(f'点赞动态 {linkid}')
-                            hbc.like_event(linkid, ftype, True)
-                            hbc.random_sleep(0, 1)
-                    else:
-                        hbc.logger.info('没有新动态')
+                        hbc.random_sleep(0, 5)
+                    hbc.logger.info(f'关注了[{len(ulist)}]个新粉丝')
                 else:
-                    hbc.logger.info('当前账号点赞次数用尽, 跳过')
-            
+                    hbc.logger.info('没有新粉丝')
+                    if not mcfg['join_xhhauto']:
+                        hbc.logger.info('[!] 试试加入xhh_auto互助计划?')
+
+                eventlist = hbc.get_subscrib_events(EVENT, True)
+                hbc.logger.info(f'获取[{len(eventlist)}]条动态')
+                if eventlist:
+                    for linkid, ftype, _ in eventlist:
+                        hbc.logger.info(f'点赞动态 {linkid}')
+                        hbc.like_event(linkid, ftype, True)
+                        hbc.random_sleep(0, 1)
+                else:
+                    hbc.logger.info('没有新动态')
+
             except AccountLimited:
-                hbc.logger.info('当前账号点赞次数用尽, 终止点赞任务')
-                limited =True
+                hbc.logger.info('当前账号点赞或关注已受限, 终止任务')
+                limited = True
 
             logger.info('-' * 40)
 
