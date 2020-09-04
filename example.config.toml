@@ -10,8 +10,12 @@
 heybox_id = 0
 imei = ""
 pkey = ""
+# 为每个账号独立配置请求头, 不设置的话使用[heybox]节的全局配置
+# channel = "heybox_xiaomi"
+# os_type = 1
+# os_version = "8.1"
 
-# 如果有多个账号,像这样多写几组即可(记得去除前面的#号)
+# 如果有多个账号,像这样多写几组即可(记得去除下面4行前面的#号)
 
 # [[accounts]]
 # heybox_id = 0
@@ -20,11 +24,11 @@ pkey = ""
 
 # ====其他配置======================================
 [main]
-# 是否检查更新,[true]
+# 是否检查更新, [true]
 check_update = true
-# 是否开启调试模式,[false]
+# 是否开启调试模式, [false]
 debug = false
-# 是否参与互助计划,[true]
+# 是否参与互助计划, [true]
 join_xhhauto = true
 # 互助计划说明:
 # 开启后会自动关注我的账号和我的粉丝的账号
@@ -35,16 +39,16 @@ join_xhhauto = true
 # ====推送设置======================================
 [ftqq]
 # 方糖气球模块,用于推送运行结果到微信
-# 是否开启方糖气球模块,开启后会将结果推送至微信,[false]
+# 是否开启方糖气球模块,开启后会将结果推送至微信, [false]
 enable = false
 # 方糖气球SKEY,获取地址:(http://sc.ftqq.com/)
 skey = ""
-# 设置为true后只会在程序出错时才会推送消息,[false]
+# 设置为true后只会在程序出错时才会推送消息, [false]
 only_on_error = false
 
 [email]
 # 邮件模块,用于推送结果到邮箱
-# 是否开启邮箱模块,[false]
+# 是否开启邮箱模块, [false]
 enable = false
 # SMTP服务器设置
 port = 465
@@ -59,17 +63,19 @@ sendaddr = 'send@example.com'
 only_on_error = false
 
 # ====高级配置======================================
+# 这里是全局配置, 也可以在[accounts]节为每个账户单独配置
+# 支持独立配置的有os_type,channel,os_version
 [heybox]
-# 自定义请求头,如果担心被风控请自行修改成和自己的手机一致
-# 表示模拟哪种客户端,1:Android,2:iOS,[1]
+# 自定义请求头数据,如果担心被风控请自行修改修改, [1]
+# 表示模拟哪种客户端, 1:Android, 2:iOS, 
 os_type = 1
-# 表明客户端来自哪个渠道,仅安卓客户端有效,["heybox_yingyongbao"]
+# 表明客户端来自哪个渠道,仅安卓客户端有效, ["heybox_yingyongbao"]
 channel = "heybox_yingyongbao"
-# 系统版本,对应Android或者IOS版本,["8.1"]
+# 系统版本,对应Android或者IOS版本, ["8.1"]
 os_version = "8.1"
-# 随机延时倍数,[1.0]
+# 随机延时倍数, [1.0]
 # 设为0.5代表延时时间缩短一半,以此类推
 # 如果需要手动控制延时就设为0
 sleep_interval = 1.0
-# 开启后自动发送report流量,伪装正常客户端,[true]
+# 开启后自动发送report流量,伪装正常客户端, [true]
 auto_report = true

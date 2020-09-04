@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-27 18:40:05
+# @LastEditTime : 2020-09-04 23:39:47
 # @Description  : 启动入口
 '''
 
@@ -36,7 +36,7 @@ try:
 
     from pyxiaoheihe import HeyBoxClient
     from pyxiaoheihe.static import PYXIAOHEIHE_VERSION, RelationType, ReportType
-    from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError
+    from pyxiaoheihe.error import UnknownError, HeyboxException, TokenError, AccountLimited
     from pyxiaoheihe.utils import user_relation_filter
 except ImportError as e:
     print(e)
@@ -71,6 +71,7 @@ def main():
     data = []
     for i, account in enumerate(accounts, 1):
         try:
+            limited = False
             logger.info(str(f'==[{i}/{ac}]').ljust(40, '='))
             data.append(f'#### {str(f"==[{i}/{ac}]").ljust(30, "=")}')
             hbc = HeyBoxClient(account, hbxcfg, mcfg['debug'])
@@ -83,29 +84,35 @@ def main():
             if not qd:
                 hbc.logger.info('签到……')
                 hbc.sign()
-            if not dz or not fxxw or not fxpl:
-                hbc.logger.info('获取首页新闻列表……')
-                idlist = hbc.get_news_id(6, -1)
-                hbc.logger.info(f'获取[{len(idlist)}]条内容')
-                if not fxxw or not fxpl:
-                    hbc.logger.info('分享新闻……')
-                    linkid = idlist[0]
-                    hbc.get_news_content(linkid, 1)
-                    hbc.get_comments(linkid, 1, i, False)
-                    hbc.share_news(linkid, 1)
-                    hbc.random_sleep(0, 1)
-                    hbc.share_comment()
-                    hbc.random_sleep(0, 1)
-                if not dz:
-                    for i, linkid in enumerate(idlist, 1):
-                        # 伪装正常流量
-                        hbc.logger.info(f'模拟浏览新闻{linkid}')
-                        hbc.get_news_content(linkid)
+
+            try:
+                if not dz or not fxxw or not fxpl:
+                    hbc.logger.info('获取首页新闻列表……')
+                    idlist = hbc.get_news_id(6, -1)
+                    hbc.logger.info(f'获取[{len(idlist)}]条内容')
+                    if not fxxw or not fxpl:
+                        hbc.logger.info('分享新闻……')
+                        linkid = idlist[0]
+                        hbc.get_news_content(linkid, 1)
                         hbc.get_comments(linkid, 1, i, False)
-                        hbc.like_news(linkid, i, True)
-                        hbc.random_sleep(1, 5)
-            else:
-                hbc.logger.info('已完成点赞和分享任务,跳过')
+                        hbc.share_news(linkid, 1)
+                        hbc.random_sleep(0, 1)
+                        hbc.share_comment()
+                        hbc.random_sleep(0, 1)
+                    if not dz:
+                        for i, linkid in enumerate(idlist, 1):
+                            # 伪装正常流量
+                            hbc.logger.info(f'模拟浏览新闻{linkid}')
+                            hbc.get_news_content(linkid)
+                            hbc.get_comments(linkid, 1, i, False)
+                            hbc.like_news(linkid, i, True)
+                            hbc.random_sleep(1, 5)
+                else:
+                    hbc.logger.info('已完成点赞和分享任务,跳过')
+
+            except AccountLimited:
+                hbc.logger.info('当前账号点赞次数用尽, 终止点赞任务')
+                limited =True
 
             # xhh_auto 互助计划,如果想要退出可以在配置文件中关闭
             if mcfg['join_xhhauto']:
@@ -131,23 +138,31 @@ def main():
                 hbc.logger.info('没有新粉丝')
                 if not mcfg['join_xhhauto']:
                     hbc.logger.info('[!] 试试加入xhh_auto互助计划?')
-
-            eventlist = hbc.get_subscrib_events(EVENT, True)
-            hbc.logger.info(f'获取[{len(eventlist)}]条动态')
-            if eventlist:
-                for linkid, ftype, _ in eventlist:
-                    hbc.logger.info(f'点赞动态 {linkid}')
-                    hbc.like_event(linkid, ftype, True)
-                    hbc.random_sleep(0, 1)
-            else:
-                hbc.logger.info('没有新动态')
+           
+            try:
+                if  not limited:
+                    eventlist = hbc.get_subscrib_events(EVENT, True)
+                    hbc.logger.info(f'获取[{len(eventlist)}]条动态')
+                    if eventlist :
+                        for linkid, ftype, _ in eventlist:
+                            hbc.logger.info(f'点赞动态 {linkid}')
+                            hbc.like_event(linkid, ftype, True)
+                            hbc.random_sleep(0, 1)
+                    else:
+                        hbc.logger.info('没有新动态')
+                else:
+                    hbc.logger.info('当前账号点赞次数用尽, 跳过')
+            
+            except AccountLimited:
+                hbc.logger.info('当前账号点赞次数用尽, 终止点赞任务')
+                limited =True
 
             logger.info('-' * 40)
 
             logger.info('生成统计数据')
             uname, uid, coin, level, sign = hbc.get_my_data()
 
-            logger.info(f'昵称[{uname}] @{uid}')
+            logger.info(f'昵称[{uname}] @{uid} {"[受限]" if limited else ""}')
             logger.info(
                 f'等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]')
             logger.info(f'盒币[{coin}]签到[{sign}]天')
@@ -162,7 +177,7 @@ def main():
 
             logger.info(f'签到[{qd}]分享[{fxxw}{fxpl}]点赞[{dz}]')
 
-            data.append(f'#### {uname} @{uid}\n'
+            data.append(f'#### {uname} @{uid} {"[受限]" if limited else ""}\n'
                         f'#### 盒币[{coin}]签到[{sign}]天\n'
                         f'#### 等级[{level[0]}级]==>{int((level[1]*100)/level[2])}%==>[{level[0]+1}级]\n'
                         f'#### 关注[{follow}]粉丝[{fan}]获赞[{awd}]\n'
@@ -270,7 +285,7 @@ if __name__ == '__main__':
         else:
             logger.error(
                 f'[*] Pyxiaoheihe版本太低,无法继续运行 [当前{PYXIAOHEIHE_VERSION} < 要求{MINI_CORE_VERSION}]')
-            logger.error('[*] 可以使用 pip3 install pyxiaoheihe -U 命令升级')
+            logger.error('[*] 可以使用 pip3 install pyxiaoheihe --upgrade 命令升级')
             cliwait()
     except KeyboardInterrupt:
         logger.info('[*] 手动终止运行')

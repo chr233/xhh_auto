@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-21 10:31:49
+# @LastEditTime : 2020-09-04 23:05:31
 # @Description  : 读取并验证配置
 '''
 
@@ -113,7 +113,7 @@ def verify_config(cfg: dict) -> dict:
 
     ftqq = cfg.get('ftqq', {})
     if ftqq and type(ftqq) == dict:
-        enable =bool( ftqq.get('enable', False))
+        enable = bool(ftqq.get('enable', False))
         skey = ftqq.get('skey', "")
         only_on_error = bool(ftqq.get('only_on_error', False))
         if enable and not skey:
@@ -178,10 +178,14 @@ def verify_config(cfg: dict) -> dict:
                 heybox_id = int(account['heybox_id'])
                 imei = account['imei']
                 pkey = account['pkey']
+                i_os_type = account.get('os_type') or os_type
+                i_channel = account.get('channel') or channel
+                i_os_version = account.get('os_version') or os_version
+
                 if heybox_id and imei and pkey:
-                    vcfg['accounts'].append({'heybox_id': heybox_id,
-                                             'imei': imei,
-                                             'pkey': pkey})
+                    vcfg['accounts'].append({'heybox_id': heybox_id, 'imei': imei,
+                                             'pkey': pkey, 'os_type': i_os_type,
+                                             'channel': i_channel, 'os_version': i_os_version})
                 else:
                     raise ValueError
             except (ValueError, AttributeError):
