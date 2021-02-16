@@ -29,4 +29,12 @@ jobs:
 
     - name: Run
       run: python run.py
+      env:
+        HEYBOX_ID: ${{secrets.HEYBOX_ID}}
+        IMEI: ${{secrets.IMEI}}
+        PKEY: ${{secrets.PKEY}}
+        OS_TYPE: ${{secrets.OS_TYPE}}
+        CHANNEL: ${{secrets.CHANNEL}}
+        OS_VERSION: ${{secrets.OS_VERSION}}
+
 
