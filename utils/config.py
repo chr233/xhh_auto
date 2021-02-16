@@ -1,4 +1,3 @@
-
 '''
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
@@ -8,8 +7,10 @@
 '''
 
 import os
-import toml
+
 import chardet
+import toml
+
 from .log import get_logger, init_logger
 
 logger = get_logger('Setting')
@@ -28,7 +29,7 @@ def get_script_path() -> str:
     返回:
         str: 脚本所在路径
     '''
-    return(SCRIPT_PATH)
+    return (SCRIPT_PATH)
 
 
 def get_config(key: str) -> dict:
@@ -40,7 +41,7 @@ def get_config(key: str) -> dict:
     返回:
         dict: 配置信息字典
     '''
-    return(CFG.get(key))
+    return (CFG.get(key))
 
 
 def get_all_config() -> dict:
@@ -50,7 +51,7 @@ def get_all_config() -> dict:
     返回:
         dict: 配置信息字典
     '''
-    return(CFG)
+    return (CFG)
 
 
 def load_config(path: str = DEFAULT_PATH) -> dict:
@@ -75,7 +76,7 @@ def load_config(path: str = DEFAULT_PATH) -> dict:
         level = 0 if debug == 'debug' else 20
         init_logger(level)
         logger.debug('配置验证通过')
-        return(CFG)
+        return (CFG)
 
     except FileNotFoundError:
         logger.error(f'[*] 配置文件[{path}]不存在')
@@ -85,15 +86,15 @@ def load_config(path: str = DEFAULT_PATH) -> dict:
 
 
 def verify_config(cfg: dict) -> dict:
-    '''
+    """
     验证配置
 
     参数:
         cfg: 配置字典
     返回:
         dict: 验证过的配置字典,剔除错误的和不必要的项目
-    '''
-    vcfg = {'main': {'check_update': True, 'debug': False,  'join_xhhauto': True},
+    """
+    vcfg = {'main': {'check_update': True, 'debug': False, 'join_xhhauto': True},
             'ftqq': {'enable': False, 'skey': '', 'only_on_error': False},
             'email': {'port': 465, 'server': '', 'password': '', 'user': '',
                       'recvaddr': '', 'sendaddr': '', 'only_on_error': False},
@@ -192,6 +193,20 @@ def verify_config(cfg: dict) -> dict:
                 logger.warning(f'[*] 第{i}项账号配置有误,已忽略该项')
                 logger.debug(f'[*] 配置项为{account}')
 
+    if not vcfg['accounts'] and os.getenv('CI'):
+        heybox_id = int(os.getenv('HEYBOX_ID'))
+        imei = os.getenv('IMEI')
+        pkey = os.getenv('PKEY')
+        i_os_type = os.getenv('OS_TYPE') or os_type
+        i_channel = os.getenv('CHANNEL') or channel
+        i_os_version = os.getenv('OS_VERSION') or os_version
+
+        if heybox_id and imei and pkey:
+            vcfg['accounts'].append({'heybox_id': heybox_id, 'imei': imei,
+                                     'pkey': pkey, 'os_type': i_os_type,
+                                     'channel': i_channel, 'os_version': i_os_version})
+
     if not vcfg['accounts']:
         logger.error('[*] 不存在有效的账号信息,请检查config.toml')
-    return(vcfg)
+
+    return (vcfg)

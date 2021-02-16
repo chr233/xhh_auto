@@ -192,7 +192,7 @@ def main():
             total += 1
 
     logger.info('=' * 40)
-    if (success < total):
+    if success < total:
         logger.warning(f'[{total-success}]个任务执行出错')
         data.append(f'#### {"=" * 30 }\n'
                     f'#### **[{total-success}]个任务执行出错**')

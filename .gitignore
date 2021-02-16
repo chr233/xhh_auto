@@ -270,3 +270,4 @@ debug.py
 test.py
 test/
 roll.py
+venv/
