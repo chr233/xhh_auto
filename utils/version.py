@@ -3,19 +3,20 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:32:40
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-09-04 23:14:59
+# @LastEditTime : 2021-11-18 22:00:05
 # @Description  : 检查脚本更新
 '''
 
+from typing import Tuple
 import requests
 from pyxiaoheihe.static import PYXIAOHEIHE_VERSION
 
 from .log import get_logger
 
 
-SCRIPT_VERSION = "0.91"
+SCRIPT_VERSION = "0.92"
 
-MINI_CORE_VERSION = "1.0.8"
+MINI_CORE_VERSION = "1.0.10"
 
 logger = get_logger('Version')
 
@@ -49,7 +50,7 @@ def check_pyxiaoheihe_version() -> bool:
         return(False)
 
 
-def check_script_update() -> (str, str, str):
+def check_script_update() -> Tuple[str, str, str]:
     '''
     检查脚本更新
 

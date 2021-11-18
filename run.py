@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-09-05 00:14:20
+# @LastEditTime : 2021-11-18 22:00:56
 # @Description  : 启动入口
 '''
 
@@ -54,7 +54,7 @@ def main():
     '''
 
     # 动态点赞数量
-    EVENT = 20
+    EVENT = 5
 
     start_time = time.time()
     total = 0
@@ -74,7 +74,8 @@ def main():
             limited = False
             logger.info(str(f'==[{i}/{ac}]').ljust(40, '='))
             data.append(f'#### {str(f"==[{i}/{ac}]").ljust(30, "=")}')
-            hbc = HeyBoxClient(account, hbxcfg, mcfg['debug'])
+            hbc = HeyBoxClient(
+                account, hbxcfg, mcfg['debug'], mcfg['rpc_server'])
 
             # 读取每日任务详情
             qd, fxxw, fxpl, dz = hbc.get_daily_task()
@@ -124,26 +125,26 @@ def main():
                             hbc.follow_user(i, True)
                             hbc.random_sleep(0, 2)
 
-                ulist = hbc.get_new_fans()
-                if ulist:
-                    for i in ulist:
-                        hbc.follow_user(i, True)
-                        hbc.random_sleep(0, 5)
-                    hbc.logger.info(f'关注了[{len(ulist)}]个新粉丝')
-                else:
-                    hbc.logger.info('没有新粉丝')
-                    if not mcfg['join_xhhauto']:
-                        hbc.logger.info('[!] 试试加入xhh_auto互助计划?')
+                    ulist = hbc.get_new_fans()
+                    if ulist:
+                        for i in ulist:
+                            hbc.follow_user(i, True)
+                            hbc.random_sleep(0, 5)
+                        hbc.logger.info(f'关注了[{len(ulist)}]个新粉丝')
+                    else:
+                        hbc.logger.info('没有新粉丝')
+                        if not mcfg['join_xhhauto']:
+                            hbc.logger.info('[!] 试试加入xhh_auto互助计划?')
 
-                eventlist = hbc.get_subscrib_events(EVENT, True)
-                hbc.logger.info(f'获取[{len(eventlist)}]条动态')
-                if eventlist:
-                    for linkid, ftype, _ in eventlist:
-                        hbc.logger.info(f'点赞动态 {linkid}')
-                        hbc.like_event(linkid, ftype, True)
-                        hbc.random_sleep(0, 1)
-                else:
-                    hbc.logger.info('没有新动态')
+                    eventlist = hbc.get_subscrib_events(EVENT, True)
+                    hbc.logger.info(f'获取[{len(eventlist)}]条动态')
+                    if eventlist:
+                        for linkid, ftype, _ in eventlist:
+                            hbc.logger.info(f'点赞动态 {linkid}')
+                            hbc.like_event(linkid, ftype, True)
+                            hbc.random_sleep(0, 1)
+                    else:
+                        hbc.logger.info('没有新动态')
 
             except AccountLimited:
                 hbc.logger.info('当前账号点赞或关注已受限, 终止任务')

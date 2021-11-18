@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-29 14:21:39
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-09-05 00:12:36
+# @LastEditTime : 2021-11-18 21:49:07
 # @Description  : 读取并验证配置
 '''
 
@@ -106,8 +106,9 @@ def verify_config(cfg: dict) -> dict:
         check_update = bool(main.get('check_update', True))
         debug = bool(main.get('debug', False))
         join_xhhauto = bool(main.get('join_xhhauto', True))
+        rpc_server = main.get('rpc_server', 'http://localhost:9000/encode')
         vcfg['main'] = {'check_update': check_update, 'debug': debug,
-                        'join_xhhauto': join_xhhauto}
+                        'join_xhhauto': join_xhhauto, 'rpc_server': rpc_server}
     else:
         logger.debug('[main]节配置有误或者未配置,将使用默认配置')
 

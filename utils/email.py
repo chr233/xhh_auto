@@ -3,7 +3,7 @@
 # @Author       : Chr_
 # @Date         : 2020-08-01 22:26:25
 # @LastEditors  : Chr_
-# @LastEditTime : 2020-08-08 15:39:22
+# @LastEditTime : 2021-11-18 22:00:22
 # @Description  : 邮件推送模块
 '''
 
@@ -21,7 +21,7 @@ logger = get_logger('EMail')
 def send_to_email(title: str, data: str, emailcfg: dict) -> bool:
     '''
     发送消息到电子邮箱
-    
+
     参数:
         title: 标题
         text: 内容
