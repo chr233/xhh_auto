@@ -4,7 +4,7 @@
 # @Author       : Chr_
 # @Date         : 2020-07-14 16:36:33
 # @LastEditors  : Chr_
-# @LastEditTime : 2021-11-18 22:00:56
+# @LastEditTime : 2021-11-19 11:55:54
 # @Description  : 启动入口
 '''
 
@@ -75,7 +75,7 @@ def main():
             logger.info(str(f'==[{i}/{ac}]').ljust(40, '='))
             data.append(f'#### {str(f"==[{i}/{ac}]").ljust(30, "=")}')
             hbc = HeyBoxClient(
-                account, hbxcfg, mcfg['debug'], mcfg['rpc_server'])
+                account, hbxcfg, mcfg['debug'])
 
             # 读取每日任务详情
             qd, fxxw, fxpl, dz = hbc.get_daily_task()
