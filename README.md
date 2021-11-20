@@ -10,6 +10,8 @@
 
 ## Frida_RPC服务部署方法
 
+![demo](https://blog.chrxw.com/usr/uploads/2021/11/59198763.png)
+
 * Frida RPC简介：[这篇文章](https://blog.chrxw.com/archives/2021/11/19/1640.html)
 
 * RPC Server获取：[frida_project](https://github.com/chr233/frida_project)
