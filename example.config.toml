@@ -79,3 +79,5 @@ os_version = "8.1"
 sleep_interval = 1.0
 # 开启后自动发送report流量,伪装正常客户端, [true]
 auto_report = true
+# 远程RPC服务器地址
+rpc_server = 'http://192.168.50.184:9000/encode'

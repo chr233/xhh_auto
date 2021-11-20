@@ -8,8 +8,10 @@
 
 * 请从这里下载稳定版: [Releases][release], 仓库中的代码未经测试, 可能会有问题.
 
-> 官方Q群: `916945024`
-> 官方Telegram群: `https://t.me/xhh_auto`
+## Frida_RPC服务部署方法
+
+    Frida RPC简介：[这篇文章](https://blog.chrxw.com/archives/2021/11/19/1640.html)
+    以及这个仓库：[frida_project](https://github.com/chr233/frida_project)
 
 ## 安装与使用方法
 
@@ -76,4 +78,4 @@
 [pypi]: https://pypi.org/project/pyxiaoheihe/
 [jiaocheng1]: https://blog.chrxw.com/archives/2020/08/10/1353.html
 [jiaocheng2]: https://blog.chrxw.com/archives/2019/10/19/390.html
-[jiaocheng3]: https://blog.chrxw.com/archives/2019/10/20/437.html
+[jiaocheng3]: https://blog.chrxw.com/archives/2019/10/20/437.htm

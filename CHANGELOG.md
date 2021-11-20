@@ -1,5 +1,11 @@
 # 更新日志
 
+## 2021-11-19 v0.93
+
+* 改为使用Frida RPC计算hkey, 需要在config.toml中heybox节内定义rpc_server, 并部署RPC server
+* 模拟小黑盒版本为1.3.191
+* `pyxiaoheihe`版本需要>=1.0.11
+
 ## 2020-09-04 v0.91
 
 * 支持为每个账号配置不同的请求头, 方便多设备用户使用
