@@ -8,6 +8,8 @@
 
 * 请从这里下载稳定版: [Releases][release], 仓库中的代码未经测试, 可能会有问题.
 
+> 本项目已经停止更新, 交流群 `916945024`
+
 ## Frida_RPC服务部署方法
 
 ![demo](https://blog.chrxw.com/usr/uploads/2021/11/59198763.png)
