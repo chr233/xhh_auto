@@ -6,9 +6,9 @@
 
     本项目仅供学习交流使用, 用户如何使用该脚本与作者无关
 
-* 请从这里下载稳定版: [Releases][release], 仓库中的代码未经测试, 可能会有问题.
+> 本项目已经停止更新, 交流群 `916945024`, 另一个半弃坑的工程: [Xiaoheihe_CShape](https://github.com/chr233/Xiaoheihe_CShape)
 
-> 本项目已经停止更新, 交流群 `916945024`
+* 请从这里下载稳定版: [Releases][release], 仓库中的代码未经测试, 可能会有问题.
 
 ## Frida_RPC服务部署方法
 
